@@ -1,0 +1,27 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RequestAccess {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  fullName        String
+  email           String
+  role            String?
+  company         String?
+  githubUsername  String
+  preferredStack  String   @default("flutter")
+  message         String?
+  status          String   @default("pending")
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
