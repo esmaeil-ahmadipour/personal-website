@@ -563,6 +563,27 @@ const translations: Record<string, { en: string; fa: string }> = {
     en: "Request audit →",
     fa: "درخواست بازبینی",
   },
+  contactSuccessDesc: {
+    en: "Tarvix will reach out within 24 hours to discuss your project.",
+    fa: "Tarvix ظرف ۲۴ ساعت برای بررسی پروژه شما با شما تماس خواهد گرفت.",
+  },
+  emailSent: {
+    en: "Email sent",
+    fa: "ایمیل ارسال شد",
+  },
+  responseWithin24h: {
+    en: "Response within 24h",
+    fa: "پاسخ در کمتر از ۲۴ ساعت",
+  },
+  contactSuccess1: {
+    en: "Thank you!",
+    fa: "متشکریم!",
+  },
+  contactSuccessDesc1: {
+    en: "Tarvix will reach out within 24 hours to discuss your project.",
+    fa: "Tarvix ظرف ۲۴ ساعت برای بررسی پروژه شما با شما تماس خواهد گرفت.",
+  },
+
   // ===== DIALOG KEYS =====
   dialogTitle: {
     en: "Request Early Access",

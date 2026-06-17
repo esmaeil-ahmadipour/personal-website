@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDirection } from "@/providers/DirectionProvider";
 import { useTranslation } from "@/features/shared";
+import { ContactForm } from "@/features/contact";
 
 // Theme utilities
 const getInitialTheme = (): "light" | "dark" => {
@@ -428,22 +429,7 @@ export default function HomePage() {
           <div className="contact-grid">
             <div>
               <p>{t("contactDesc")}</p>
-              <form onSubmit={handleContactSubmit}>
-                <input type="text" placeholder={t("fullName")} required />
-                <input type="email" placeholder={t("email")} required />
-                <select aria-label={t("serviceSelect")}>
-                  <option>{t("serviceFlutter")}</option>
-                  <option>{t("serviceWeb")}</option>
-                  <option>{t("serviceWeb3")}</option>
-                  <option>{t("serviceConsulting")}</option>
-                  <option>{t("serviceFoundation")}</option>
-                  <option>{t("serviceAudit")}</option>
-                </select>
-                <textarea rows={4} placeholder={t("projectDesc")}></textarea>
-                <button type="submit" className="btn btn-primary">
-                  {t("sendInquiry")} →
-                </button>
-              </form>
+              <ContactForm />
               <p style={{ marginTop: "1rem" }}>
                 📧 contact@tarvix.org · <i className="fab fa-github"></i>{" "}
                 <i className="fab fa-x"></i> <i className="fab fa-linkedin"></i>{" "}
