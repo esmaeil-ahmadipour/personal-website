@@ -2,8 +2,10 @@
 "use client";
 
 import { Breadcrumb } from "@/features/early-access/components/Breadcrumb";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useDirection } from "@/providers/DirectionProvider";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const getInitialTheme = (): "light" | "dark" => {
   if (typeof window !== "undefined") {
@@ -16,17 +18,11 @@ const getInitialTheme = (): "light" | "dark" => {
   return "light";
 };
 
-const getInitialLang = (): "en" | "fa" => {
-  if (typeof window !== "undefined") {
-    const saved = localStorage.getItem("tarvix_lang");
-    if (saved === "en" || saved === "fa") return saved;
-  }
-  return "en";
-};
-
 export default function DevPlatformPage() {
+  const { isRTL, toggleDirection } = useDirection();
+  const { t } = useTranslation();
+
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [lang, setLang] = useState<"en" | "fa">("en");
   const [mounted, setMounted] = useState(false);
   const [isHeroDialogOpen, setIsHeroDialogOpen] = useState(false);
   const [formState, setFormState] = useState({
@@ -45,7 +41,6 @@ export default function DevPlatformPage() {
 
   useEffect(() => {
     setTheme(getInitialTheme());
-    setLang(getInitialLang());
     setMounted(true);
   }, []);
 
@@ -56,14 +51,6 @@ export default function DevPlatformPage() {
       localStorage.setItem("tarvix_theme", theme);
     }
   }, [theme, mounted]);
-
-  useEffect(() => {
-    if (mounted) {
-      document.documentElement.lang = lang;
-      document.documentElement.dir = lang === "fa" ? "rtl" : "ltr";
-      localStorage.setItem("tarvix_lang", lang);
-    }
-  }, [lang, mounted]);
 
   useEffect(() => {
     if (!isHeroDialogOpen) return;
@@ -84,7 +71,6 @@ export default function DevPlatformPage() {
   }, [isHeroDialogOpen]);
 
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
-  const toggleLang = () => setLang(lang === "en" ? "fa" : "en");
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -104,23 +90,23 @@ export default function DevPlatformPage() {
     setValidationError(null);
 
     if (!formState.fullName.trim()) {
-      setValidationError("Full name is required");
+      setValidationError(t("fullNameRequired"));
       return;
     }
     if (
       !formState.workEmail.trim() ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.workEmail)
     ) {
-      setValidationError("Valid email is required");
+      setValidationError(t("validEmailRequired"));
       return;
     }
     if (!formState.ghUsername.trim()) {
-      setValidationError("GitHub username is required");
+      setValidationError(t("githubRequired"));
       return;
     }
     const ghRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/;
     if (!ghRegex.test(formState.ghUsername)) {
-      setValidationError("Invalid GitHub username format");
+      setValidationError(t("invalidGithubFormat"));
       setGhError(true);
       return;
     }
@@ -144,12 +130,10 @@ export default function DevPlatformPage() {
       if (data.success) {
         setSubmitSuccess(true);
       } else {
-        setValidationError(
-          data.message || "Something went wrong. Please try again.",
-        );
+        setValidationError(data.message || t("somethingWentWrong"));
       }
     } catch {
-      setValidationError("Network error. Please try again.");
+      setValidationError(t("networkError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -177,62 +161,63 @@ export default function DevPlatformPage() {
 
   if (!mounted) return null;
 
+  const LanguageButton = () => (
+    <button
+      className="lang-switch px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+      onClick={toggleDirection}
+    >
+      {isRTL ? "🇬🇧 English" : "🇮🇷 فارسی"}
+    </button>
+  );
+
   return (
     <>
-      <nav className="flex items-center flex-nowrap w-full">
-        <div className="logo text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 whitespace-nowrap">
-          TARVIX
+      <nav className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <div className="logo text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 whitespace-nowrap">
+            TARVIX
+          </div>
+          <Breadcrumb />
         </div>
-        <Breadcrumb />
-        <div className="nav-controls flex items-center gap-2 ml-auto">
-          <button className="lang-switch" onClick={toggleLang}>
-            {lang === "en" ? "🇬🇧 English" : "🇮🇷 فارسی"}
-          </button>
 
+        <div className="nav-controls flex items-center gap-2">
+          <LanguageButton />
           <button className="theme-switch" onClick={toggleTheme}>
-            🌓 Dark/Light
+            {theme === "dark" ? "☀️" : "🌙"}
           </button>
         </div>
-        {/* 3. Far Right Group: Links */}
-        <div className="nav-links flex items-center gap-4 ml-4">
-          <a href="#hero">Platform</a>
-          <a href="#substance">System</a>
-          <a href="#value-loop">Value Loop</a>
-          <a href="#layers">Layers</a>
-          <a href="#access">Access</a>
+
+        <div className="nav-links flex items-center gap-4 flex-wrap">
+          <a href="#hero">{t("platform")}</a>
+          <a href="#substance">{t("system")}</a>
+          <a href="#value-loop">{t("valueLoop")}</a>
+          <a href="#layers">{t("layers")}</a>
+          <a href="#access">{t("access")}</a>
         </div>
       </nav>
 
       <section id="hero">
         <div className="container">
           <div style={{ maxWidth: 800 }}>
-            <h1>
-              The Tarvix Developer Platform
-              <br />— production systems engineering, shared.
-            </h1>
+            <h1>{t("heroTitleDev")}</h1>
 
-            <div className="hero-sub">
-              A codified engineering system for Flutter, Web, and Web3. Built to
-              resolve active constraints across high-stakes domains —
-              documented, tooled, and ready for adoption.
-            </div>
+            <div className="hero-sub">{t("heroSubDev")}</div>
 
             <div
               className="intent-note"
               style={{
                 fontSize: "0.9rem",
                 color: "var(--text-secondary-light)",
-                borderLeft: "3px solid var(--accent)",
-                paddingLeft: "1rem",
+                borderInlineStart: "3px solid var(--accent)",
+                paddingInlineStart: "1rem",
                 marginTop: "1.5rem",
               }}
             >
               <i
                 className="fas fa-check-circle"
-                style={{ marginRight: "0.5rem", color: "var(--accent)" }}
+                style={{ marginInlineEnd: "0.5rem", color: "var(--accent)" }}
               ></i>
-              Patterns tested by reality. Shared because good architecture
-              should not stay locked inside agencies.
+              {t("heroIntent")}
             </div>
 
             <div
@@ -252,7 +237,7 @@ export default function DevPlatformPage() {
                   setIsHeroDialogOpen(true);
                 }}
               >
-                Request Early Access →
+                {t("requestAccess")} →
               </button>
             </div>
           </div>
@@ -261,27 +246,20 @@ export default function DevPlatformPage() {
 
       <section>
         <div className="container">
-          <h2>Why this system exists</h2>
+          <h2>{t("whyTitle")}</h2>
 
           <div className="grid-2">
             <div className="card">
-              <span className="badge">Repeated production constraints</span>
-
+              <span className="badge">{t("whyBadge1")}</span>
               <p style={{ fontSize: "1.1rem", marginTop: "0.5rem" }}>
-                Every serious product faces the same challenges: unclear
-                boundaries, inconsistent standards, and accumulating debt. This
-                system codifies what we learned solving those problems across
-                fintech, Web3, logistics, and ed-tech.
+                {t("whyText1")}
               </p>
             </div>
 
             <div className="card">
-              <span className="badge">Shared engineering leverage</span>
-
+              <span className="badge">{t("whyBadge2")}</span>
               <p style={{ fontSize: "1.1rem", marginTop: "0.5rem" }}>
-                When architecture decisions are documented and enforced, teams
-                stop debating the same questions. When quality is automated,
-                human energy goes to product value, not firefighting.
+                {t("whyText2")}
               </p>
             </div>
           </div>
@@ -293,9 +271,7 @@ export default function DevPlatformPage() {
               color: "var(--text-secondary-light)",
             }}
           >
-            The platform gives you visibility into how we build. The system
-            provides patterns you can adapt. A shared foundation grounded in
-            engineering reality.
+            {t("whyFooter")}
           </p>
         </div>
       </section>
@@ -303,7 +279,7 @@ export default function DevPlatformPage() {
       <section id="substance">
         <div className="container">
           <h2>
-            The Tarvix Engineering System
+            {t("substanceTitle")}
             <br />
             <span
               style={{
@@ -311,27 +287,17 @@ export default function DevPlatformPage() {
                 color: "var(--text-secondary-light)",
               }}
             >
-              — decisions, not decoration
+              {t("substanceSub")}
             </span>
           </h2>
 
           <div className="grid-2">
             <div className="card">
-              <p>
-                A living body of architectural decisions, quality standards,
-                automation patterns, and reference implementations. Every piece
-                here was designed to resolve active structural friction — across
-                fintech, blockchain, logistics, and ed-tech.
-              </p>
+              <p>{t("substanceText1")}</p>
             </div>
 
             <div className="card">
-              <p>
-                Selected parts are available through the Developer Platform: as
-                open patterns, documented standards, and reference
-                implementations. Designed to provide immediate engineering
-                leverage.
-              </p>
+              <p>{t("substanceText2")}</p>
             </div>
           </div>
 
@@ -343,9 +309,7 @@ export default function DevPlatformPage() {
             }}
           >
             <p style={{ fontSize: "1.1rem", fontWeight: 500 }}>
-              One organizing principle: <strong>engineering leverage</strong>.
-              Every decision exists to make future work faster, safer, and more
-              predictable.
+              {t("substancePrinciple")}
             </p>
           </div>
         </div>
@@ -353,7 +317,7 @@ export default function DevPlatformPage() {
 
       <section id="value-loop">
         <div className="container">
-          <h2>The system flywheel</h2>
+          <h2>{t("flywheelTitle")}</h2>
 
           <p
             style={{
@@ -362,7 +326,7 @@ export default function DevPlatformPage() {
               color: "var(--text-secondary-light)",
             }}
           >
-            Each cycle increases leverage for everyone who comes next.
+            {t("flywheelSub")}
           </p>
 
           <div
@@ -376,144 +340,75 @@ export default function DevPlatformPage() {
               flexWrap: "wrap",
             }}
           >
-            <div
-              className="flywheel-step card"
-              style={{ flex: 1, textAlign: "center", padding: "1rem" }}
-            >
-              <i
-                className="fas fa-users"
-                style={{
-                  fontSize: "2rem",
-                  color: "var(--accent)",
-                  marginBottom: "0.5rem",
-                  display: "inline-block",
-                }}
-              ></i>
-
-              <h3 style={{ fontSize: "1.1rem" }}>Adopt</h3>
-
-              <p style={{ fontSize: "0.9rem" }}>
-                Teams integrate patterns into their codebases
-              </p>
-            </div>
-
-            <div
-              className="flywheel-arrow"
-              style={{ fontSize: "1.5rem", color: "var(--accent)" }}
-            >
-              <i className="fas fa-arrow-right"></i>
-            </div>
-
-            <div
-              className="flywheel-step card"
-              style={{ flex: 1, textAlign: "center", padding: "1rem" }}
-            >
-              <i
-                className="fas fa-flask"
-                style={{
-                  fontSize: "2rem",
-                  color: "var(--accent)",
-                  marginBottom: "0.5rem",
-                  display: "inline-block",
-                }}
-              ></i>
-
-              <h3 style={{ fontSize: "1.1rem" }}>Validate</h3>
-
-              <p style={{ fontSize: "0.9rem" }}>
-                Active deployment reveals what holds up
-              </p>
-            </div>
-
-            <div
-              className="flywheel-arrow"
-              style={{ fontSize: "1.5rem", color: "var(--accent)" }}
-            >
-              <i className="fas fa-arrow-right"></i>
-            </div>
-
-            <div
-              className="flywheel-step card"
-              style={{ flex: 1, textAlign: "center", padding: "1rem" }}
-            >
-              <i
-                className="fas fa-sync-alt"
-                style={{
-                  fontSize: "2rem",
-                  color: "var(--accent)",
-                  marginBottom: "0.5rem",
-                  display: "inline-block",
-                }}
-              ></i>
-
-              <h3 style={{ fontSize: "1.1rem" }}>Refine</h3>
-
-              <p style={{ fontSize: "0.9rem" }}>
-                Improvements return to documentation and tooling
-              </p>
-            </div>
-
-            <div
-              className="flywheel-arrow"
-              style={{ fontSize: "1.5rem", color: "var(--accent)" }}
-            >
-              <i className="fas fa-arrow-right"></i>
-            </div>
-
-            <div
-              className="flywheel-step card"
-              style={{ flex: 1, textAlign: "center", padding: "1rem" }}
-            >
-              <i
-                className="fas fa-chart-line"
-                style={{
-                  fontSize: "2rem",
-                  color: "var(--accent)",
-                  marginBottom: "0.5rem",
-                  display: "inline-block",
-                }}
-              ></i>
-
-              <h3 style={{ fontSize: "1.1rem" }}>Reapply</h3>
-
-              <p style={{ fontSize: "0.9rem" }}>
-                Refined patterns become the baseline for the next cycle
-              </p>
-            </div>
+            {[
+              {
+                icon: "users",
+                label: t("flywheelAdopt"),
+                desc: t("flywheelAdoptDesc"),
+              },
+              {
+                icon: "flask",
+                label: t("flywheelValidate"),
+                desc: t("flywheelValidateDesc"),
+              },
+              {
+                icon: "sync-alt",
+                label: t("flywheelRefine"),
+                desc: t("flywheelRefineDesc"),
+              },
+              {
+                icon: "chart-line",
+                label: t("flywheelReapply"),
+                desc: t("flywheelReapplyDesc"),
+              },
+            ].map((step, idx, arr) => (
+              <React.Fragment key={idx}>
+                <div
+                  className="flywheel-step card"
+                  style={{ flex: 1, textAlign: "center", padding: "1rem" }}
+                >
+                  <i
+                    className={`fas fa-${step.icon}`}
+                    style={{
+                      fontSize: "2rem",
+                      color: "var(--accent)",
+                      marginBottom: "0.5rem",
+                      display: "inline-block",
+                    }}
+                  ></i>
+                  <h3 style={{ fontSize: "1.1rem" }}>{step.label}</h3>
+                  <p style={{ fontSize: "0.9rem" }}>{step.desc}</p>
+                </div>
+                {idx < arr.length - 1 && (
+                  <div
+                    className="flywheel-arrow"
+                    style={{
+                      fontSize: "1.5rem",
+                      color: "var(--accent)",
+                      transform: isRTL ? "rotate(180deg)" : "none",
+                    }}
+                  >
+                    <i className="fas fa-arrow-right"></i>
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
           </div>
 
           <div className="grid-3" style={{ marginTop: "2rem" }}>
             <div className="card value-card">
-              <h3>Individual developer</h3>
-
-              <p>
-                <strong>Leverage that compounds.</strong> Clear patterns reduce
-                cognitive load. Documented decisions eliminate guesswork. Each
-                cycle makes the system more robust — and you benefit without
-                reinvention.
-              </p>
+              <h3>{t("valueIndividual")}</h3>
+              <p>{t("valueIndividualText")}</p>
             </div>
 
             <div className="card value-card">
-              <h3>Team / company</h3>
-
-              <p>
-                <strong>Lower coordination costs over time.</strong> Shared
-                vocabulary across projects. Reduced architectural drift. New
-                members onboard faster because patterns are consistent — not
-                because of hidden tribal knowledge.
-              </p>
+              <h3>{t("valueTeam")}</h3>
+              <p>{t("valueTeamText")}</p>
             </div>
 
             <div className="card value-card">
-              <h3>Engineering ecosystem</h3>
-
-              <p>
-                <strong>Better defaults for everyone.</strong> Open
-                documentation raises the industry baseline. Reference
-                implementations become teaching tools. Quality spreads because
-                functional design outlasts transient trends.
-              </p>
+              <h3>{t("valueEcosystem")}</h3>
+              <p>{t("valueEcosystemText")}</p>
             </div>
           </div>
         </div>
@@ -525,52 +420,38 @@ export default function DevPlatformPage() {
       >
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-            System layers — engineering philosophy
+            {t("layersTitle")}
           </h2>
 
           <p className="text-base text-gray-600 dark:text-gray-400 max-w-2xl">
-            Each layer represents a commitment to quality, not a checklist of
-            tools.
+            {t("layersSub")}
           </p>
 
           <div className="flex flex-col">
             {[
+              { title: t("layer1"), content: t("layer1Text") },
+              { title: t("layer2"), content: t("layer2Text") },
+              { title: t("layer3"), content: t("layer3Text") },
               {
-                title: "Layer 1 — Modular Domain Boundaries",
-                content:
-                  "Feature-first organization. Clean separation between domain logic, data access, and presentation. Dependency direction flows inward. Changes localize — cross-module impact is explicit and reviewed.",
-              },
-              {
-                title: "Layer 2 — Living Documentation Standards",
-                content:
-                  "Architectural Decision Records (ADRs) as first-class citizens. Coding conventions that prioritize readability over cleverness. Design system implementation guidelines that bridge design and code without translation gaps.",
-              },
-              {
-                title: "Layer 3 — Automated Quality Gates",
-                content:
-                  "Continuous integration that enforces architecture rules before merge. Dependency graphs that prevent circular imports. Coverage thresholds that fail builds, not just report. No human approval overrides automated gates.",
-              },
-              {
-                title: "Layer 4 — Reference Implementations",
-                content:
-                  "Applied reference setups that clarify architectural decisions and accelerate adoption. Each demonstrates how structural principles behave in implementation, reducing ambiguity and providing a rigorous starting point for engineering teams.",
-                footer:
-                  "Flutter production reference · Web3 integration example · Backend service blueprint · Design system implementation",
+                title: t("layer4"),
+                content: t("layer4Text"),
+                footer: t("layer4Footer"),
               },
             ].map((layer, idx, arr) => (
               <div
                 key={idx}
                 className="card p-6 border-l-[3px] border-l-blue-500 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1"
-                style={{ marginBottom: idx !== arr.length - 1 ? "1.0rem" : 0 }}
+                style={{
+                  marginBottom: idx !== arr.length - 1 ? "1.0rem" : 0,
+                  borderInlineStart: "3px solid #3b82f6",
+                }}
               >
                 <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
                   {layer.title}
                 </h3>
-
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   {layer.content}
                 </p>
-
                 {layer.footer && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
                     {layer.footer}
@@ -584,43 +465,25 @@ export default function DevPlatformPage() {
 
       <section>
         <div className="container">
-          <h2>Operating principles</h2>
+          <h2>{t("principlesTitle")}</h2>
 
           <div className="grid-3">
             <div className="card">
-              <span className="badge">Readability</span>
-
-              <h3>Clarity over cleverness</h3>
-
-              <p>
-                Code is read far more often than it's written. Patterns that
-                surprise are patterns that fail. We optimize for comprehension,
-                not conciseness.
-              </p>
+              <span className="badge">{t("principle1Badge")}</span>
+              <h3>{t("principle1Title")}</h3>
+              <p>{t("principle1Text")}</p>
             </div>
 
             <div className="card">
-              <span className="badge">Explicit standards</span>
-
-              <h3>Standards over tribal knowledge</h3>
-
-              <p>
-                If it's not documented and enforced, it doesn't exist. We prefer
-                explicit rules that computers can check over unwritten
-                agreements that humans must remember.
-              </p>
+              <span className="badge">{t("principle2Badge")}</span>
+              <h3>{t("principle2Title")}</h3>
+              <p>{t("principle2Text")}</p>
             </div>
 
             <div className="card">
-              <span className="badge">Reusable precedent</span>
-
-              <h3>Reusable decisions over repeated debate</h3>
-
-              <p>
-                Every architecture question worth asking once is worth
-                documenting as a precedent. We invest in decisions that compound
-                across teams and projects.
-              </p>
+              <span className="badge">{t("principle3Badge")}</span>
+              <h3>{t("principle3Title")}</h3>
+              <p>{t("principle3Text")}</p>
             </div>
           </div>
         </div>
@@ -628,7 +491,7 @@ export default function DevPlatformPage() {
 
       <section id="access">
         <div className="container">
-          <h2>Explore the Engineering System</h2>
+          <h2>{t("accessTitle")}</h2>
 
           <div className="grid-3">
             <div className="card" style={{ textAlign: "center" }}>
@@ -641,15 +504,8 @@ export default function DevPlatformPage() {
                   display: "inline-block",
                 }}
               ></i>
-
-              <h3>Architecture Guide</h3>
-
-              <p>
-                Understand the foundation. Documentation detailing modular
-                boundaries, layer decisions, and the rationale behind each
-                pattern.
-              </p>
-
+              <h3>{t("accessGuide")}</h3>
+              <p>{t("accessGuideText")}</p>
               <a
                 href="#"
                 className="btn-subtle"
@@ -661,7 +517,7 @@ export default function DevPlatformPage() {
                   padding: "0.5rem 1rem",
                 }}
               >
-                Read documentation →
+                {t("accessGuideLink")}
               </a>
             </div>
 
@@ -675,15 +531,8 @@ export default function DevPlatformPage() {
                   display: "inline-block",
                 }}
               ></i>
-
-              <h3>Reference Implementations</h3>
-
-              <p>
-                Inspect the implementation. Functional, forkable repositories
-                demonstrating how structural decisions behave in applied
-                environments.
-              </p>
-
+              <h3>{t("accessGithub")}</h3>
+              <p>{t("accessGithubText")}</p>
               <a
                 href="#"
                 className="btn-subtle"
@@ -695,7 +544,7 @@ export default function DevPlatformPage() {
                   padding: "0.5rem 1rem",
                 }}
               >
-                Explore on GitHub →
+                {t("accessGithubLink")}
               </a>
             </div>
 
@@ -709,13 +558,8 @@ export default function DevPlatformPage() {
                   display: "inline-block",
                 }}
               ></i>
-
-              <h3>Architecture Review</h3>
-
-              <p>
-                Engage for deeper alignment. A structured engineering review to
-                help teams adapt these standards directly to their codebases.
-              </p>
+              <h3>{t("accessReview")}</h3>
+              <p>{t("accessReviewText")}</p>
             </div>
           </div>
 
@@ -726,17 +570,15 @@ export default function DevPlatformPage() {
               textAlign: "center",
               fontSize: "0.9rem",
               color: "var(--text-secondary-light)",
-              borderLeft: "3px solid var(--accent)",
-              paddingLeft: "1rem",
+              borderInlineStart: "3px solid var(--accent)",
+              paddingInlineStart: "1rem",
             }}
           >
             <i
               className="fas fa-quote-left"
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginInlineEnd: "0.5rem" }}
             ></i>
-            The platform provides visibility into how robust systems are
-            structured, giving teams the blueprints needed to establish their
-            own durable engineering standards.
+            {t("accessFooter")}
           </div>
         </div>
       </section>
@@ -751,28 +593,18 @@ export default function DevPlatformPage() {
             }}
           >
             <p style={{ fontSize: "1.1rem", fontWeight: 500 }}>
-              Engineering systems only matter when rigor is preserved.
+              {t("finalTitle")}
             </p>
-
-            <p style={{ marginTop: "0.5rem" }}>
-              This foundation exists to document decisions, enforce
-              architectural constraints, and cultivate a durable engineering
-              culture.
-            </p>
+            <p style={{ marginTop: "0.5rem" }}>{t("finalText")}</p>
           </div>
         </div>
       </section>
 
       <footer>
         <div className="container">
-          <p>
-            © 2025 Tarvix — engineering system for digital products. Grounded in
-            rigorous constraints across fintech, Web3, and SaaS.
-          </p>
-
+          <p>{t("footer")}</p>
           <p style={{ marginTop: "0.5rem", fontSize: "0.8rem" }}>
-            Modular Architecture · Living Standards · Quality Gates · Reference
-            Implementations
+            {t("footerTags")}
           </p>
         </div>
       </footer>
@@ -834,7 +666,7 @@ export default function DevPlatformPage() {
                       color: theme === "dark" ? "#ffffff" : "#111827",
                     }}
                   >
-                    Request Early Access
+                    {t("dialogTitle")}
                   </h2>
                   <p
                     style={{
@@ -843,11 +675,7 @@ export default function DevPlatformPage() {
                       lineHeight: 1.6,
                     }}
                   >
-                    Request access to the Tarvix Engineering System. Share your
-                    GitHub, technical context, and adoption or collaboration
-                    goals. Requests are reviewed manually and selected
-                    participants may be invited to repository discussions and
-                    early collaboration.
+                    {t("dialogDesc")}
                   </p>
                 </div>
                 <button
@@ -897,7 +725,7 @@ export default function DevPlatformPage() {
                         color: theme === "dark" ? "#eef2f5" : "#111827",
                       }}
                     >
-                      Full Name
+                      {t("fullName")}
                     </label>
                     <input
                       id="fullName"
@@ -939,7 +767,7 @@ export default function DevPlatformPage() {
                         color: theme === "dark" ? "#eef2f5" : "#111827",
                       }}
                     >
-                      Work Email
+                      {t("workEmail")}
                     </label>
                     <input
                       id="workEmail"
@@ -981,7 +809,7 @@ export default function DevPlatformPage() {
                         color: theme === "dark" ? "#eef2f5" : "#111827",
                       }}
                     >
-                      Role / Title
+                      {t("roleTitle")}
                     </label>
                     <input
                       id="roleTitle"
@@ -1022,7 +850,7 @@ export default function DevPlatformPage() {
                         color: theme === "dark" ? "#eef2f5" : "#111827",
                       }}
                     >
-                      Company or Team
+                      {t("companyTeam")}
                     </label>
                     <input
                       id="companyTeam"
@@ -1063,7 +891,7 @@ export default function DevPlatformPage() {
                         color: theme === "dark" ? "#eef2f5" : "#111827",
                       }}
                     >
-                      GitHub Username
+                      {t("githubUsername")}
                     </label>
                     <input
                       id="ghUsername"
@@ -1107,7 +935,7 @@ export default function DevPlatformPage() {
                           marginTop: "0.4rem",
                         }}
                       >
-                        Invalid GitHub username format
+                        {t("invalidGithubFormat")}
                       </p>
                     )}
                     <p
@@ -1117,7 +945,7 @@ export default function DevPlatformPage() {
                         marginTop: "0.4rem",
                       }}
                     >
-                      Please provide a valid GitHub username.
+                      {t("githubHelp")}
                     </p>
                   </div>
 
@@ -1132,7 +960,7 @@ export default function DevPlatformPage() {
                         color: theme === "dark" ? "#eef2f5" : "#111827",
                       }}
                     >
-                      Preferred Stack
+                      {t("preferredStack")}
                     </label>
                     <select
                       id="prefStack"
@@ -1159,10 +987,10 @@ export default function DevPlatformPage() {
                           theme === "dark" ? "#2a353f" : "#eef2f0")
                       }
                     >
-                      <option value="flutter">Flutter (available now)</option>
-                      <option value="react">React (interest only)</option>
-                      <option value="django">Django (interest only)</option>
-                      <option value="nestjs">NestJS (interest only)</option>
+                      <option value="flutter">{t("stackFlutter")}</option>
+                      <option value="react">{t("stackReact")}</option>
+                      <option value="django">{t("stackDjango")}</option>
+                      <option value="nestjs">{t("stackNestJS")}</option>
                     </select>
                     <p
                       style={{
@@ -1171,9 +999,7 @@ export default function DevPlatformPage() {
                         marginTop: "0.4rem",
                       }}
                     >
-                      Flutter CleanArc (Bloc/Riverpod) is supported in the
-                      current release. Other stacks are in the
-                      interest‑gathering phase.
+                      {t("stackHelp")}
                     </p>
                   </div>
 
@@ -1188,7 +1014,7 @@ export default function DevPlatformPage() {
                         color: theme === "dark" ? "#eef2f5" : "#111827",
                       }}
                     >
-                      Why do you want access?
+                      {t("whyAccess")}
                     </label>
                     <textarea
                       id="whyAccess"
@@ -1261,7 +1087,7 @@ export default function DevPlatformPage() {
                         (e.currentTarget.style.background = "transparent")
                       }
                     >
-                      Cancel
+                      {t("cancel")}
                     </button>
                     <button
                       type="submit"
@@ -1288,7 +1114,7 @@ export default function DevPlatformPage() {
                           e.currentTarget.style.background = "#3b82f6";
                       }}
                     >
-                      {isSubmitting ? "Submitting..." : "Request Access"}
+                      {isSubmitting ? t("submitting") : t("requestAccess")}
                     </button>
                   </div>
                 </div>
@@ -1313,7 +1139,7 @@ export default function DevPlatformPage() {
                     color: theme === "dark" ? "#ffffff" : "#111827",
                   }}
                 >
-                  Request Received
+                  {t("requestReceived")}
                 </h3>
                 <p
                   style={{
@@ -1322,7 +1148,7 @@ export default function DevPlatformPage() {
                     marginBottom: "0.5rem",
                   }}
                 >
-                  Thanks — your request has been received.
+                  {t("requestReceivedText1")}
                 </p>
                 <p
                   style={{
@@ -1331,7 +1157,7 @@ export default function DevPlatformPage() {
                     marginBottom: "1.5rem",
                   }}
                 >
-                  We will review it and contact you if your access is approved.
+                  {t("requestReceivedText2")}
                 </p>
                 <button
                   onClick={closeDialog}
@@ -1359,7 +1185,7 @@ export default function DevPlatformPage() {
                     (e.currentTarget.style.background = "transparent")
                   }
                 >
-                  Close
+                  {t("close")}
                 </button>
               </div>
             )}
