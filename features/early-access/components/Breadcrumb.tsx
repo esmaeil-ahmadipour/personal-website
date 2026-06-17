@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDirection } from "@/providers/DirectionProvider";
-import { useTranslation } from "@/hooks/useTranslation";
-import { HomeIcon } from "@/shared/icons/HomeIcon";
-import { ChevronLeftIcon } from "@/shared/icons/ChevronLeftIcon";
-import { ChevronRightIcon } from "@/shared/icons/ChevronRightIcon";
+import { useTranslation } from "@/features/shared/hooks/useTranslation";
+import { HomeIcon } from "@/features/shared/components/icons/HomeIcon";
+import { ChevronLeftIcon } from "@/features/shared/components/icons/ChevronLeftIcon";
+import { ChevronRightIcon } from "@/features/shared/components/icons/ChevronRightIcon";
 
 export function Breadcrumb() {
   const pathname = usePathname();

@@ -1,15 +1,11 @@
 // app/layout.tsx
 import type { Metadata } from "next";
+ import "./globals.css";
 import { DirectionProvider } from "@/providers/DirectionProvider";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Tarvix | Architecture-First Engineering Studio",
-  description:
-    "Tarvix builds scalable digital foundations — Flutter, Web3, and smart contract systems with clean architecture and maintainable codebases.",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  description: "...",
 };
 
 export default function RootLayout({

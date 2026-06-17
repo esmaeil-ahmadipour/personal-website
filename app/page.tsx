@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDirection } from "@/providers/DirectionProvider";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/features/shared";
 
 // Theme utilities
 const getInitialTheme = (): "light" | "dark" => {

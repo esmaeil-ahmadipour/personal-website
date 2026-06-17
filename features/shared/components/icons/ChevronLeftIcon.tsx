@@ -1,5 +1,5 @@
-import type { IconProps } from "@/utils/icon-props";
-import { DEFAULT_ICON_PROPS as DIP } from "@/utils/icon-props";
+import type { IconProps } from "@/features/shared/utils/icon-props";
+import { DEFAULT_ICON_PROPS as DIP } from "@/features/shared/utils/icon-props";
 
 export const ChevronLeftIcon = ({
   size = DIP.SIZE,

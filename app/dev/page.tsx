@@ -2,7 +2,7 @@
 "use client";
 
 import { Breadcrumb } from "@/features/early-access/components/Breadcrumb";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { useDirection } from "@/providers/DirectionProvider";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
