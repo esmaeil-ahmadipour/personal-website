@@ -16,20 +16,19 @@ export function EarlyAccessModal() {
     useEarlyAccessStore();
   const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  const lastFocusedElement = useRef<HTMLElement | null>(null);
-  const successRef = useRef<HTMLDivElement>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   const { mutate, isPending } = useEarlyAccessMutation();
 
-  // تشخیص تم از body
   useEffect(() => {
     const checkTheme = () => {
-      setTheme(document.body.classList.contains("dark") ? "dark" : "light");
+      setTheme(
+        document.documentElement.classList.contains("dark") ? "dark" : "light",
+      );
     };
     checkTheme();
     const observer = new MutationObserver(checkTheme);
-    observer.observe(document.body, {
+    observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class"],
     });
@@ -49,115 +48,50 @@ export function EarlyAccessModal() {
     },
   });
 
-  // جلوگیری از hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // مدیریت باز/بسته شدن مودال
   useEffect(() => {
     if (isOpen) {
-      lastFocusedElement.current = document.activeElement as HTMLElement;
       document.body.style.overflow = "hidden";
-      document.body.classList.add("modal-open");
-
-      setTimeout(() => {
-        const firstInput = modalRef.current?.querySelector(
-          "input, select, textarea",
-        );
-        if (firstInput) (firstInput as HTMLElement).focus();
-      }, 100);
     } else {
       document.body.style.overflow = "";
-      document.body.classList.remove("modal-open");
-      if (lastFocusedElement.current) {
-        lastFocusedElement.current.focus();
-      }
     }
-
     return () => {
       document.body.style.overflow = "";
-      document.body.classList.remove("modal-open");
     };
   }, [isOpen]);
 
-  // مدیریت کلید Escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
         closeModal();
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, closeModal]);
 
-  // مدیریت کلیک روی backdrop
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       closeModal();
     }
   };
 
-  // مدیریت Trap Focus
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
-
-      const focusableElements = modalRef.current?.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      );
-
-      if (!focusableElements || focusableElements.length === 0) return;
-
-      const focusable = Array.from(focusableElements).filter(
-        (el) =>
-          (el as HTMLElement).offsetWidth > 0 ||
-          (el as HTMLElement).offsetHeight > 0,
-      ) as HTMLElement[];
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleTabKey);
-    return () => document.removeEventListener("keydown", handleTabKey);
-  }, [isOpen]);
-
-  // مدیریت submit فرم
   const onSubmit = async (data: EarlyAccessData) => {
     try {
       await mutate(data);
       setSubmitted(true);
       resetForm();
-      setTimeout(() => {
-        const closeBtn = successRef.current?.querySelector("button");
-        if (closeBtn) (closeBtn as HTMLElement).focus();
-      }, 100);
     } catch (error) {
       setError("root", {
         message:
-          error instanceof Error ? error.message : "خطا در ارسال درخواست",
+          error instanceof Error ? error.message : "Error submitting request",
       });
     }
   };
 
-  // ریست کردن مودال هنگام بسته شدن
   const handleClose = () => {
     reset();
     resetForm();
@@ -171,15 +105,14 @@ export function EarlyAccessModal() {
   return createPortal(
     <div
       ref={modalRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
-      aria-describedby="modal-description"
     >
       <div
-        className="w-[90%] max-w-[520px] max-h-[90vh] overflow-y-auto rounded-2xl p-8 shadow-2xl border"
+        className="w-full max-w-[520px] max-h-[90vh] overflow-y-auto rounded-2xl p-8 shadow-2xl border"
         style={{
           background: isDark ? "#141a22" : "#ffffff",
           color: isDark ? "#eef2f5" : "#111827",
@@ -187,32 +120,20 @@ export function EarlyAccessModal() {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="mb-6">
           <div className="flex justify-between items-start">
             <div>
-              <h2
-                id="modal-title"
-                className="text-2xl font-bold mb-2"
-                style={{ color: isDark ? "#ffffff" : "#111827" }}
-              >
+              <h2 id="modal-title" className="text-2xl font-bold mb-2">
                 Request Early Access
               </h2>
-              <p
-                id="modal-description"
-                className="text-sm leading-relaxed"
-                style={{ color: isDark ? "#b0c0ca" : "#4a5b5e" }}
-              >
+              <p className="text-sm leading-relaxed text-white/50">
                 Request access to the Tarvix Engineering System. Share your
-                GitHub, technical context, and adoption or collaboration goals.
-                Requests are reviewed manually and selected participants may be
-                invited to repository discussions and early collaboration.
+                GitHub, technical context, and adoption goals.
               </p>
             </div>
             <button
               onClick={handleClose}
-              className="text-2xl leading-none ml-4 hover:opacity-70 transition-opacity"
-              style={{ color: isDark ? "#b0c0ca" : "#4a5b5e" }}
+              className="text-2xl leading-none ml-4 hover:opacity-70 transition-opacity text-white/50"
               aria-label="Close dialog"
             >
               ×
@@ -220,16 +141,13 @@ export function EarlyAccessModal() {
           </div>
         </div>
 
-        {/* Form */}
         {!isSubmitted ? (
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="space-y-4">
-              {/* Full Name */}
               <div>
                 <label
                   htmlFor="fullName"
                   className="block text-sm font-semibold mb-1"
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                 >
                   Full Name
                 </label>
@@ -243,7 +161,6 @@ export function EarlyAccessModal() {
                         ? "border-[#2a353f] focus:border-blue-600"
                         : "border-gray-200 focus:border-blue-600"
                   }`}
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                   {...register("fullName")}
                 />
                 {errors.fullName && (
@@ -253,12 +170,10 @@ export function EarlyAccessModal() {
                 )}
               </div>
 
-              {/* Work Email */}
               <div>
                 <label
                   htmlFor="workEmail"
                   className="block text-sm font-semibold mb-1"
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                 >
                   Work Email
                 </label>
@@ -272,7 +187,6 @@ export function EarlyAccessModal() {
                         ? "border-[#2a353f] focus:border-blue-600"
                         : "border-gray-200 focus:border-blue-600"
                   }`}
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                   {...register("workEmail")}
                 />
                 {errors.workEmail && (
@@ -282,12 +196,10 @@ export function EarlyAccessModal() {
                 )}
               </div>
 
-              {/* Role / Title */}
               <div>
                 <label
                   htmlFor="roleTitle"
                   className="block text-sm font-semibold mb-1"
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                 >
                   Role / Title
                 </label>
@@ -299,17 +211,14 @@ export function EarlyAccessModal() {
                       ? "border-[#2a353f] focus:border-blue-600"
                       : "border-gray-200 focus:border-blue-600"
                   }`}
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                   {...register("roleTitle")}
                 />
               </div>
 
-              {/* Company or Team */}
               <div>
                 <label
                   htmlFor="companyTeam"
                   className="block text-sm font-semibold mb-1"
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                 >
                   Company or Team
                 </label>
@@ -321,17 +230,14 @@ export function EarlyAccessModal() {
                       ? "border-[#2a353f] focus:border-blue-600"
                       : "border-gray-200 focus:border-blue-600"
                   }`}
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                   {...register("companyTeam")}
                 />
               </div>
 
-              {/* GitHub Username */}
               <div>
                 <label
                   htmlFor="ghUsername"
                   className="block text-sm font-semibold mb-1"
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                 >
                   GitHub Username
                 </label>
@@ -345,7 +251,6 @@ export function EarlyAccessModal() {
                         ? "border-[#2a353f] focus:border-blue-600"
                         : "border-gray-200 focus:border-blue-600"
                   }`}
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                   {...register("ghUsername")}
                 />
                 {errors.ghUsername && (
@@ -353,20 +258,15 @@ export function EarlyAccessModal() {
                     {errors.ghUsername.message}
                   </p>
                 )}
-                <p
-                  className="mt-1 text-xs"
-                  style={{ color: isDark ? "#b0c0ca" : "#4a5b5e" }}
-                >
+                <p className="mt-1 text-xs text-white/30">
                   Please provide a valid GitHub username.
                 </p>
               </div>
 
-              {/* Preferred Stack */}
               <div>
                 <label
                   htmlFor="prefStack"
                   className="block text-sm font-semibold mb-1"
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                 >
                   Preferred Stack
                 </label>
@@ -378,7 +278,6 @@ export function EarlyAccessModal() {
                       : "border-gray-200 focus:border-blue-600"
                   }`}
                   style={{
-                    color: isDark ? "#eef2f5" : "#111827",
                     background: isDark ? "#141a22" : "#ffffff",
                   }}
                   {...register("prefStack")}
@@ -388,21 +287,12 @@ export function EarlyAccessModal() {
                   <option value="django">Django (interest only)</option>
                   <option value="nestjs">NestJS (interest only)</option>
                 </select>
-                <p
-                  className="mt-1 text-xs"
-                  style={{ color: isDark ? "#b0c0ca" : "#4a5b5e" }}
-                >
-                  Flutter CleanArc (Bloc/Riverpod) is supported in the current
-                  release. Other stacks are in the interest‑gathering phase.
-                </p>
               </div>
 
-              {/* Why Access */}
               <div>
                 <label
                   htmlFor="whyAccess"
                   className="block text-sm font-semibold mb-1"
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                 >
                   Why do you want access?
                 </label>
@@ -414,7 +304,6 @@ export function EarlyAccessModal() {
                       ? "border-[#2a353f] focus:border-blue-600"
                       : "border-gray-200 focus:border-blue-600"
                   }`}
-                  style={{ color: isDark ? "#eef2f5" : "#111827" }}
                   {...register("whyAccess")}
                 />
               </div>
@@ -455,25 +344,13 @@ export function EarlyAccessModal() {
             </div>
           </form>
         ) : (
-          /* Success State */
-          <div ref={successRef} className="text-center py-8">
+          <div className="text-center py-8">
             <i className="fas fa-check-circle text-5xl text-blue-600 mb-4"></i>
-            <h3
-              className="text-xl font-bold mb-2"
-              style={{ color: isDark ? "#ffffff" : "#111827" }}
-            >
-              Request Received
-            </h3>
-            <p
-              className="text-sm mb-1"
-              style={{ color: isDark ? "#b0c0ca" : "#4a5b5e" }}
-            >
+            <h3 className="text-xl font-bold mb-2">Request Received</h3>
+            <p className="text-sm text-white/50 mb-1">
               Thanks — your request has been received.
             </p>
-            <p
-              className="text-sm"
-              style={{ color: isDark ? "#b0c0ca" : "#4a5b5e" }}
-            >
+            <p className="text-sm text-white/50">
               We will review it and contact you if your access is approved.
             </p>
             <div className="flex justify-center mt-6">
@@ -485,14 +362,6 @@ export function EarlyAccessModal() {
                   borderColor: isDark ? "#2a353f" : "#eef2f0",
                   color: isDark ? "#eef2f5" : "#111827",
                   background: "transparent",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = isDark
-                    ? "rgba(255,255,255,0.05)"
-                    : "rgba(0,0,0,0.05)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
                 }}
               >
                 Close
