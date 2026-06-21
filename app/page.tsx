@@ -11,6 +11,7 @@ import Team from "@/features/shared/components/Team";
 import Contact from "@/features/shared/components/Contact";
 import Footer from "@/features/shared/components/Footer";
 import { StatsIndustries } from "@/features/shared/components/StatsIndustries";
+import { BlogSection } from "@/features/blog/components/BlogSection";
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
@@ -28,6 +29,7 @@ export default function HomePage() {
       <StatsIndustries />
       <Features />
       <Portfolio />
+      <BlogSection />
       <Team />
       <Contact />
       <Footer />
