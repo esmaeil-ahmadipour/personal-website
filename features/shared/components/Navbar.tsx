@@ -46,7 +46,7 @@ export default function Navbar() {
     { label: t("home"), href: "#home" },
     { label: t("capabilities"), href: "#services" },
     { label: t("work"), href: "#portfolio" },
-    { label: t("foundation"), href: "#package" },
+    { label: t("blogBadge"), href: "#blog" },
     { label: t("team"), href: "#about" },
     { label: t("contact"), href: "#contact" },
   ];

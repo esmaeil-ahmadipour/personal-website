@@ -9,7 +9,10 @@ export function BlogSection() {
   const { t } = useTranslation();
 
   return (
-    <section className="py-16 px-4 border-t border-[var(--border-subtle)]">
+    <section
+      id="blog"
+      className="py-16 px-4 border-t border-[var(--border-subtle)]"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="inline-block text-xs font-mono tracking-[0.2em] uppercase text-[var(--accent-blue)] bg-[var(--accent-blue)]/10 px-4 py-1.5 rounded-full border border-[var(--accent-blue)]/10 mb-4">
