@@ -1,35 +1,35 @@
+// features/blog/types/blog.types.ts
+
 export interface Author {
   id: string;
+  slug: string;
   firstName: string;
   lastName: string;
-  slug: string;
-  email?: string | null;
   bio?: string | null;
   avatarUrl?: string | null;
+  email?: string | null;
 }
 
 export interface Category {
   id: string;
-  name: string;
   slug: string;
+  name: string;
   description?: string | null;
 }
 
 export interface Tag {
   id: string;
-  name: string;
   slug: string;
+  name: string;
 }
 
 export interface Post {
   id: string;
-  title: string;
   slug: string;
+  title: string;
   excerpt?: string | null;
   content: string;
   coverImageUrl?: string | null;
-  seoTitle?: string | null;
-  seoDescription?: string | null;
   readingTimeMin?: number | null;
   status: "draft" | "pending" | "published";
   publishedAt?: Date | null;
@@ -53,4 +53,5 @@ export interface PostsResponse {
 export interface GetPostsParams {
   page?: number;
   limit?: number;
+  locale?: "en" | "fa";
 }

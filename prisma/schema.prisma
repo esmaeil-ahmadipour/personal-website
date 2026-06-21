@@ -43,6 +43,8 @@ model Contact {
   @@index([createdAt])
 }
 
+
+
 enum PostStatus {
   draft
   pending
@@ -51,12 +53,18 @@ enum PostStatus {
 
 model Author {
   id        String   @id @default(cuid())
-  firstName String
-  lastName  String
   slug      String   @unique
   email     String?  @unique
-  bio       String?
   avatarUrl String?
+  
+  firstNameEn String
+  lastNameEn  String
+  bioEn       String?
+  
+  firstNameFa String
+  lastNameFa  String
+  bioFa       String?
+  
   posts     Post[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -67,9 +75,14 @@ model Author {
 
 model Category {
   id          String   @id @default(cuid())
-  name        String
   slug        String   @unique
-  description String?
+  
+  nameEn      String
+  descriptionEn String?
+  
+  nameFa      String
+  descriptionFa String?
+  
   posts       Post[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -80,26 +93,36 @@ model Category {
 
 model Tag {
   id        String   @id @default(cuid())
-  name      String
   slug      String   @unique
+  
+  nameEn    String
+  nameFa    String
+  
   posts     PostTag[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([name])
   @@index([slug])
   @@index([createdAt])
 }
 
 model Post {
   id             String      @id @default(cuid())
-  title          String
   slug           String      @unique
-  excerpt        String?
-  content        String
+  
+  titleEn        String
+  excerptEn      String?
+  contentEn      String
+  seoTitleEn     String?
+  seoDescriptionEn String?
+  
+  titleFa        String
+  excerptFa      String?
+  contentFa      String
+  seoTitleFa     String?
+  seoDescriptionFa String?
+  
   coverImageUrl  String?
-  seoTitle       String?
-  seoDescription String?
   readingTimeMin Int?
   status         PostStatus  @default(draft)
   publishedAt    DateTime?

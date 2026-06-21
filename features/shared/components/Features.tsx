@@ -86,7 +86,7 @@ export default function Features() {
             <span className="gradient-text">{t("capabilitiesTitle")}</span>
           </h2>
           <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-lg">
-            Engineering capabilities that drive product success
+            {t("capabilitiesSub")}
           </p>
         </div>
 

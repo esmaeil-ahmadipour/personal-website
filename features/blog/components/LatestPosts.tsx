@@ -1,6 +1,9 @@
+// features/blog/components/LatestPosts.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { BlogApi } from "../api/blog.api";
 import type { Post } from "../types/blog.types";
 
@@ -9,6 +12,7 @@ interface LatestPostsProps {
 }
 
 export function LatestPosts({ limit = 3 }: LatestPostsProps) {
+  const { lang } = useTranslation();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +22,11 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
       try {
         setLoading(true);
         setError(null);
-        const response = await BlogApi.getPosts({ page: 1, limit });
+        const response = await BlogApi.getPosts({
+          page: 1,
+          limit,
+          locale: lang as "en" | "fa",
+        });
         setPosts(response.items);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load posts");
@@ -28,7 +36,7 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
     };
 
     fetchPosts();
-  }, [limit]);
+  }, [limit, lang]);
 
   if (loading) {
     return (
@@ -103,8 +111,8 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
               />
             ) : (
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold">
-                {post.author.firstName[0]}
-                {post.author.lastName[0]}
+                {post.author.firstName?.[0] || "?"}
+                {post.author.lastName?.[0] || ""}
               </div>
             )}
             <span>
@@ -112,11 +120,14 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
             </span>
             {post.publishedAt && (
               <span>
-                {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {new Date(post.publishedAt).toLocaleDateString(
+                  lang === "fa" ? "fa-IR" : "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  },
+                )}
               </span>
             )}
           </div>

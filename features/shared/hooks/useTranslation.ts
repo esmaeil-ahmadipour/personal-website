@@ -468,38 +468,9 @@ const translations: Record<string, { en: string; fa: string }> = {
     fa: "برنامه‌ریزی بازبینی معماری",
   },
 
-  // Blog
-  blogTitle: { en: "Engineering insights", fa: "بینش‌های مهندسی" },
-  blogBadge1: { en: "Architecture", fa: "معماری" },
-  blogTitle1: {
-    en: "Why clean architecture still matters",
-    fa: "چرا معماری تمیز هنوز اهمیت دارد",
-  },
-  blogDesc1: {
-    en: "Separating domain from frameworks reduces friction and technical debt in large codebases.",
-    fa: "جداسازی دامنه از فریم‌ورک‌ها اصطکاک و بدهی فنی را در کدبیس‌های بزرگ کاهش می‌دهد.",
-  },
-  blogBadge2: { en: "Flutter", fa: "فلاتر" },
-  blogTitle2: {
-    en: "Scaling Flutter with modular design",
-    fa: "مقیاس‌دهی فلاتر با طراحی ماژولار",
-  },
-  blogDesc2: {
-    en: "Feature-first modules and generated routes for teams of 10+ engineers.",
-    fa: "ماژول‌های مبتنی بر ویژگی و مسیرهای تولید شده برای تیم‌های بیش از ۱۰ مهندس.",
-  },
-  blogBadge3: { en: "Web3 UX", fa: "UX وب۳" },
-  blogTitle3: {
-    en: "Designing usable crypto products",
-    fa: "طراحی محصولات کریپتو قابل استفاده",
-  },
-  blogDesc3: {
-    en: "Reducing cognitive load and making smart contracts accessible to mainstream users.",
-    fa: "کاهش بار شناختی و قابل دسترس کردن قراردادهای هوشمند برای کاربران عمومی.",
-  },
   readMore: { en: "Read more", fa: "بیشتر بخوانید" },
 
-// Team
+  // Team
   teamTitle: { en: "Engineering leadership", fa: "رهبری مهندسی" },
   teamEsmaeilRole: {
     en: "Founder & Lead Frontend/Mobile Engineer",
@@ -591,7 +562,10 @@ const translations: Record<string, { en: string; fa: string }> = {
     en: "Tarvix will reach out within 24 hours to discuss your project.",
     fa: "Tarvix ظرف ۲۴ ساعت برای بررسی پروژه شما با شما تماس خواهد گرفت.",
   },
-
+  capabilitiesSub: {
+    en: "Engineering capabilities that drive product success",
+    fa: "قابلیت‌های مهندسی که موفقیت محصول را هدایت می‌کنند",
+  },
   // ===== DIALOG KEYS =====
   dialogTitle: {
     en: "Request Early Access",
@@ -770,6 +744,19 @@ const translations: Record<string, { en: string; fa: string }> = {
   industriesSub: {
     en: "Tarvix team members have contributed individually and collectively across these industries.",
     fa: "اعضای تیم Tarvix به صورت فردی و جمعی در این صنایع مشارکت داشته‌اند.",
+  },
+  // ===== BLOG =====
+  blogBadge: {
+    en: "Blog",
+    fa: "وبلاگ",
+  },
+  blogTitle: {
+    en: "Latest from the Blog",
+    fa: "آخرین مطالب وبلاگ",
+  },
+  blogSubtitle: {
+    en: "Insights on engineering, architecture, and product development",
+    fa: "نکات و تجربیات در حوزه مهندسی نرم‌افزار، معماری و توسعه محصول",
   },
 };
 
