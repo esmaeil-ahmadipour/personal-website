@@ -758,6 +758,14 @@ const translations: Record<string, { en: string; fa: string }> = {
     en: "Insights on engineering, architecture, and product development",
     fa: "نکات و تجربیات در حوزه مهندسی نرم‌افزار، معماری و توسعه محصول",
   },
+  blogNoPosts: {
+    en: "No posts available yet",
+    fa: "مطلبی فعلاً موجود نیست",
+  },
+  blogCheckBackLater: {
+    en: "Check back soon for new content",
+    fa: "به زودی برای مطالب جدید بازگردید",
+  },
 };
 
 export function useTranslation() {

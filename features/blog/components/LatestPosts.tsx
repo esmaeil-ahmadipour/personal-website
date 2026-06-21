@@ -12,7 +12,7 @@ interface LatestPostsProps {
 }
 
 export function LatestPosts({ limit = 3 }: LatestPostsProps) {
-  const { lang } = useTranslation();
+  const { lang, t } = useTranslation();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,18 +57,28 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
 
   if (error) {
     return (
-      <div className="text-center py-8 text-[var(--text-secondary)]">
-        <p>Failed to load blog posts</p>
-        <p className="text-sm text-[var(--text-muted)]">{error}</p>
+      <div className="text-center py-12">
+        <div className="text-4xl mb-4">📝</div>
+        <p className="text-[var(--text-secondary)] font-medium">
+          {t("blogNoPosts")}
+        </p>
+        <p className="text-sm text-[var(--text-muted)] mt-1">
+          {t("blogCheckBackLater")}
+        </p>
       </div>
     );
   }
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-8 text-[var(--text-secondary)]">
-        <p>No blog posts yet</p>
-        <p className="text-sm text-[var(--text-muted)]">Check back soon!</p>
+      <div className="text-center py-12">
+        <div className="text-4xl mb-4">📝</div>
+        <p className="text-[var(--text-secondary)] font-medium">
+          {t("blogNoPosts")}
+        </p>
+        <p className="text-sm text-[var(--text-muted)] mt-1">
+          {t("blogCheckBackLater")}
+        </p>
       </div>
     );
   }
