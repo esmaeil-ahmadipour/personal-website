@@ -10,6 +10,7 @@ import Portfolio from "@/features/shared/components/Portfolio";
 import Team from "@/features/shared/components/Team";
 import Contact from "@/features/shared/components/Contact";
 import Footer from "@/features/shared/components/Footer";
+import { StatsIndustries } from "@/features/shared/components/StatsIndustries";
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
@@ -24,6 +25,7 @@ export default function HomePage() {
     <div className="relative">
       <Navbar />
       <Hero />
+      <StatsIndustries />
       <Features />
       <Portfolio />
       <Team />

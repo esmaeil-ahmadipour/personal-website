@@ -104,7 +104,7 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="fullName"
-            className="block text-sm font-semibold mb-1 text-gray-900 dark:text-white"
+            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
           >
             {t("fullName")}
           </label>
@@ -112,8 +112,8 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
             id="fullName"
             type="text"
             placeholder={t("fullName")}
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent dark:border-[#2a353f] focus:border-blue-600 focus:outline-none ${
-              errors.fullName ? "border-red-500" : "border-gray-200"
+            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none ${
+              errors.fullName ? "border-red-500" : ""
             }`}
             {...register("fullName")}
           />
@@ -127,7 +127,7 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-semibold mb-1 text-gray-900 dark:text-white"
+            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
           >
             {t("email")}
           </label>
@@ -135,8 +135,8 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
             id="email"
             type="email"
             placeholder={t("email")}
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent dark:border-[#2a353f] focus:border-blue-600 focus:outline-none ${
-              errors.email ? "border-red-500" : "border-gray-200"
+            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none ${
+              errors.email ? "border-red-500" : ""
             }`}
             {...register("email")}
           />
@@ -148,28 +148,64 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
         <div>
           <label
             htmlFor="service"
-            className="block text-sm font-semibold mb-1 text-gray-900 dark:text-white"
+            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
           >
             {t("serviceSelect")}
           </label>
           <select
             id="service"
-            className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm transition-colors bg-transparent dark:border-[#2a353f] focus:border-blue-600 focus:outline-none"
+            className="w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none appearance-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right 1rem center",
+              paddingRight: "2.5rem",
+            }}
             {...register("service")}
           >
-            <option value="flutter">{t("serviceFlutter")}</option>
-            <option value="web">{t("serviceWeb")}</option>
-            <option value="web3">{t("serviceWeb3")}</option>
-            <option value="consulting">{t("serviceConsulting")}</option>
-            <option value="foundation">{t("serviceFoundation")}</option>
-            <option value="audit">{t("serviceAudit")}</option>
+            <option
+              value="flutter"
+              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+            >
+              {t("serviceFlutter")}
+            </option>
+            <option
+              value="web"
+              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+            >
+              {t("serviceWeb")}
+            </option>
+            <option
+              value="web3"
+              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+            >
+              {t("serviceWeb3")}
+            </option>
+            <option
+              value="consulting"
+              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+            >
+              {t("serviceConsulting")}
+            </option>
+            <option
+              value="foundation"
+              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+            >
+              {t("serviceFoundation")}
+            </option>
+            <option
+              value="audit"
+              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+            >
+              {t("serviceAudit")}
+            </option>
           </select>
         </div>
 
         <div>
           <label
             htmlFor="message"
-            className="block text-sm font-semibold mb-1 text-gray-900 dark:text-white"
+            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
           >
             {t("projectDesc")}
           </label>
@@ -177,8 +213,8 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
             id="message"
             rows={4}
             placeholder={t("projectDesc")}
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent dark:border-[#2a353f] focus:border-blue-600 focus:outline-none resize-y ${
-              errors.message ? "border-red-500" : "border-gray-200"
+            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none resize-y ${
+              errors.message ? "border-red-500" : ""
             }`}
             {...register("message")}
           />

@@ -422,6 +422,14 @@ const translations: Record<string, { en: string; fa: string }> = {
     fa: "پکیج‌های منتشر شده برای انتخابگر تاریخ جلالی، تصاویر کش شده سریع و ابزارها.",
   },
 
+  teamImanRole: {
+    en: "Flutter Developer",
+    fa: "توسعه‌دهنده فلاتر",
+  },
+  teamImanBio: {
+    en: "Mobile developer with experience in native Android and Flutter. Specializes in state management, performance optimization, and custom package development.",
+    fa: "توسعه‌دهنده موبایل با تجربه در اندروید بومی و فلاتر. تخصص در مدیریت وضعیت، بهینه‌سازی عملکرد و توسعه پکیج‌های سفارشی.",
+  },
   // Foundation
   foundationTitle: {
     en: "Tarvix Engineering Foundation",
@@ -491,15 +499,15 @@ const translations: Record<string, { en: string; fa: string }> = {
   },
   readMore: { en: "Read more", fa: "بیشتر بخوانید" },
 
-  // Team
+// Team
   teamTitle: { en: "Engineering leadership", fa: "رهبری مهندسی" },
   teamEsmaeilRole: {
-    en: "Founder & Flutter Team Lead",
-    fa: "بنیان‌گذار و سرپرست تیم فلاتر",
+    en: "Founder & Lead Frontend/Mobile Engineer",
+    fa: "بنیان‌گذار و مهندس ارشد فرانت‌اند و موبایل",
   },
   teamEsmaeilBio: {
-    en: "8+ years in mobile development. Leads architecture and delivery for enterprise Flutter applications. Open source contributor and Pactus GUI manager.",
-    fa: "بیش از ۸ سال در توسعه موبایل. رهبری معماری و تحویل برنامه‌های فلاتر سازمانی. مشارکت‌کننده متن‌باز و مدیر GUI Pactus.",
+    en: "Full-stack frontend engineer with 8+ years in mobile and web development. Leads architecture and delivery for enterprise Flutter, React, and Next.js applications. Open source contributor and Pactus GUI manager.",
+    fa: "مهندس فرانت‌اند فول‌استک با بیش از ۸ سال در توسعه موبایل و وب. رهبری معماری و تحویل برنامه‌های سازمانی فلاتر، React و Next.js. مشارکت‌کننده متن‌باز و مدیر GUI Pactus.",
   },
   teamMiladRole: { en: "Backend & Web3 Engineer", fa: "مهندس بک‌اند و وب۳" },
   teamMiladBio: {
@@ -688,6 +696,80 @@ const translations: Record<string, { en: string; fa: string }> = {
   networkError: {
     en: "Network error. Please try again.",
     fa: "خطای شبکه. لطفاً دوباره تلاش کنید.",
+  },
+
+  // ===== DIALOG FORM LABELS & HELP TEXT =====
+  workEmailPlaceholder: {
+    en: "Enter your work email",
+    fa: "ایمیل کاری خود را وارد کنید",
+  },
+  roleTitlePlaceholder: {
+    en: "e.g. CTO, Lead Engineer",
+    fa: "مثلاً مدیر فنی، مهندس ارشد",
+  },
+  companyTeamPlaceholder: {
+    en: "e.g. Acme Corp, Team Alpha",
+    fa: "مثلاً شرکت آکمه، تیم آلفا",
+  },
+  githubUsernamePlaceholder: {
+    en: "e.g. github-username",
+    fa: "مثلاً github-username",
+  },
+  whyAccessPlaceholder: {
+    en: "e.g. Adopting Flutter CleanArc for new product",
+    fa: "مثلاً پذیرش Flutter CleanArc برای محصول جدید",
+  },
+
+  // ===== DIALOG FORM VALIDATION =====
+  roleTitleRequired: {
+    en: "Role / Title is required",
+    fa: "نقش / عنوان الزامی است",
+  },
+  companyTeamRequired: {
+    en: "Company or Team is required",
+    fa: "شرکت یا تیم الزامی است",
+  },
+  whyAccessRequired: {
+    en: "Please explain why you want access",
+    fa: "لطفاً دلیل نیاز به دسترسی را توضیح دهید",
+  },
+
+  // ===== DIALOG FORM SUCCESS =====
+  successIcon: {
+    en: "Success",
+    fa: "موفقیت",
+  },
+
+  // ===== DIALOG FORM BUTTONS =====
+  submitRequest: {
+    en: "Submit Request",
+    fa: "ارسال درخواست",
+  },
+
+  // Placeholders for form inputs
+  fullNamePlaceholder: {
+    en: "Enter your full name",
+    fa: "نام کامل خود را وارد کنید",
+  },
+  statsProjects: {
+    en: "Projects Delivered",
+    fa: "پروژه‌های تحویل شده",
+  },
+  statsUsers: {
+    en: "Users Served",
+    fa: "کاربران",
+  },
+  statsTeam: {
+    en: "Team Members",
+    fa: "اعضای تیم",
+  },
+  industriesTitle: {
+    en: "Industries We've Worked In",
+    fa: "حوزه‌هایی که در آنها فعالیت داشته‌ایم",
+  },
+  industriesSub: {
+    en: "Tarvix team members have contributed individually and collectively across these industries.",
+    fa: "اعضای تیم Tarvix به صورت فردی و جمعی در این صنایع مشارکت داشته‌اند.",
   },
 };
 

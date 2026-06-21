@@ -8,11 +8,18 @@ const teamData = [
     name: "Esmaeil Ahmadipour",
     roleKey: "teamEsmaeilRole",
     bioKey: "teamEsmaeilBio",
-    skills: ["Flutter", "Clean Architecture", "CI/CD"],
+    skills: ["Flutter", "Next.JS", "React.JS"],
     gradient: "from-blue-500 to-cyan-500",
   },
   {
-    name: "Milad",
+    name: "Iman Yarahmadi",
+    roleKey: "teamImanRole",
+    bioKey: "teamImanBio",
+    skills: ["State Management", "Performance", "Custom Packages"],
+    gradient: "from-amber-500 to-orange-500",
+  },
+  {
+    name: "Milad Bachari",
     roleKey: "teamMiladRole",
     bioKey: "teamMiladBio",
     skills: ["Node.js", "Golang", "Web3"],
@@ -74,11 +81,12 @@ export default function Team() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* 2x2 Grid */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {teamData.map((member, index) => (
             <div
               key={index}
-              className="team-card text-center p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover-lift opacity-0 shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-glow)]"
+              className="team-card p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover-lift opacity-0 shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-glow)] text-center"
             >
               <div
                 className={`w-20 h-20 rounded-full bg-gradient-to-br ${member.gradient} mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white shadow-lg`}

@@ -10,8 +10,12 @@ import {
 } from "../schemas/early-access.schema";
 import { useEarlyAccessStore } from "../store/early-access.store";
 import { useEarlyAccessMutation } from "../hooks/useEarlyAccessModal";
+ import { useDirection } from "@/providers/DirectionProvider";
+import { useTranslation } from "@/features/shared";
 
 export function EarlyAccessModal() {
+  const { t } = useTranslation();
+  const { isRTL } = useDirection();
   const { isOpen, isSubmitted, closeModal, setSubmitted, reset } =
     useEarlyAccessStore();
   const [mounted, setMounted] = useState(false);
@@ -87,7 +91,7 @@ export function EarlyAccessModal() {
     } catch (error) {
       setError("root", {
         message:
-          error instanceof Error ? error.message : "Error submitting request",
+          error instanceof Error ? error.message : t("somethingWentWrong"),
       });
     }
   };
@@ -124,17 +128,24 @@ export function EarlyAccessModal() {
           <div className="flex justify-between items-start">
             <div>
               <h2 id="modal-title" className="text-2xl font-bold mb-2">
-                Request Early Access
+                {t("dialogTitle")}
               </h2>
-              <p className="text-sm leading-relaxed text-white/50">
-                Request access to the Tarvix Engineering System. Share your
-                GitHub, technical context, and adoption goals.
+              <p
+                className="text-sm leading-relaxed"
+                style={{
+                  color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+                }}
+              >
+                {t("dialogDesc")}
               </p>
             </div>
             <button
               onClick={handleClose}
-              className="text-2xl leading-none ml-4 hover:opacity-70 transition-opacity text-white/50"
-              aria-label="Close dialog"
+              className="text-2xl leading-none ml-4 hover:opacity-70 transition-opacity"
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+              }}
+              aria-label={t("close")}
             >
               ×
             </button>
@@ -149,11 +160,12 @@ export function EarlyAccessModal() {
                   htmlFor="fullName"
                   className="block text-sm font-semibold mb-1"
                 >
-                  Full Name
+                  {t("fullName")}
                 </label>
                 <input
                   id="fullName"
                   type="text"
+                  dir={isRTL ? "rtl" : "ltr"}
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent focus:outline-none ${
                     errors.fullName
                       ? "border-red-500"
@@ -161,11 +173,12 @@ export function EarlyAccessModal() {
                         ? "border-[#2a353f] focus:border-blue-600"
                         : "border-gray-200 focus:border-blue-600"
                   }`}
+                  placeholder={t("fullNamePlaceholder")}
                   {...register("fullName")}
                 />
                 {errors.fullName && (
                   <p className="mt-1 text-sm text-red-500">
-                    {errors.fullName.message}
+                    {t("fullNameRequired")}
                   </p>
                 )}
               </div>
@@ -175,11 +188,12 @@ export function EarlyAccessModal() {
                   htmlFor="workEmail"
                   className="block text-sm font-semibold mb-1"
                 >
-                  Work Email
+                  {t("workEmail")}
                 </label>
                 <input
                   id="workEmail"
                   type="email"
+                  dir={isRTL ? "rtl" : "ltr"}
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent focus:outline-none ${
                     errors.workEmail
                       ? "border-red-500"
@@ -187,11 +201,12 @@ export function EarlyAccessModal() {
                         ? "border-[#2a353f] focus:border-blue-600"
                         : "border-gray-200 focus:border-blue-600"
                   }`}
+                  placeholder={t("workEmailPlaceholder")}
                   {...register("workEmail")}
                 />
                 {errors.workEmail && (
                   <p className="mt-1 text-sm text-red-500">
-                    {errors.workEmail.message}
+                    {t("validEmailRequired")}
                   </p>
                 )}
               </div>
@@ -201,18 +216,27 @@ export function EarlyAccessModal() {
                   htmlFor="roleTitle"
                   className="block text-sm font-semibold mb-1"
                 >
-                  Role / Title
+                  {t("roleTitle")}
                 </label>
                 <input
                   id="roleTitle"
                   type="text"
+                  dir={isRTL ? "rtl" : "ltr"}
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent focus:outline-none ${
-                    isDark
-                      ? "border-[#2a353f] focus:border-blue-600"
-                      : "border-gray-200 focus:border-blue-600"
+                    errors.roleTitle
+                      ? "border-red-500"
+                      : isDark
+                        ? "border-[#2a353f] focus:border-blue-600"
+                        : "border-gray-200 focus:border-blue-600"
                   }`}
+                  placeholder={t("roleTitlePlaceholder")}
                   {...register("roleTitle")}
                 />
+                {errors.roleTitle && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {t("roleTitleRequired")}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -220,18 +244,27 @@ export function EarlyAccessModal() {
                   htmlFor="companyTeam"
                   className="block text-sm font-semibold mb-1"
                 >
-                  Company or Team
+                  {t("companyTeam")}
                 </label>
                 <input
                   id="companyTeam"
                   type="text"
+                  dir={isRTL ? "rtl" : "ltr"}
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent focus:outline-none ${
-                    isDark
-                      ? "border-[#2a353f] focus:border-blue-600"
-                      : "border-gray-200 focus:border-blue-600"
+                    errors.companyTeam
+                      ? "border-red-500"
+                      : isDark
+                        ? "border-[#2a353f] focus:border-blue-600"
+                        : "border-gray-200 focus:border-blue-600"
                   }`}
+                  placeholder={t("companyTeamPlaceholder")}
                   {...register("companyTeam")}
                 />
+                {errors.companyTeam && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {t("companyTeamRequired")}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -239,11 +272,12 @@ export function EarlyAccessModal() {
                   htmlFor="ghUsername"
                   className="block text-sm font-semibold mb-1"
                 >
-                  GitHub Username
+                  {t("githubUsername")}
                 </label>
                 <input
                   id="ghUsername"
                   type="text"
+                  dir="ltr"
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent focus:outline-none ${
                     errors.ghUsername
                       ? "border-red-500"
@@ -251,15 +285,21 @@ export function EarlyAccessModal() {
                         ? "border-[#2a353f] focus:border-blue-600"
                         : "border-gray-200 focus:border-blue-600"
                   }`}
+                  placeholder={t("githubUsernamePlaceholder")}
                   {...register("ghUsername")}
                 />
                 {errors.ghUsername && (
                   <p className="mt-1 text-sm text-red-500">
-                    {errors.ghUsername.message}
+                    {t("githubRequired")}
                   </p>
                 )}
-                <p className="mt-1 text-xs text-white/30">
-                  Please provide a valid GitHub username.
+                <p
+                  className="mt-1 text-xs"
+                  style={{
+                    color: isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)",
+                  }}
+                >
+                  {t("githubHelp")}
                 </p>
               </div>
 
@@ -268,10 +308,11 @@ export function EarlyAccessModal() {
                   htmlFor="prefStack"
                   className="block text-sm font-semibold mb-1"
                 >
-                  Preferred Stack
+                  {t("preferredStack")}
                 </label>
                 <select
                   id="prefStack"
+                  dir={isRTL ? "rtl" : "ltr"}
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent focus:outline-none ${
                     isDark
                       ? "border-[#2a353f] focus:border-blue-600"
@@ -282,11 +323,19 @@ export function EarlyAccessModal() {
                   }}
                   {...register("prefStack")}
                 >
-                  <option value="flutter">Flutter (available now)</option>
-                  <option value="react">React (interest only)</option>
-                  <option value="django">Django (interest only)</option>
-                  <option value="nestjs">NestJS (interest only)</option>
+                  <option value="flutter">{t("stackFlutter")}</option>
+                  <option value="react">{t("stackReact")}</option>
+                  <option value="django">{t("stackDjango")}</option>
+                  <option value="nestjs">{t("stackNestJS")}</option>
                 </select>
+                <p
+                  className="mt-1 text-xs"
+                  style={{
+                    color: isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)",
+                  }}
+                >
+                  {t("stackHelp")}
+                </p>
               </div>
 
               <div>
@@ -294,18 +343,27 @@ export function EarlyAccessModal() {
                   htmlFor="whyAccess"
                   className="block text-sm font-semibold mb-1"
                 >
-                  Why do you want access?
+                  {t("whyAccess")}
                 </label>
                 <textarea
                   id="whyAccess"
                   rows={3}
+                  dir={isRTL ? "rtl" : "ltr"}
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-transparent focus:outline-none resize-y ${
-                    isDark
-                      ? "border-[#2a353f] focus:border-blue-600"
-                      : "border-gray-200 focus:border-blue-600"
+                    errors.whyAccess
+                      ? "border-red-500"
+                      : isDark
+                        ? "border-[#2a353f] focus:border-blue-600"
+                        : "border-gray-200 focus:border-blue-600"
                   }`}
+                  placeholder={t("whyAccessPlaceholder")}
                   {...register("whyAccess")}
                 />
+                {errors.whyAccess && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {t("whyAccessRequired")}
+                  </p>
+                )}
               </div>
 
               {errors.root && (
@@ -331,27 +389,51 @@ export function EarlyAccessModal() {
                     e.currentTarget.style.background = "transparent";
                   }}
                 >
-                  Cancel
+                  {t("cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={isPending}
                   className="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isPending ? "Submitting..." : "Request Access"}
+                  {isPending ? t("submitting") : t("submitRequest")}
                 </button>
               </div>
             </div>
           </form>
         ) : (
           <div className="text-center py-8">
-            <i className="fas fa-check-circle text-5xl text-blue-600 mb-4"></i>
-            <h3 className="text-xl font-bold mb-2">Request Received</h3>
-            <p className="text-sm text-white/50 mb-1">
-              Thanks — your request has been received.
+            <div className="w-16 h-16 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-emerald-500 dark:text-emerald-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold mb-2">{t("requestReceived")}</h3>
+            <p
+              className="text-sm mb-1"
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+              }}
+            >
+              {t("requestReceivedText1")}
             </p>
-            <p className="text-sm text-white/50">
-              We will review it and contact you if your access is approved.
+            <p
+              className="text-sm"
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+              }}
+            >
+              {t("requestReceivedText2")}
             </p>
             <div className="flex justify-center mt-6">
               <button
@@ -364,7 +446,7 @@ export function EarlyAccessModal() {
                   background: "transparent",
                 }}
               >
-                Close
+                {t("close")}
               </button>
             </div>
           </div>

@@ -54,9 +54,10 @@ export default function Navbar() {
   return (
     <nav
       className={`
-        glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3
+        fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3
         transition-all duration-300
-        ${isScrolled ? "border-b border-[var(--border-subtle)] shadow-lg" : "border-transparent"}
+        bg-[var(--bg-surface)] shadow-[var(--shadow-card)]
+        ${isScrolled ? "border-b border-[var(--border-subtle)]" : "border-b border-transparent"}
       `}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -67,9 +68,6 @@ export default function Navbar() {
           </div>
           <span className="text-lg font-bold tracking-tight gradient-text">
             Tarvix
-          </span>
-          <span className="hidden sm:inline-block text-[10px] font-mono tracking-widest uppercase text-[var(--text-muted)] border border-[var(--border-subtle)] px-2 py-0.5 rounded-full">
-            v2.0
           </span>
         </a>
 
@@ -158,7 +156,7 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div
         className={`
-          md:hidden absolute top-full left-0 right-0 glass border-b border-[var(--border-subtle)]
+          md:hidden absolute top-full left-0 right-0 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] shadow-[var(--shadow-card)]
           transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
           ${isMenuOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-4 pointer-events-none"}
         `}
