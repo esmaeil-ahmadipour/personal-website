@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -23,15 +22,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // تشخیص زبان از هدرها (برای SSR)
   const headersList = await headers();
   const acceptLanguage = headersList.get("accept-language") || "";
   const isPersian =
     acceptLanguage.includes("fa") || acceptLanguage.includes("ar");
-
-  // اگر از مسیر استفاده می‌کنید (مثلاً /fa/about)
-  // می‌تونید از pathname هم استفاده کنید
-  // const pathname = headersList.get("x-pathname") || "";
 
   return (
     <html
@@ -67,7 +61,6 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <div className="fixed inset-0 -z-10 animate-mesh pointer-events-none" />
         <DirectionProvider>{children}</DirectionProvider>
       </body>
     </html>

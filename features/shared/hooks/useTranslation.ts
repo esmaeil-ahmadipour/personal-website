@@ -472,6 +472,10 @@ const translations: Record<string, { en: string; fa: string }> = {
 
   // Team
   teamTitle: { en: "Engineering leadership", fa: "رهبری مهندسی" },
+  teamSubtitle: {
+    en: "The people behind Tarvix engineering",
+    fa: "افراد پشت مهندسی Tarvix",
+  },
   teamEsmaeilRole: {
     en: "Founder & Lead Frontend/Mobile Engineer",
     fa: "بنیان‌گذار و مهندس ارشد فرانت‌اند و موبایل",
@@ -539,7 +543,7 @@ const translations: Record<string, { en: string; fa: string }> = {
   serviceSelect: { en: "Service type", fa: "نوع خدمت" },
 
   auditCTA: {
-    en: "Request audit →",
+    en: "Request audit",
     fa: "درخواست بازبینی",
   },
   contactSuccessDesc: {
@@ -765,6 +769,71 @@ const translations: Record<string, { en: string; fa: string }> = {
   blogCheckBackLater: {
     en: "Check back soon for new content",
     fa: "به زودی برای مطالب جدید بازگردید",
+  },
+  // به translations اضافه کنید:
+
+  // ===== BLOG POST DETAIL =====
+  blogPostNotFound: {
+    en: "Post Not Found",
+    fa: "پست یافت نشد",
+  },
+  blogPostNotFoundDesc: {
+    en: "The blog post you're looking for doesn't exist.",
+    fa: "پست مورد نظر وجود ندارد.",
+  },
+  backToHome: {
+    en: "Back to Home",
+    fa: "بازگشت به خانه",
+  },
+  notPublished: {
+    en: "Not published",
+    fa: "منتشر نشده",
+  },
+  minRead: {
+    en: "min read",
+    fa: "دقیقه مطالعه",
+  },
+  backToAllPosts: {
+    en: "Back to all posts",
+    fa: "بازگشت به همه پست‌ها",
+  },
+  loadingPost: {
+    en: "Loading post...",
+    fa: "در حال بارگذاری پست...",
+  },
+  author: {
+    en: "Author",
+    fa: "نویسنده",
+  },
+  publishedOn: {
+    en: "Published on",
+    fa: "منتشر شده در",
+  },
+  readingTime: {
+    en: "Reading time",
+    fa: "زمان مطالعه",
+  },
+  views: {
+    en: "Views",
+    fa: "بازدید",
+  },
+  category: {
+    en: "Category",
+    fa: "دسته‌بندی",
+  },
+  tags: {
+    en: "Tags",
+    fa: "برچسب‌ها",
+  },
+  // به translations اضافه کنید:
+
+  tryAgain: {
+    en: "Try again",
+    fa: "دوباره تلاش کنید",
+  },
+  errorLoadingPost: {
+    en: "Error loading post",
+    fa: "خطا در بارگذاری پست",
   },
 };
 

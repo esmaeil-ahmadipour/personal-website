@@ -126,6 +126,8 @@ model Post {
   readingTimeMin Int?
   status         PostStatus  @default(draft)
   publishedAt    DateTime?
+  
+  views          Int         @default(0)  
 
   authorId       String
   categoryId     String

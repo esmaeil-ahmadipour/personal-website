@@ -88,7 +88,7 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
       {posts.map((post) => (
         <a
           key={post.id}
-          href={`/blog/${post.slug}`}
+          href={`/blog/${post.id}`}
           className="group rounded-2xl p-6 bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover-lift shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-glow)] hover:-translate-y-1"
         >
           <div className="flex items-center gap-2 mb-3">

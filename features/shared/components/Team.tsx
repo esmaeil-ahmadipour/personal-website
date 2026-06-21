@@ -1,120 +1,167 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
+import { cn } from "@/lib/utils";
 
-const teamData = [
-  {
-    name: "Esmaeil Ahmadipour",
-    roleKey: "teamEsmaeilRole",
-    bioKey: "teamEsmaeilBio",
-    skills: ["Flutter", "Next.JS", "React.JS"],
-    gradient: "from-blue-500 to-cyan-500",
-  },
-  {
-    name: "Iman Yarahmadi",
-    roleKey: "teamImanRole",
-    bioKey: "teamImanBio",
-    skills: ["State Management", "Performance", "Custom Packages"],
-    gradient: "from-amber-500 to-orange-500",
-  },
-  {
-    name: "Milad Bachari",
-    roleKey: "teamMiladRole",
-    bioKey: "teamMiladBio",
-    skills: ["Node.js", "Golang", "Web3"],
-    gradient: "from-purple-500 to-pink-500",
-  },
-  {
-    name: "Sina Soujeh",
-    roleKey: "teamSinaRole",
-    bioKey: "teamSinaBio",
-    skills: ["Figma", "Design Systems", "UI/UX"],
-    gradient: "from-emerald-500 to-teal-500",
-  },
-];
+interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  image?: string;
+  social?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+  };
+}
 
-export default function Team() {
-  const { t } = useTranslation();
-  const sectionRef = useRef<HTMLElement>(null);
+export function Team() {
+  const { t, lang } = useTranslation();
+  const isFa = lang === "fa";
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const cards = entry.target.querySelectorAll(".team-card");
-            cards.forEach((card, index) => {
-              setTimeout(() => {
-                card.classList.add("animate-fade-up");
-              }, index * 100);
-            });
-          }
-        });
+  const teamMembers: TeamMember[] = [
+    {
+      name: "Esmaeil",
+      role: t("teamEsmaeilRole"),
+      bio: t("teamEsmaeilBio"),
+      social: {
+        github: "https://github.com/esmaeil-ahmadipour",
+        linkedin: "https://linkedin.com/in/esmaeil-ahmadipour",
       },
-      { threshold: 0.1 },
-    );
+    },
+    {
+      name: "Milad",
+      role: t("teamMiladRole"),
+      bio: t("teamMiladBio"),
+      social: {
+        github: "https://github.com/sg-milad",
+        linkedin: "https://linkedin.com/in/sg-milad",
+      },
+    },
+    {
+      name: "Sina",
+      role: t("teamSinaRole"),
+      bio: t("teamSinaBio"),
+      social: {
+        github: "",
+        linkedin: "https://linkedin.com/in/sina-soujeh-b91844250",
+      },
+    },
+    {
+      name: "Iman",
+      role: t("teamImanRole"),
+      bio: t("teamImanBio"),
+      social: {
+        github: "https://github.com/iManYarahmadi",
+        linkedin: "https://linkedin.com/in/iman-yarahmadi",
+      },
+    },
+  ];
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  // تابع تولید حرف اول نام
+  const getInitial = (name: string) => {
+    return name.charAt(0).toUpperCase();
+  };
 
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="py-24 px-4 border-t border-[var(--border-subtle)]"
-    >
+    <section className="py-16 px-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="inline-block text-xs font-mono tracking-[0.2em] uppercase text-[var(--accent-blue)] bg-[var(--accent-blue)]/10 px-4 py-1.5 rounded-full border border-[var(--accent-blue)]/10 mb-4">
-            {t("team")}
+        {/* Header */}
+        <div className="text-center mb-12">
+          <span className="badge badge-purple text-xs font-mono tracking-wider uppercase mb-3">
+            {t("teamTitle") || "Team"}
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-            <span className="gradient-text">{t("teamTitle")}</span>
+          <h2 className="text-3xl md:text-4xl font-bold gradient-text">
+            {t("teamTitle") || "Engineering Leadership"}
           </h2>
-          <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
-            Engineering leadership with deep product experience
+          <p className="text-[var(--text-secondary)] mt-3 max-w-2xl mx-auto">
+            {t("teamSubtitle") || "The people behind Tarvix engineering"}
           </p>
         </div>
 
-        {/* 2x2 Grid */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {teamData.map((member, index) => (
+        {/* Team Grid - 4, 2, 1 ستون */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          {teamMembers.map((member, index) => (
             <div
               key={index}
-              className="team-card p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover-lift opacity-0 shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-glow)] text-center"
+              className="group relative rounded-2xl p-6 bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:-translate-y-1 flex flex-col"
             >
-              <div
-                className={`w-20 h-20 rounded-full bg-gradient-to-br ${member.gradient} mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white shadow-lg`}
-              >
-                {member.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </div>
-              <h3 className="text-[var(--text-primary)] font-semibold text-lg">
-                {member.name}
-              </h3>
-              <p className="text-sm text-[var(--accent-blue)] font-medium mt-1">
-                {t(member.roleKey)}
-              </p>
-              <p className="text-sm text-[var(--text-secondary)] mt-3 leading-relaxed">
-                {t(member.bioKey)}
-              </p>
-              <div className="flex flex-wrap justify-center gap-2 mt-4">
-                {member.skills.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="text-xs px-3 py-1 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)]"
+              {/* Avatar + Name */}
+              <div className="flex items-center gap-4 mb-4">
+                {/* Avatar - دایره با حرف اول */}
+                <div className="flex-shrink-0">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-blue-500/20">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      getInitial(member.name)
+                    )}
+                  </div>
+                </div>
+
+                {/* Name + Role - بدون truncate */}
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className={cn(
+                      "text-base font-semibold text-[var(--text-primary)]",
+                      isFa && "font-vazir",
+                    )}
                   >
-                    {skill}
-                  </span>
-                ))}
+                    {member.name}
+                  </h3>
+                  <p className="text-xs font-medium text-[var(--accent-blue)]">
+                    {member.role}
+                  </p>
+                </div>
               </div>
+
+              {/* Bio */}
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-4 flex-1 mb-4">
+                {member.bio}
+              </p>
+
+              {/* Social Links - در پایین کارت */}
+              {member.social && (
+                <div className="flex items-center gap-3 pt-4 border-t border-[var(--border-subtle)] mt-auto">
+                  {member.social.github && (
+                    <a
+                      href={member.social.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                      aria-label="GitHub"
+                    >
+                      <i className="fab fa-github text-base"></i>
+                    </a>
+                  )}
+                  {member.social.linkedin && (
+                    <a
+                      href={member.social.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                      aria-label="LinkedIn"
+                    >
+                      <i className="fab fa-linkedin text-base"></i>
+                    </a>
+                  )}
+                  {member.social.twitter && (
+                    <a
+                      href={member.social.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                      aria-label="Twitter"
+                    >
+                      <i className="fab fa-twitter text-base"></i>
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

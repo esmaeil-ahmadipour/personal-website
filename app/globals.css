@@ -802,9 +802,189 @@ body.rtl .ltr-keep {
   text-align: left !important;
 }
 
-/* تنظیمات responsive برای RTL */
-@media (max-width: 768px) {
-  body.rtl .flex-col-reverse {
-    flex-direction: column-reverse;
-  }
+/* ============================================
+   PROSE STYLES - برای محتوای وبلاگ
+   ============================================ */
+
+/* استایل‌های پایه prose */
+.prose {
+  max-width: 65ch;
+  color: var(--text-primary);
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.prose p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.prose ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.prose ul li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.prose ul li strong {
+  color: var(--text-primary);
+}
+
+.prose strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ============================================
+   RTL SUPPORT برای محتوای فارسی
+   ============================================ */
+
+.prose-fa {
+  direction: rtl;
+  text-align: right;
+}
+
+.prose-fa h2,
+.prose-fa h3,
+.prose-fa p,
+.prose-fa ul,
+.prose-fa ol {
+  text-align: right;
+}
+
+.prose-fa ul {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+.prose-fa blockquote {
+  border-right: 4px solid var(--accent-blue);
+  border-left: none;
+  padding-right: 1rem;
+  padding-left: 0;
+}
+
+.prose-fa code,
+.prose-fa pre {
+  direction: ltr;
+  text-align: left;
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+.dark .prose h2,
+.dark .prose h3 {
+  color: var(--text-primary);
+}
+
+.dark .prose p,
+.dark .prose ul li {
+  color: var(--text-secondary);
+}
+
+.dark .prose strong {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   BLOG CONTENT - استایل‌های دستی
+   ============================================ */
+
+.blog-content h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.blog-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.blog-content p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.blog-content ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.blog-content ul li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.blog-content ul li strong {
+  color: var(--text-primary);
+}
+
+.blog-content strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* RTL */
+.blog-content-fa {
+  direction: rtl;
+  text-align: right;
+}
+
+.blog-content-fa ul {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+/* Dark mode */
+.dark .blog-content h2,
+.dark .blog-content h3 {
+  color: var(--text-primary);
+}
+
+.dark .blog-content p,
+.dark .blog-content ul li {
+  color: var(--text-secondary);
+}
+
+.dark .blog-content strong {
+  color: var(--text-primary);
 }
