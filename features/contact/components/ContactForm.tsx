@@ -230,7 +230,7 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="btn btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          className="group relative px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold text-lg hover:shadow-xl hover:shadow-blue-500/25 transition-all btn-press overflow-hidden"
         >
           {isPending ? t("submitting") : t("sendInquiry")} →
         </button>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDirection } from "@/providers/DirectionProvider";
-import { useTranslation } from "@/features/shared/hooks/useTranslation";
+ import { useTranslation } from "@/features/shared/hooks/useTranslation";
+import LanguageSwitcher from "@/components/SwitchLanguage";
 
 // ✅ تابع برای دریافت مقدار اولیه از localStorage
 const getInitialTheme = (): "light" | "dark" => {
@@ -16,8 +16,7 @@ const getInitialTheme = (): "light" | "dark" => {
 };
 
 export default function Navbar() {
-  const { isRTL, toggleDirection } = useDirection();
-  const { t } = useTranslation();
+   const { t,locale,isRTL } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -82,12 +81,7 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-          <button
-            onClick={toggleDirection}
-            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 font-medium"
-          >
-            {isRTL ? "EN" : "FA"}
-          </button>
+ <LanguageSwitcher/>
           <button
             onClick={toggleTheme}
             className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 font-medium"
@@ -110,12 +104,7 @@ export default function Navbar() {
 
         {/* Mobile Controls */}
         <div className="flex md:hidden items-center gap-3">
-          <button
-            onClick={toggleDirection}
-            className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors text-[var(--text-secondary)] text-sm"
-          >
-            {isRTL ? "EN" : "FA"}
-          </button>
+ <LanguageSwitcher/>
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors text-[var(--text-secondary)]"

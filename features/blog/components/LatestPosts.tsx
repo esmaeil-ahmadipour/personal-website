@@ -12,7 +12,7 @@ interface LatestPostsProps {
 }
 
 export function LatestPosts({ limit = 3 }: LatestPostsProps) {
-  const { lang, t } = useTranslation();
+  const { t, locale, isRTL } = useTranslation();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
         const response = await BlogApi.getPosts({
           page: 1,
           limit,
-          locale: lang as "en" | "fa",
+          locale: locale as "en" | "fa",
         });
         setPosts(response.items);
       } catch (err) {
@@ -36,7 +36,7 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
     };
 
     fetchPosts();
-  }, [limit, lang]);
+  }, [limit, locale]);
 
   if (loading) {
     return (
@@ -131,7 +131,7 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
             {post.publishedAt && (
               <span>
                 {new Date(post.publishedAt).toLocaleDateString(
-                  lang === "fa" ? "fa-IR" : "en-US",
+                  locale === "fa" ? "fa-IR" : "en-US",
                   {
                     month: "short",
                     day: "numeric",

@@ -9,8 +9,8 @@ interface BlogPostPageProps {
 }
 
 export function BlogPostPage({ post }: BlogPostPageProps) {
-  const { lang } = useTranslation();
-  const isFa = lang === "fa";
+  const { t,locale,isRTL } = useTranslation();
+  const isFa = locale === "fa";
 
   // محتوای متنی
   const title = isFa ? post.titleFa : post.titleEn;

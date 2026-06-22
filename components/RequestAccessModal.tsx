@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDirection } from "@/providers/DirectionProvider";
-import { useTranslation } from "@/features/shared";
+ import { useTranslation } from "@/features/shared";
 
 interface RequestAccessDialogProps {
   isOpen: boolean;
@@ -13,9 +12,8 @@ export default function RequestAccessDialog({
   isOpen,
   onClose,
 }: RequestAccessDialogProps) {
-  const { t } = useTranslation();
-  const { isRTL } = useDirection();
-
+  const { t,locale,isRTL } = useTranslation();
+ 
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",

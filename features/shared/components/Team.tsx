@@ -16,8 +16,8 @@ interface TeamMember {
 }
 
 export function Team() {
-  const { t, lang } = useTranslation();
-  const isFa = lang === "fa";
+  const { t, locale, isRTL } = useTranslation();
+  const isFa = locale === "fa";
 
   const teamMembers: TeamMember[] = [
     {

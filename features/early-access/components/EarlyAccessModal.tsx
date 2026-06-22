@@ -10,12 +10,12 @@ import {
 } from "../schemas/early-access.schema";
 import { useEarlyAccessStore } from "../store/early-access.store";
 import { useEarlyAccessMutation } from "../hooks/useEarlyAccessModal";
- import { useDirection } from "@/providers/DirectionProvider";
+
 import { useTranslation } from "@/features/shared";
 
 export function EarlyAccessModal() {
-  const { t } = useTranslation();
-  const { isRTL } = useDirection();
+  const { t, locale, isRTL } = useTranslation();
+
   const { isOpen, isSubmitted, closeModal, setSubmitted, reset } =
     useEarlyAccessStore();
   const [mounted, setMounted] = useState(false);

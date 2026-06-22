@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useDirection } from "@/providers/DirectionProvider";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { EarlyAccessModal, EarlyAccessTrigger } from "@/features/early-access";
+import LanguageSwitcher from "@/components/SwitchLanguage";
 
 export default function DevPlatformPage() {
-  const { isRTL, toggleDirection } = useDirection();
-  const { t } = useTranslation();
+  const { t, locale, isRTL } = useTranslation();
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
@@ -48,12 +47,8 @@ export default function DevPlatformPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button
-              onClick={toggleDirection}
-              className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              {isRTL ? "EN" : "FA"}
-            </button>
+            <LanguageSwitcher />
+
             <button
               onClick={toggleTheme}
               className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"

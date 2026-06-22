@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useDirection } from "@/providers/DirectionProvider";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { HomeIcon } from "@/features/shared/components/icons/HomeIcon";
 import { ChevronLeftIcon } from "@/features/shared/components/icons/ChevronLeftIcon";
@@ -10,12 +9,12 @@ import { ChevronRightIcon } from "@/features/shared/components/icons/ChevronRigh
 
 export function Breadcrumb() {
   const pathname = usePathname();
-  const { isRTL } = useDirection();
-  const { t } = useTranslation();
+  const { t, locale, isRTL } = useTranslation();
 
   if (pathname === "/") return null;
 
   const paths = pathname.split("/").filter(Boolean);
+ 
   const Separator = isRTL ? ChevronLeftIcon : ChevronRightIcon;
 
   const routeNames: Record<string, string> = {

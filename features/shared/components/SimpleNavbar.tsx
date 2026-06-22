@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useDirection } from "@/providers/DirectionProvider";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { useState, useEffect } from "react";
+import LanguageSwitcher from "@/components/SwitchLanguage";
 
 interface NavbarProps {
   showBack?: boolean;
@@ -13,7 +13,6 @@ interface NavbarProps {
 
 export function Navbar({ showBack = false, backUrl = "/" }: NavbarProps) {
   const router = useRouter();
-  const { isRTL, toggleDirection } = useDirection();
   const { t } = useTranslation();
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
@@ -64,12 +63,8 @@ export function Navbar({ showBack = false, backUrl = "/" }: NavbarProps) {
               ← {t("back")}
             </button>
           )}
-          <button
-            onClick={toggleDirection}
-            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            {isRTL ? "EN" : "FA"}
-          </button>
+          <LanguageSwitcher />
+
           <button
             onClick={toggleTheme}
             className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"

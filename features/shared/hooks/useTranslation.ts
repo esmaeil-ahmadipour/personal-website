@@ -1,4 +1,4 @@
-import { useDirection } from "@/providers/DirectionProvider";
+import { useLocale, useTranslations } from "next-intl";
 
 type Lang = "en" | "fa";
 
@@ -838,14 +838,9 @@ const translations: Record<string, { en: string; fa: string }> = {
 };
 
 export function useTranslation() {
-  const { isRTL } = useDirection();
-  const lang: Lang = isRTL ? "fa" : "en";
+  const locale = useLocale();
+  const isRTL = locale === "fa" || locale === "ar";
+  const t = useTranslations();
 
-  const t = (key: string): string => {
-    return translations[key]?.[lang] || key;
-  };
-
-  const getLang = (): Lang => lang;
-
-  return { t, lang: getLang(), isRTL };
+  return { t, locale, isRTL };
 }
