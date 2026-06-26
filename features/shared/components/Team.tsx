@@ -64,7 +64,10 @@ export function Team() {
   ];
 
   return (
-    <section className="py-16 px-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]">
+    <section
+      id="team"
+      className="py-16 px-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]"
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
- import { useTranslation } from "@/features/shared/hooks/useTranslation";
+import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import LanguageSwitcher from "@/components/SwitchLanguage";
 
 // ✅ تابع برای دریافت مقدار اولیه از localStorage
@@ -16,7 +16,7 @@ const getInitialTheme = (): "light" | "dark" => {
 };
 
 export default function Navbar() {
-   const { t,locale,isRTL } = useTranslation();
+  const { t, locale, isRTL } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -46,7 +46,7 @@ export default function Navbar() {
     { label: t("capabilities"), href: "#services" },
     { label: t("work"), href: "#portfolio" },
     { label: t("blogBadge"), href: "#blog" },
-    { label: t("team"), href: "#about" },
+    { label: t("team"), href: "#team" },
     { label: t("contact"), href: "#contact" },
   ];
 
@@ -81,7 +81,7 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
- <LanguageSwitcher/>
+          <LanguageSwitcher />
           <button
             onClick={toggleTheme}
             className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 font-medium"
@@ -104,7 +104,7 @@ export default function Navbar() {
 
         {/* Mobile Controls */}
         <div className="flex md:hidden items-center gap-3">
- <LanguageSwitcher/>
+          <LanguageSwitcher />
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors text-[var(--text-secondary)]"
