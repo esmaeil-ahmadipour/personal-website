@@ -22,7 +22,7 @@ async function main() {
       lastNameFa: "احمدی‌پور",
       bioFa:
         "بنیان‌گذار و مهندس ارشد فرانت‌اند و موبایل با بیش از ۸ سال تجربه در توسعه موبایل و وب. رهبری معماری و تحویل برنامه‌های سازمانی فلاتر، React و Next.js.",
-      avatarUrl: "https://avatars.githubusercontent.com/u/...",
+      avatarUrl: "/images/authors/avatar-esmaeil.png",
     },
   });
 

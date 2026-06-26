@@ -25,8 +25,7 @@ export function Team() {
       name: "Esmaeil",
       role: t("teamEsmaeilRole"),
       bio: t("teamEsmaeilBio"),
-      image:
-        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476415/avatar-esmaeil_200_iyo9bb.png",
+      image: "/images/authors/avatar-esmaeil.png",
       social: {
         github: "https://github.com/esmaeil-ahmadipour",
         linkedin: "https://linkedin.com/in/esmaeil-ahmadipour",
@@ -36,8 +35,7 @@ export function Team() {
       name: "Milad",
       role: t("teamMiladRole"),
       bio: t("teamMiladBio"),
-      image:
-        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476229/avatar-milad_200_dhyloq.png",
+      image: "/images/authors/avatar-milad.png",
       social: {
         github: "https://github.com/sg-milad",
         linkedin: "https://linkedin.com/in/sg-milad",
@@ -47,8 +45,7 @@ export function Team() {
       name: "Sina",
       role: t("teamSinaRole"),
       bio: t("teamSinaBio"),
-      image:
-        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476323/avatar-sina_200_xfqtnw.png",
+      image: "/images/authors/avatar-sina.png",
       social: {
         github: "",
         linkedin: "https://linkedin.com/in/sina-soujeh-b91844250",
@@ -58,8 +55,7 @@ export function Team() {
       name: "Iman",
       role: t("teamImanRole"),
       bio: t("teamImanBio"),
-      image:
-        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476373/avatar-iman_200_bcuoyk.png",
+      image: "/images/authors/avatar-iman.png",
       social: {
         github: "https://github.com/iManYarahmadi",
         linkedin: "https://linkedin.com/in/iman-yarahmadi",
