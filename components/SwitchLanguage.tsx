@@ -2,7 +2,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
- import { locales } from "@/lib/i18n";
+import { locales } from "@/i18n/request";
 
 export default function LanguageSwitcher() {
   const pathname = usePathname();
@@ -50,7 +50,7 @@ export default function LanguageSwitcher() {
       }}
       aria-label="Switch language"
     >
-       <span>{otherLocale === "fa" ? "فارسی" : "English"}</span>
+      <span>{otherLocale === "fa" ? "فارسی" : "English"}</span>
     </button>
   );
 }

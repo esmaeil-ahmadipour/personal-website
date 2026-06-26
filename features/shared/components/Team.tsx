@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
@@ -7,7 +8,7 @@ interface TeamMember {
   name: string;
   role: string;
   bio: string;
-  image?: string;
+  image: string; // ✅ الان اجباری شده
   social?: {
     github?: string;
     linkedin?: string;
@@ -24,6 +25,8 @@ export function Team() {
       name: "Esmaeil",
       role: t("teamEsmaeilRole"),
       bio: t("teamEsmaeilBio"),
+      image:
+        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476415/avatar-esmaeil_200_iyo9bb.png",
       social: {
         github: "https://github.com/esmaeil-ahmadipour",
         linkedin: "https://linkedin.com/in/esmaeil-ahmadipour",
@@ -33,6 +36,8 @@ export function Team() {
       name: "Milad",
       role: t("teamMiladRole"),
       bio: t("teamMiladBio"),
+      image:
+        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476229/avatar-milad_200_dhyloq.png",
       social: {
         github: "https://github.com/sg-milad",
         linkedin: "https://linkedin.com/in/sg-milad",
@@ -42,6 +47,8 @@ export function Team() {
       name: "Sina",
       role: t("teamSinaRole"),
       bio: t("teamSinaBio"),
+      image:
+        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476323/avatar-sina_200_xfqtnw.png",
       social: {
         github: "",
         linkedin: "https://linkedin.com/in/sina-soujeh-b91844250",
@@ -51,17 +58,14 @@ export function Team() {
       name: "Iman",
       role: t("teamImanRole"),
       bio: t("teamImanBio"),
+      image:
+        "https://res.cloudinary.com/dgk4qbltb/image/upload/v1782476373/avatar-iman_200_bcuoyk.png",
       social: {
         github: "https://github.com/iManYarahmadi",
         linkedin: "https://linkedin.com/in/iman-yarahmadi",
       },
     },
   ];
-
-  // تابع تولید حرف اول نام
-  const getInitial = (name: string) => {
-    return name.charAt(0).toUpperCase();
-  };
 
   return (
     <section className="py-16 px-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]">
@@ -79,7 +83,7 @@ export function Team() {
           </p>
         </div>
 
-        {/* Team Grid - 4, 2, 1 ستون */}
+        {/* Team Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {teamMembers.map((member, index) => (
             <div
@@ -88,22 +92,20 @@ export function Team() {
             >
               {/* Avatar + Name */}
               <div className="flex items-center gap-4 mb-4">
-                {/* Avatar - دایره با حرف اول */}
                 <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-blue-500/20">
-                    {member.image ? (
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      getInitial(member.name)
-                    )}
+                  <div className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-[var(--accent-blue)]/20 dark:ring-[var(--accent-blue)]/40 transition-all group-hover:ring-[var(--accent-blue)]/60">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      sizes="56px"
+                      priority={index < 2}
+                    />
                   </div>
                 </div>
 
-                {/* Name + Role - بدون truncate */}
+                {/* Name + Role */}
                 <div className="flex-1 min-w-0">
                   <h3
                     className={cn(
@@ -124,7 +126,7 @@ export function Team() {
                 {member.bio}
               </p>
 
-              {/* Social Links - در پایین کارت */}
+              {/* Social Links */}
               {member.social && (
                 <div className="flex items-center gap-3 pt-4 border-t border-[var(--border-subtle)] mt-auto">
                   {member.social.github && (
