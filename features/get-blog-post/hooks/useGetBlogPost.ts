@@ -1,3 +1,5 @@
+// features/get-blog-post/hooks/useGetBlogPost.ts
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,6 +9,7 @@ interface UseGetBlogPostState {
   post: BlogPost | null;
   isLoading: boolean;
   error: string | null;
+  isInitialLoad: boolean; // اضافه کردن این state
 }
 
 export function useGetBlogPost(id: string | null) {
@@ -14,18 +17,29 @@ export function useGetBlogPost(id: string | null) {
     post: null,
     isLoading: true,
     error: null,
+    isInitialLoad: true, // true در ابتدا
   });
 
   useEffect(() => {
     if (!id) {
-      setState({ post: null, isLoading: false, error: null });
+      setState({
+        post: null,
+        isLoading: false,
+        error: null,
+        isInitialLoad: false,
+      });
       return;
     }
 
     let isMounted = true;
 
     const fetchPost = async () => {
-      setState((prev) => ({ ...prev, isLoading: true, error: null }));
+      // فقط اگر isInitialLoad نباشه، isLoading رو true کن
+      setState((prev) => ({
+        ...prev,
+        isLoading: prev.isInitialLoad ? true : true,
+        error: null,
+      }));
 
       try {
         const response = await fetch(`/api/blog/${id}`);
@@ -38,12 +52,14 @@ export function useGetBlogPost(id: string | null) {
             post: data.data,
             isLoading: false,
             error: null,
+            isInitialLoad: false,
           });
         } else {
           setState({
             post: null,
             isLoading: false,
             error: data.message || "Failed to load post",
+            isInitialLoad: false,
           });
         }
       } catch (error) {
@@ -52,6 +68,7 @@ export function useGetBlogPost(id: string | null) {
           post: null,
           isLoading: false,
           error: error instanceof Error ? error.message : "Failed to load post",
+          isInitialLoad: false,
         });
       }
     };

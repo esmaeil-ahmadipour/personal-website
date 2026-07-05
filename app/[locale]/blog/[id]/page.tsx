@@ -175,13 +175,23 @@ export default async function BlogPostPageWrapper({
 // ۴. Static Paths (برای SSG)
 // ============================================
 export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    where: { status: "published" },
-    select: { id: true, slug: true },
-  });
+  // ✅ فقط در محیط production اجرا بشه
+  if (process.env.NODE_ENV === "development") {
+    return [];
+  }
 
-  return posts.flatMap((post) => [
-    { id: post.id, lang: "en" },
-    { id: post.id, lang: "fa" },
-  ]);
+  try {
+    const posts = await prisma.post.findMany({
+      where: { status: "published" },
+      select: { id: true, slug: true },
+    });
+
+    return posts.flatMap((post) => [
+      { id: post.id, lang: "en" },
+      { id: post.id, lang: "fa" },
+    ]);
+  } catch (error) {
+    console.error("Error in generateStaticParams:", error);
+    return [];
+  }
 }
