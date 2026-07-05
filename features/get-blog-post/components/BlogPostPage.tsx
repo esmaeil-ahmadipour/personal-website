@@ -125,7 +125,7 @@ export function BlogPostPage({ post, locale }: BlogPostPageProps) {
 
           {/* متا لاین */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-            <span className="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+            <span className="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-purple-300! text-purple-700! dark:bg-purple-900/30 dark:text-purple-400">
               {categoryName}
             </span>
 

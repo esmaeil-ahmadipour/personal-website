@@ -8,7 +8,7 @@ import { Navbar } from "@/features/shared/components/SimpleNavbar";
 import type { BlogPost } from "@/features/get-blog-post/types/get-blog-post.types";
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
   searchParams?: Promise<{ lang?: "en" | "fa" }>;
 }
 
@@ -65,15 +65,13 @@ function formatPost(rawPost: any): BlogPost {
 }
 
 // ============================================
-// ۲. متادیتا (SEO)
+// ۲. متادیتا (SEO) - FIXED
 // ============================================
 export async function generateMetadata({
   params,
-  searchParams,
 }: PageProps): Promise<Metadata> {
-  const { id } = await params;
-  const lang = (await searchParams)?.lang || "en";
-  const isFa = lang === "fa";
+  const { id, locale } = await params;
+  const isFa = locale === "fa";
 
   const post = await prisma.post.findUnique({
     where: { id, status: "published" },
@@ -95,7 +93,7 @@ export async function generateMetadata({
     ? post.seoDescriptionFa || post.excerptFa
     : post.seoDescriptionEn || post.excerptEn;
   const imageUrl = post.coverImageUrl || "/images/default-blog-cover.jpg";
-  const url = `https://tarvix.org/${lang}/blog/${post.slug}`;
+  const url = `https://tarvix.org/${locale}/blog/${post.slug}`;
 
   return {
     title,
@@ -133,26 +131,36 @@ export async function generateMetadata({
 }
 
 // ============================================
-// ۳. صفحه اصلی (Server Component)
+// ۳. صفحه اصلی (Server Component) - FIXED
 // ============================================
-export default async function BlogPostPageWrapper({
-  params,
-  searchParams,
-}: PageProps) {
-  const { id } = await params;
-  const lang = (await searchParams)?.lang || "en";
+export default async function BlogPostPageWrapper({ params }: PageProps) {
+  const { id, locale } = await params;
+  const lang = locale || "en";
 
-  const rawPost = await prisma.post.findUnique({
-    where: { id, status: "published" },
-    include: {
-      author: true,
-      category: true,
-      tags: {
-        include: {
-          tag: true,
+  // ✅ دریافت پست با افزایش بازدید در یک تراکنش
+  const rawPost = await prisma.$transaction(async (tx) => {
+    const post = await tx.post.findUnique({
+      where: { id, status: "published" },
+      include: {
+        author: true,
+        category: true,
+        tags: {
+          include: {
+            tag: true,
+          },
         },
       },
-    },
+    });
+
+    if (post) {
+      // افزایش بازدید
+      await tx.post.update({
+        where: { id },
+        data: { views: { increment: 1 } },
+      });
+    }
+
+    return post;
   });
 
   if (!rawPost) {
@@ -172,7 +180,7 @@ export default async function BlogPostPageWrapper({
 }
 
 // ============================================
-// ۴. Static Paths (برای SSG)
+// ۴. Static Paths (برای SSG) - FIXED
 // ============================================
 export async function generateStaticParams() {
   // ✅ فقط در محیط production اجرا بشه
@@ -186,12 +194,18 @@ export async function generateStaticParams() {
       select: { id: true, slug: true },
     });
 
+    // ✅ مسیرهای درست با locale
     return posts.flatMap((post) => [
-      { id: post.id, lang: "en" },
-      { id: post.id, lang: "fa" },
+      { id: post.id, locale: "en" },
+      { id: post.id, locale: "fa" },
     ]);
   } catch (error) {
     console.error("Error in generateStaticParams:", error);
     return [];
   }
 }
+
+// ============================================
+// ۵. تنظیمات ریدایرکت برای SSG
+// ============================================
+export const dynamicParams = true; // اجازه ریدایرکت برای پست‌های جدید
