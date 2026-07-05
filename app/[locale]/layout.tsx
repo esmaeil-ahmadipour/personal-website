@@ -2,11 +2,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
- import { headers } from "next/headers";
+import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales } from "@/i18n/request";
+import { QueryProvider } from "@/providers/QueryProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -60,7 +61,9 @@ export default async function LocaleLayout({
       </head>
       <body className={`${inter.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <main className="container mx-auto px-4 py-8">{children}</main>
+          <main className="container mx-auto px-4 py-8">
+            <QueryProvider>{children}</QueryProvider>
+          </main>
         </NextIntlClientProvider>
       </body>
     </html>

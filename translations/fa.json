@@ -245,7 +245,9 @@
   "views": "بازدید",
   "category": "دسته‌بندی",
   "tags": "برچسب‌ها",
-  "tryAgain": "دوباره تلاش کنید",
-  "errorLoadingPost": "خطا در بارگذاری پست",
-  "teamSubtitle": "افراد پشت مهندسی Tarvix"
+  "tryAgain": "تلاش مجدد",
+  "viewAllPosts": "مشاهده همه مطالب",
+  "teamSubtitle": "افراد پشت مهندسی Tarvix",
+  "viewAll": "همه",
+  "errorLoadingPost": "خطا در بارگذاری پست"
 }

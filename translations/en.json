@@ -230,7 +230,7 @@
   "blogBadge": "Blog",
   "blogTitle": "Latest from the Blog",
   "blogSubtitle": "Insights on engineering, architecture, and product development",
-  "blogNoPosts": "No posts available yet",
+  "blogNoPosts": "No posts available",
   "blogCheckBackLater": "Check back soon for new content",
   "blogPostNotFound": "Post Not Found",
   "blogPostNotFoundDesc": "The blog post you're looking for doesn't exist.",
@@ -246,6 +246,8 @@
   "category": "Category",
   "tags": "Tags",
   "tryAgain": "Try again",
-  "errorLoadingPost": "Error loading post",
-  "teamSubtitle": "The people behind Tarvix engineering"
+  "viewAllPosts": "View all posts",
+  "viewAll": "All",
+  "teamSubtitle": "The people behind Tarvix engineering",
+  "errorLoadingPost": "Error loading post"
 }
