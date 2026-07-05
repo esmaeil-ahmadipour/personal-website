@@ -1,76 +1,187 @@
-"use client";
+// app/[locale]/blog/[id]/page.tsx
 
-import { useParams, useRouter } from "next/navigation";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { BlogPostPage } from "@/features/get-blog-post/components/BlogPostPage";
-import { useGetBlogPost } from "@/features/get-blog-post/hooks/useGetBlogPost";
-import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { Navbar } from "@/features/shared/components/SimpleNavbar";
+import type { BlogPost } from "@/features/get-blog-post/types/get-blog-post.types";
 
-export default function BlogPostRoute() {
-  const params = useParams();
-  const router = useRouter();
-  const id = params.id as string;
-  const { post, isLoading, error } = useGetBlogPost(id);
-  const { t } = useTranslation();
+interface PageProps {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ lang?: "en" | "fa" }>;
+}
 
-  if (isLoading) {
-    return (
-      <>
-        <Navbar showBack />
-        <div className="pt-20">
-          <div className="container py-16">
-            <div className="max-w-4xl mx-auto">
-              <div className="animate-pulse">
-                <div className="h-8 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
-                <div className="h-4 w-1/2 bg-gray-200 dark:bg-gray-700 rounded mb-8" />
-                <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded mb-8" />
-                <div className="space-y-3">
-                  <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded" />
-                  <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded" />
-                  <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
+// ============================================
+// ۱. تابع کمکی برای تبدیل داده‌ها به فرمت BlogPost
+// ============================================
+function formatPost(rawPost: any): BlogPost {
+  return {
+    id: rawPost.id,
+    slug: rawPost.slug,
+    titleEn: rawPost.titleEn,
+    excerptEn: rawPost.excerptEn || null,
+    contentEn: rawPost.contentEn,
+    seoTitleEn: rawPost.seoTitleEn || null,
+    seoDescriptionEn: rawPost.seoDescriptionEn || null,
+    titleFa: rawPost.titleFa,
+    excerptFa: rawPost.excerptFa || null,
+    contentFa: rawPost.contentFa,
+    seoTitleFa: rawPost.seoTitleFa || null,
+    seoDescriptionFa: rawPost.seoDescriptionFa || null,
+    coverImageUrl: rawPost.coverImageUrl || null,
+    readingTimeMin: rawPost.readingTimeMin || null,
+    status: rawPost.status,
+    publishedAt: rawPost.publishedAt,
+    author: {
+      id: rawPost.author.id,
+      slug: rawPost.author.slug,
+      firstNameEn: rawPost.author.firstNameEn,
+      lastNameEn: rawPost.author.lastNameEn,
+      bioEn: rawPost.author.bioEn || null,
+      firstNameFa: rawPost.author.firstNameFa,
+      lastNameFa: rawPost.author.lastNameFa,
+      bioFa: rawPost.author.bioFa || null,
+      avatarUrl: rawPost.author.avatarUrl || null,
+    },
+    category: {
+      id: rawPost.category.id,
+      slug: rawPost.category.slug,
+      nameEn: rawPost.category.nameEn,
+      descriptionEn: rawPost.category.descriptionEn || null,
+      nameFa: rawPost.category.nameFa,
+      descriptionFa: rawPost.category.descriptionFa || null,
+    },
+    tags: rawPost.tags.map((pt: any) => ({
+      id: pt.tag.id,
+      slug: pt.tag.slug,
+      nameEn: pt.tag.nameEn,
+      nameFa: pt.tag.nameFa,
+    })),
+    views: rawPost.views || 0,
+    createdAt: rawPost.createdAt,
+    updatedAt: rawPost.updatedAt,
+  };
+}
+
+// ============================================
+// ۲. متادیتا (SEO)
+// ============================================
+export async function generateMetadata({
+  params,
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const lang = (await searchParams)?.lang || "en";
+  const isFa = lang === "fa";
+
+  const post = await prisma.post.findUnique({
+    where: { id, status: "published" },
+  });
+
+  if (!post) {
+    return {
+      title: isFa ? "پست یافت نشد" : "Post Not Found",
+      description: isFa
+        ? "پست مورد نظر وجود ندارد"
+        : "The requested post does not exist.",
+    };
   }
 
-  if (error || !post) {
-    return (
-      <>
-        <Navbar showBack />
-        <div className="pt-20">
-          <div className="container py-16">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="card p-12">
-                <h2 className="text-2xl font-bold mb-4">
-                  {t("postNotFound") || "Post Not Found"}
-                </h2>
-                <p className="text-muted mb-6">
-                  {error || t("postNotFoundDesc") || "Post not found"}
-                </p>
-                <a
-                  href="/"
-                  className="btn btn-primary inline-flex items-center gap-2"
-                >
-                  ← {t("backToHome") || "Back to Home"}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
+  const title = isFa
+    ? post.seoTitleFa || post.titleFa
+    : post.seoTitleEn || post.titleEn;
+  const description = isFa
+    ? post.seoDescriptionFa || post.excerptFa
+    : post.seoDescriptionEn || post.excerptEn;
+  const imageUrl = post.coverImageUrl || "/images/default-blog-cover.jpg";
+  const url = `https://tarvix.org/${lang}/blog/${post.slug}`;
+
+  return {
+    title,
+    description: description || undefined,
+    openGraph: {
+      title,
+      description: description || undefined,
+      url,
+      siteName: "Tarvix",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      type: "article",
+      publishedTime: post.publishedAt?.toISOString(),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: description || undefined,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: url,
+      languages: {
+        en: `/en/blog/${post.slug}`,
+        fa: `/fa/blog/${post.slug}`,
+      },
+    },
+  };
+}
+
+// ============================================
+// ۳. صفحه اصلی (Server Component)
+// ============================================
+export default async function BlogPostPageWrapper({
+  params,
+  searchParams,
+}: PageProps) {
+  const { id } = await params;
+  const lang = (await searchParams)?.lang || "en";
+
+  const rawPost = await prisma.post.findUnique({
+    where: { id, status: "published" },
+    include: {
+      author: true,
+      category: true,
+      tags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
+  });
+
+  if (!rawPost) {
+    notFound();
   }
+
+  const post = formatPost(rawPost);
 
   return (
     <>
       <Navbar showBack />
       <div className="pt-20">
-        <BlogPostPage post={post} />
+        <BlogPostPage post={post} locale={lang} />
       </div>
     </>
   );
+}
+
+// ============================================
+// ۴. Static Paths (برای SSG)
+// ============================================
+export async function generateStaticParams() {
+  const posts = await prisma.post.findMany({
+    where: { status: "published" },
+    select: { id: true, slug: true },
+  });
+
+  return posts.flatMap((post) => [
+    { id: post.id, lang: "en" },
+    { id: post.id, lang: "fa" },
+  ]);
 }
