@@ -1,6 +1,6 @@
 // مسیر: app/[locale]/layout.tsx
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
@@ -10,10 +10,21 @@ import { locales } from "@/i18n/request";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 
+// ============================================
+// 🔤 فونت‌ها
+// ============================================
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const vazir = Vazirmatn({
+  subsets: ["arabic", "latin"],
+  display: "swap",
+  variable: "--font-vazir",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -41,32 +52,36 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  // ✅ تشخیص RTL بودن
+  const isRTL = locale === "fa" || locale === "ar";
+
   // ✅ دریافت ترجمه‌ها
   const messages = await getMessages({ locale });
 
-  // ✅ تشخیص زبان از هدر (برای fallback)
-  const headersList = await headers();
-  const acceptLanguage = headersList.get("accept-language") || "";
-  //suppressHydrationWarning
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={isRTL ? "rtl" : "ltr"}
+      className={`${inter.variable} ${vazir.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
-          rel="stylesheet"
-        />
+        {/* Font Awesome */}
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
       </head>
-      <body className={`${inter.variable} antialiased`}>
+      <body
+        className={`
+          antialiased
+          ${isRTL ? "font-vazir" : "font-inter"}
+        `}
+      >
         <NextIntlClientProvider messages={messages}>
-          <main className="container mx-auto px-4 py-8">
-            <QueryProvider>
-              <ThemeProvider>{children}</ThemeProvider>
-            </QueryProvider>
-          </main>
+          <QueryProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -4,120 +4,93 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 
 // ============================================
-// BLUE/PURPLE OFFICIAL COLOR PALETTE
+// OFFICIAL COLOR PALETTE - Blue, Purple, Green
+// با opacity بالاتر برای تم روشن
 // ============================================
 const OFFICIAL_COLORS = [
   {
-    // 0 - Light Blue
-    gradient: "from-blue-400/20 via-blue-300/10 to-transparent",
-    border: "border-blue-400/30 hover:border-blue-400/60",
-    shadow: "shadow-blue-400/5 hover:shadow-blue-400/15",
-    iconBg: "from-blue-400/25 to-blue-300/15",
-    iconColor: "text-blue-500",
-    badgeBg: "bg-blue-400/15",
-    badgeColor: "text-blue-600 dark:text-blue-300",
-    badgeBorder: "border-blue-400/25",
-    chipBg: "bg-blue-400/10",
-    chipBorder: "border-blue-400/20",
-    chipColor: "text-blue-600 dark:text-blue-300",
+    // 0 - Blue
+    name: "Blue",
+    gradient: "from-blue-500/40 via-blue-400/20 to-transparent",
+    border: "border-blue-500 hover:border-blue-700",
+    borderStrong: "border-blue-600",
+    shadow: "shadow-blue-500/10 hover:shadow-blue-500/25",
+    text: "text-blue-600 dark:text-blue-300",
+    iconBg: "bg-blue-600",
+    iconColor: "text-white",
+    badgeBg: "bg-blue-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-blue-700",
   },
   {
-    // 1 - Medium Blue
-    gradient: "from-blue-500/20 via-blue-400/10 to-transparent",
-    border: "border-blue-500/30 hover:border-blue-500/60",
-    shadow: "shadow-blue-500/5 hover:shadow-blue-500/15",
-    iconBg: "from-blue-500/25 to-blue-400/15",
-    iconColor: "text-blue-600",
-    badgeBg: "bg-blue-500/15",
-    badgeColor: "text-blue-700 dark:text-blue-300",
-    badgeBorder: "border-blue-500/25",
-    chipBg: "bg-blue-500/10",
-    chipBorder: "border-blue-500/20",
-    chipColor: "text-blue-700 dark:text-blue-300",
+    // 1 - Purple
+    name: "Purple",
+    gradient: "from-purple-500/40 via-purple-400/20 to-transparent",
+    border: "border-purple-500 hover:border-purple-700",
+    borderStrong: "border-purple-600",
+    shadow: "shadow-purple-500/10 hover:shadow-purple-500/25",
+    text: "text-purple-600 dark:text-purple-300",
+    iconBg: "bg-purple-600",
+    iconColor: "text-white",
+    badgeBg: "bg-purple-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-purple-700",
   },
   {
-    // 2 - Deep Blue
-    gradient: "from-blue-600/20 via-blue-500/10 to-transparent",
-    border: "border-blue-600/30 hover:border-blue-600/60",
-    shadow: "shadow-blue-600/5 hover:shadow-blue-600/15",
-    iconBg: "from-blue-600/25 to-blue-500/15",
-    iconColor: "text-blue-700",
-    badgeBg: "bg-blue-600/15",
-    badgeColor: "text-blue-800 dark:text-blue-300",
-    badgeBorder: "border-blue-600/25",
-    chipBg: "bg-blue-600/10",
-    chipBorder: "border-blue-600/20",
-    chipColor: "text-blue-800 dark:text-blue-300",
+    // 2 - Green
+    name: "Green",
+    gradient: "from-emerald-500/40 via-emerald-400/20 to-transparent",
+    border: "border-emerald-500 hover:border-emerald-700",
+    borderStrong: "border-emerald-600",
+    shadow: "shadow-emerald-500/10 hover:shadow-emerald-500/25",
+    text: "text-emerald-600 dark:text-emerald-300",
+    iconBg: "bg-emerald-600",
+    iconColor: "text-white",
+    badgeBg: "bg-emerald-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-emerald-700",
   },
   {
-    // 3 - Light Purple
-    gradient: "from-purple-400/20 via-purple-300/10 to-transparent",
-    border: "border-purple-400/30 hover:border-purple-400/60",
-    shadow: "shadow-purple-400/5 hover:shadow-purple-400/15",
-    iconBg: "from-purple-400/25 to-purple-300/15",
-    iconColor: "text-purple-500",
-    badgeBg: "bg-purple-400/15",
-    badgeColor: "text-purple-600 dark:text-purple-300",
-    badgeBorder: "border-purple-400/25",
-    chipBg: "bg-purple-400/10",
-    chipBorder: "border-purple-400/20",
-    chipColor: "text-purple-600 dark:text-purple-300",
+    // 3 - Blue (Alternate)
+    name: "Blue Alt",
+    gradient: "from-blue-600/40 via-blue-500/20 to-transparent",
+    border: "border-blue-600 hover:border-blue-800",
+    borderStrong: "border-blue-700",
+    shadow: "shadow-blue-600/10 hover:shadow-blue-600/25",
+    text: "text-blue-700 dark:text-blue-200",
+    iconBg: "bg-blue-700",
+    iconColor: "text-white",
+    badgeBg: "bg-blue-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-blue-800",
   },
   {
-    // 4 - Medium Purple
-    gradient: "from-purple-500/20 via-purple-400/10 to-transparent",
-    border: "border-purple-500/30 hover:border-purple-500/60",
-    shadow: "shadow-purple-500/5 hover:shadow-purple-500/15",
-    iconBg: "from-purple-500/25 to-purple-400/15",
-    iconColor: "text-purple-600",
-    badgeBg: "bg-purple-500/15",
-    badgeColor: "text-purple-700 dark:text-purple-300",
-    badgeBorder: "border-purple-500/25",
-    chipBg: "bg-purple-500/10",
-    chipBorder: "border-purple-500/20",
-    chipColor: "text-purple-700 dark:text-purple-300",
+    // 4 - Purple (Alternate)
+    name: "Purple Alt",
+    gradient: "from-purple-600/40 via-purple-500/20 to-transparent",
+    border: "border-purple-600 hover:border-purple-800",
+    borderStrong: "border-purple-700",
+    shadow: "shadow-purple-600/10 hover:shadow-purple-600/25",
+    text: "text-purple-700 dark:text-purple-200",
+    iconBg: "bg-purple-700",
+    iconColor: "text-white",
+    badgeBg: "bg-purple-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-purple-800",
   },
   {
-    // 5 - Deep Purple
-    gradient: "from-purple-600/20 via-purple-500/10 to-transparent",
-    border: "border-purple-600/30 hover:border-purple-600/60",
-    shadow: "shadow-purple-600/5 hover:shadow-purple-600/15",
-    iconBg: "from-purple-600/25 to-purple-500/15",
-    iconColor: "text-purple-700",
-    badgeBg: "bg-purple-600/15",
-    badgeColor: "text-purple-800 dark:text-purple-300",
-    badgeBorder: "border-purple-600/25",
-    chipBg: "bg-purple-600/10",
-    chipBorder: "border-purple-600/20",
-    chipColor: "text-purple-800 dark:text-purple-300",
-  },
-  {
-    // 6 - Blue-Purple Mix
-    gradient: "from-blue-500/20 via-purple-400/10 to-transparent",
-    border: "border-blue-500/30 hover:border-purple-500/60",
-    shadow: "shadow-purple-500/5 hover:shadow-purple-500/15",
-    iconBg: "from-blue-500/25 to-purple-400/15",
-    iconColor: "text-purple-600",
-    badgeBg: "bg-purple-500/15",
-    badgeColor: "text-purple-700 dark:text-purple-300",
-    badgeBorder: "border-purple-500/25",
-    chipBg: "bg-purple-500/10",
-    chipBorder: "border-purple-500/20",
-    chipColor: "text-purple-700 dark:text-purple-300",
-  },
-  {
-    // 7 - Purple-Blue Mix
-    gradient: "from-purple-500/20 via-blue-400/10 to-transparent",
-    border: "border-purple-500/30 hover:border-blue-500/60",
-    shadow: "shadow-blue-500/5 hover:shadow-blue-500/15",
-    iconBg: "from-purple-500/25 to-blue-400/15",
-    iconColor: "text-blue-600",
-    badgeBg: "bg-blue-500/15",
-    badgeColor: "text-blue-700 dark:text-blue-300",
-    badgeBorder: "border-blue-500/25",
-    chipBg: "bg-blue-500/10",
-    chipBorder: "border-blue-500/20",
-    chipColor: "text-blue-700 dark:text-blue-300",
+    // 5 - Green (Alternate)
+    name: "Green Alt",
+    gradient: "from-emerald-600/40 via-emerald-500/20 to-transparent",
+    border: "border-emerald-600 hover:border-emerald-800",
+    borderStrong: "border-emerald-700",
+    shadow: "shadow-emerald-600/10 hover:shadow-emerald-600/25",
+    text: "text-emerald-700 dark:text-emerald-200",
+    iconBg: "bg-emerald-700",
+    iconColor: "text-white",
+    badgeBg: "bg-emerald-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-emerald-800",
   },
 ];
 
@@ -127,42 +100,42 @@ const featuresData = [
     titleKey: "capTitle1",
     descKey: "capDesc1",
     badgeKey: "capBadge1",
-    colorIndex: 0, // Light Blue
+    colorIndex: 0, // Blue
   },
   {
     icon: "fa-globe",
     titleKey: "capTitle2",
     descKey: "capDesc2",
     badgeKey: "capBadge2",
-    colorIndex: 1, // Medium Blue
+    colorIndex: 1, // Purple
   },
   {
     icon: "fa-link",
     titleKey: "capTitle3",
     descKey: "capDesc3",
     badgeKey: "capBadge3",
-    colorIndex: 3, // Light Purple
+    colorIndex: 2, // Green
   },
   {
     icon: "fa-paint-brush",
     titleKey: "capTitle4",
     descKey: "capDesc4",
     badgeKey: "capBadge4",
-    colorIndex: 4, // Medium Purple
+    colorIndex: 3, // Blue Alt
   },
   {
     icon: "fa-sitemap",
     titleKey: "capTitle5",
     descKey: "capDesc5",
     badgeKey: "capBadge5",
-    colorIndex: 2, // Deep Blue
+    colorIndex: 4, // Purple Alt
   },
   {
     icon: "fa-users-cog",
     titleKey: "capTitle6",
     descKey: "capDesc6",
     badgeKey: "capBadge6",
-    colorIndex: 5, // Deep Purple
+    colorIndex: 5, // Green Alt
   },
 ];
 
@@ -221,25 +194,39 @@ export default function Features() {
               <div
                 key={index}
                 className={`
-                  feature-card rounded-2xl p-6 card
+                  feature-card rounded-2xl p-6
                   bg-gradient-to-br ${color.gradient}
-                  border ${color.border}
+                  border-2 ${color.border}
                   shadow-lg ${color.shadow}
                   transition-all duration-300 
                   hover:-translate-y-2 hover:shadow-xl ${color.shadow}
                   opacity-0
                   ${isRTL ? "rtl" : ""}
                 `}
+                style={{
+                  backgroundColor: "var(--bg-secondary)",
+                  backdropFilter: "blur(12px)",
+                }}
               >
+                {/* Stronger border indicator - decorative top border accent */}
+                <div
+                  className={`w-full h-1 rounded-t-2xl ${color.borderStrong} mb-4 -mt-6`}
+                />
+
+                {/* Icon with solid background and white icon */}
                 <div
                   className={`
-                    w-12 h-12 rounded-xl bg-gradient-to-br ${color.iconBg}
-                    flex items-center justify-center ${color.iconColor} mb-4
+                    w-12 h-12 rounded-xl
+                    flex items-center justify-center
+                    ${color.iconBg} ${color.iconColor}
+                    mb-4 shadow-md
                     ${isRTL ? "ml-auto mr-0" : ""}
                   `}
                 >
                   <i className={`fas ${feature.icon} text-xl`}></i>
                 </div>
+
+                {/* Badge with white text - بدون شفافیت */}
                 <span
                   className={`
                     inline-flex items-center px-3 py-1 rounded-full
@@ -251,6 +238,7 @@ export default function Features() {
                 >
                   {t(feature.badgeKey)}
                 </span>
+
                 <h3
                   className={`text-lg font-semibold text-[var(--text-primary)] mt-3 mb-2 ${isRTL ? "text-right" : ""}`}
                 >

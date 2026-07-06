@@ -3,6 +3,115 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 
+// ============================================
+// OFFICIAL COLOR PALETTE - Blue, Purple, Green
+// با پشتیبانی از تم دارک و لایت
+// ============================================
+const OFFICIAL_COLORS = [
+  {
+    // 0 - Blue
+    name: "Blue",
+    gradient: "from-blue-500/40 via-blue-400/20 to-transparent",
+    border: "border-blue-500 hover:border-blue-700",
+    borderStrong: "border-blue-600",
+    shadow: "shadow-blue-500/10 hover:shadow-blue-500/25",
+    text: "text-blue-600 dark:text-blue-300",
+    iconBg: "bg-blue-600",
+    iconColor: "text-white",
+    badgeBg: "bg-blue-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-blue-700",
+    techBg: "bg-blue-100 dark:bg-blue-900/30",
+    techColor: "text-blue-700 dark:text-white",
+    techBorder: "border-blue-300 dark:border-blue-700/30",
+  },
+  {
+    // 1 - Purple
+    name: "Purple",
+    gradient: "from-purple-500/40 via-purple-400/20 to-transparent",
+    border: "border-purple-500 hover:border-purple-700",
+    borderStrong: "border-purple-600",
+    shadow: "shadow-purple-500/10 hover:shadow-purple-500/25",
+    text: "text-purple-600 dark:text-purple-300",
+    iconBg: "bg-purple-600",
+    iconColor: "text-white",
+    badgeBg: "bg-purple-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-purple-700",
+    techBg: "bg-purple-100 dark:bg-purple-900/30",
+    techColor: "text-purple-700 dark:text-white",
+    techBorder: "border-purple-300 dark:border-purple-700/30",
+  },
+  {
+    // 2 - Green
+    name: "Green",
+    gradient: "from-emerald-500/40 via-emerald-400/20 to-transparent",
+    border: "border-emerald-500 hover:border-emerald-700",
+    borderStrong: "border-emerald-600",
+    shadow: "shadow-emerald-500/10 hover:shadow-emerald-500/25",
+    text: "text-emerald-600 dark:text-emerald-300",
+    iconBg: "bg-emerald-600",
+    iconColor: "text-white",
+    badgeBg: "bg-emerald-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-emerald-700",
+    techBg: "bg-emerald-100 dark:bg-emerald-900/30",
+    techColor: "text-emerald-700 dark:text-white",
+    techBorder: "border-emerald-300 dark:border-emerald-700/30",
+  },
+  {
+    // 3 - Blue (Alternate)
+    name: "Blue Alt",
+    gradient: "from-blue-600/40 via-blue-500/20 to-transparent",
+    border: "border-blue-600 hover:border-blue-800",
+    borderStrong: "border-blue-700",
+    shadow: "shadow-blue-600/10 hover:shadow-blue-600/25",
+    text: "text-blue-700 dark:text-blue-200",
+    iconBg: "bg-blue-700",
+    iconColor: "text-white",
+    badgeBg: "bg-blue-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-blue-800",
+    techBg: "bg-blue-200 dark:bg-blue-800/30",
+    techColor: "text-blue-800 dark:text-white",
+    techBorder: "border-blue-400 dark:border-blue-700/30",
+  },
+  {
+    // 4 - Purple (Alternate)
+    name: "Purple Alt",
+    gradient: "from-purple-600/40 via-purple-500/20 to-transparent",
+    border: "border-purple-600 hover:border-purple-800",
+    borderStrong: "border-purple-700",
+    shadow: "shadow-purple-600/10 hover:shadow-purple-600/25",
+    text: "text-purple-700 dark:text-purple-200",
+    iconBg: "bg-purple-700",
+    iconColor: "text-white",
+    badgeBg: "bg-purple-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-purple-800",
+    techBg: "bg-purple-200 dark:bg-purple-800/30",
+    techColor: "text-purple-800 dark:text-white",
+    techBorder: "border-purple-400 dark:border-purple-700/30",
+  },
+  {
+    // 5 - Green (Alternate)
+    name: "Green Alt",
+    gradient: "from-emerald-600/40 via-emerald-500/20 to-transparent",
+    border: "border-emerald-600 hover:border-emerald-800",
+    borderStrong: "border-emerald-700",
+    shadow: "shadow-emerald-600/10 hover:shadow-emerald-600/25",
+    text: "text-emerald-700 dark:text-emerald-200",
+    iconBg: "bg-emerald-700",
+    iconColor: "text-white",
+    badgeBg: "bg-emerald-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-emerald-800",
+    techBg: "bg-emerald-200 dark:bg-emerald-800/30",
+    techColor: "text-emerald-800 dark:text-white",
+    techBorder: "border-emerald-400 dark:border-emerald-700/30",
+  },
+];
+
 const projectsData = [
   {
     titleKey: "projectPactusTitle",
@@ -11,16 +120,7 @@ const projectsData = [
     descriptionKey: "projectPactusDesc",
     technologies: ["Flutter", "gRPC", "Blockchain"],
     icon: "fa-link",
-    gradient: "from-blue-500/20 via-blue-400/10 to-transparent",
-    borderColor: "border-blue-500/25",
-    iconBg: "from-blue-500/25 to-blue-400/15",
-    iconColor: "text-blue-500",
-    badgeBg: "bg-blue-500/15",
-    badgeColor: "text-blue-600 dark:text-blue-400",
-    badgeBorder: "border-blue-500/20",
-    techBg: "bg-blue-500/8",
-    techBorder: "border-blue-500/15",
-    techColor: "text-blue-600 dark:text-blue-400",
+    colorIndex: 0,
   },
   {
     titleKey: "projectDaneshjouyarTitle",
@@ -29,16 +129,7 @@ const projectsData = [
     descriptionKey: "projectDaneshjouyarDesc",
     technologies: ["Flutter", "Clean Architecture", "BLoC"],
     icon: "fa-graduation-cap",
-    gradient: "from-purple-500/20 via-purple-400/10 to-transparent",
-    borderColor: "border-purple-500/25",
-    iconBg: "from-purple-500/25 to-purple-400/15",
-    iconColor: "text-purple-500",
-    badgeBg: "bg-purple-500/15",
-    badgeColor: "text-purple-600 dark:text-purple-400",
-    badgeBorder: "border-purple-500/20",
-    techBg: "bg-purple-500/8",
-    techBorder: "border-purple-500/15",
-    techColor: "text-purple-600 dark:text-purple-400",
+    colorIndex: 1,
   },
   {
     titleKey: "projectTONTitle",
@@ -47,16 +138,7 @@ const projectsData = [
     descriptionKey: "projectTONDesc",
     technologies: ["Golang", "Smart Contracts", "TON"],
     icon: "fa-coins",
-    gradient: "from-emerald-500/20 via-emerald-400/10 to-transparent",
-    borderColor: "border-emerald-500/25",
-    iconBg: "from-emerald-500/25 to-emerald-400/15",
-    iconColor: "text-emerald-500",
-    badgeBg: "bg-emerald-500/15",
-    badgeColor: "text-emerald-600 dark:text-emerald-400",
-    badgeBorder: "border-emerald-500/20",
-    techBg: "bg-emerald-500/8",
-    techBorder: "border-emerald-500/15",
-    techColor: "text-emerald-600 dark:text-emerald-400",
+    colorIndex: 2,
   },
   {
     titleKey: "projectAdminTitle",
@@ -65,16 +147,7 @@ const projectsData = [
     descriptionKey: "projectAdminDesc",
     technologies: ["Nest.js", "Docker", "RabbitMQ"],
     icon: "fa-server",
-    gradient: "from-amber-500/20 via-amber-400/10 to-transparent",
-    borderColor: "border-amber-500/25",
-    iconBg: "from-amber-500/25 to-amber-400/15",
-    iconColor: "text-amber-500",
-    badgeBg: "bg-amber-500/15",
-    badgeColor: "text-amber-600 dark:text-amber-400",
-    badgeBorder: "border-amber-500/20",
-    techBg: "bg-amber-500/8",
-    techBorder: "border-amber-500/15",
-    techColor: "text-amber-600 dark:text-amber-400",
+    colorIndex: 3,
   },
   {
     titleKey: "projectMohsenTitle",
@@ -83,16 +156,7 @@ const projectsData = [
     descriptionKey: "projectMohsenDesc",
     technologies: ["Flutter", "Bluetooth", "Geolocation"],
     icon: "fa-shopping-cart",
-    gradient: "from-rose-500/20 via-rose-400/10 to-transparent",
-    borderColor: "border-rose-500/25",
-    iconBg: "from-rose-500/25 to-rose-400/15",
-    iconColor: "text-rose-500",
-    badgeBg: "bg-rose-500/15",
-    badgeColor: "text-rose-600 dark:text-rose-400",
-    badgeBorder: "border-rose-500/20",
-    techBg: "bg-rose-500/8",
-    techBorder: "border-rose-500/15",
-    techColor: "text-rose-600 dark:text-rose-400",
+    colorIndex: 4,
   },
   {
     titleKey: "projectPackagesTitle",
@@ -101,16 +165,7 @@ const projectsData = [
     descriptionKey: "projectPackagesDesc",
     technologies: ["Flutter", "Dart", "Pub.dev"],
     icon: "fa-box",
-    gradient: "from-indigo-500/20 via-indigo-400/10 to-transparent",
-    borderColor: "border-indigo-500/25",
-    iconBg: "from-indigo-500/25 to-indigo-400/15",
-    iconColor: "text-indigo-500",
-    badgeBg: "bg-indigo-500/15",
-    badgeColor: "text-indigo-600 dark:text-indigo-400",
-    badgeBorder: "border-indigo-500/20",
-    techBg: "bg-indigo-500/8",
-    techBorder: "border-indigo-500/15",
-    techColor: "text-indigo-600 dark:text-indigo-400",
+    colorIndex: 5,
   },
 ];
 
@@ -157,80 +212,106 @@ export default function Portfolio() {
             <span className="gradient-text">{t("portfolioTitle")}</span>
           </h2>
           <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-lg">
-            Real engineering work with real impact
+            {t("principle4Title")}
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projectsData.map((proj, idx) => (
-            <div
-              key={idx}
-              className={`
-                project-card rounded-2xl p-6 card
-                bg-gradient-to-br ${proj.gradient}
-                border ${proj.borderColor}
-                transition-all duration-300 
-                hover:-translate-y-2 hover:shadow-xl
-                opacity-0
-                ${isRTL ? "rtl" : ""}
-              `}
-            >
+          {projectsData.map((proj, idx) => {
+            const color =
+              OFFICIAL_COLORS[proj.colorIndex % OFFICIAL_COLORS.length];
+            return (
               <div
+                key={idx}
                 className={`
-                  w-12 h-12 rounded-xl bg-gradient-to-br ${proj.iconBg}
-                  flex items-center justify-center ${proj.iconColor} mb-4
-                  ${isRTL ? "ml-auto mr-0" : ""}
+                  project-card rounded-2xl p-6
+                  bg-gradient-to-br ${color.gradient}
+                  border-2 ${color.border}
+                  shadow-lg ${color.shadow}
+                  transition-all duration-300
+                  hover:-translate-y-2 hover:shadow-xl
+                  opacity-0
+                  ${isRTL ? "rtl" : ""}
                 `}
+                style={{
+                  backgroundColor: "var(--bg-secondary)",
+                  backdropFilter: "blur(12px)",
+                }}
               >
-                <i className={`fas ${proj.icon} text-xl`}></i>
+                {/* Decorative top border accent */}
+                <div
+                  className={`w-full h-1 rounded-t-2xl ${color.borderStrong} mb-4 -mt-6`}
+                />
+
+                {/* Icon */}
+                <div
+                  className={`
+                    w-12 h-12 rounded-xl
+                    flex items-center justify-center
+                    ${color.iconBg} ${color.iconColor}
+                    mb-4 shadow-md
+                    ${isRTL ? "ml-auto mr-0" : ""}
+                  `}
+                >
+                  <i className={`fas ${proj.icon} text-xl`}></i>
+                </div>
+
+                {/* Badge */}
+                <span
+                  className={`
+                    inline-flex items-center px-3 py-1 rounded-full
+                    text-[10px] font-mono font-semibold tracking-wider uppercase
+                    ${color.badgeBg} ${color.badgeColor}
+                    border ${color.badgeBorder}
+                    ${isRTL ? "flex-row-reverse" : ""}
+                  `}
+                >
+                  {t(proj.categoryKey)}
+                </span>
+
+                <h3
+                  className={`text-lg font-semibold text-[var(--text-primary)] mt-3 ${isRTL ? "text-right" : ""}`}
+                >
+                  {t(proj.titleKey)}
+                </h3>
+                <p
+                  className={`text-sm text-[var(--text-secondary)] mt-1 ${isRTL ? "text-right" : ""}`}
+                >
+                  <span className="text-[var(--text-primary)] font-medium">
+                    {t("tarvixRole")}:
+                  </span>{" "}
+                  {t(proj.roleKey)}
+                </p>
+                <p
+                  className={`text-sm text-[var(--text-muted)] mt-2 leading-relaxed ${isRTL ? "text-right" : ""}`}
+                >
+                  {t(proj.descriptionKey)}
+                </p>
+
+                {/* Technologies */}
+                <div
+                  className={`flex flex-wrap gap-2 mt-4 ${isRTL ? "flex-row-reverse" : ""}`}
+                >
+                  {proj.technologies.map((tech, i) => (
+                    <span
+                      key={i}
+                      className={`
+                        inline-flex items-center px-3 py-1 rounded-full
+                        text-[11px] font-semibold
+                        ${color.techBg}
+                        ${color.techColor}
+                        border ${color.techBorder}
+                        transition-all duration-200
+                        hover:scale-105
+                      `}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <span
-                className={`
-                  inline-flex items-center px-3 py-1 rounded-full
-                  text-[10px] font-mono font-semibold tracking-wider uppercase
-                  ${proj.badgeBg} ${proj.badgeColor}
-                  border ${proj.badgeBorder}
-                  ${isRTL ? "flex-row-reverse" : ""}
-                `}
-              >
-                {t(proj.categoryKey)}
-              </span>
-              <h3
-                className={`text-lg font-semibold text-[var(--text-primary)] mt-3 ${isRTL ? "text-right" : ""}`}
-              >
-                {t(proj.titleKey)}
-              </h3>
-              <p
-                className={`text-sm text-[var(--text-secondary)] mt-1 ${isRTL ? "text-right" : ""}`}
-              >
-                <span className="text-[var(--text-primary)] font-medium">
-                  {t("tarvixRole")}:
-                </span>{" "}
-                {t(proj.roleKey)}
-              </p>
-              <p
-                className={`text-sm text-[var(--text-muted)] mt-2 leading-relaxed ${isRTL ? "text-right" : ""}`}
-              >
-                {t(proj.descriptionKey)}
-              </p>
-              <div
-                className={`flex flex-wrap gap-2 mt-4 ${isRTL ? "flex-row-reverse" : ""}`}
-              >
-                {proj.technologies.map((tech, i) => (
-                  <span
-                    key={i}
-                    className={`
-                      text-[10px] px-3 py-1 rounded-full font-medium
-                      ${proj.techBg} ${proj.techColor}
-                      border ${proj.techBorder}
-                    `}
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

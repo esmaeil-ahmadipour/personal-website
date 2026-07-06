@@ -249,5 +249,11 @@
   "viewAllPosts": "مشاهده همه مطالب",
   "teamSubtitle": "افراد پشت مهندسی Tarvix",
   "viewAll": "همه",
-  "errorLoadingPost": "خطا در بارگذاری پست"
+  "errorLoadingPost": "خطا در بارگذاری پست",
+  "edTech": "فناوری آموزشی",
+  "logistics": "حمل و نقل و لجستیک",
+  "retailGrocery": "خرده فروشی و مواد غذایی",
+  "finTechLeanTech": "فناوری مالی / وام دهی",
+  "principle4Title": "کار مهندسی واقعی با تأثیر واقعی",
+  "web3Blockchain": "وب ۳ و بلاکچین"
 }

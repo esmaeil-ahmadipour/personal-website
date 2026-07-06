@@ -8,66 +8,93 @@ import LanguageSwitcher from "@/components/SwitchLanguage";
 import ThemeSwitcherWrapper from "@/features/shared/components/ThemeSwitcherWrapper";
 
 // ============================================
-// OFFICIAL COLOR PALETTE FOR DEV PLATFORM CARDS
+// OFFICIAL COLOR PALETTE - Blue, Purple, Green
+// با opacity بالاتر برای تم روشن
 // ============================================
-const CARD_COLORS = [
+const OFFICIAL_COLORS = [
   {
-    gradient: "from-blue-500/20 via-blue-400/10 to-transparent",
-    border: "border-blue-500/25 hover:border-blue-500/50",
-    shadow: "shadow-blue-500/5 hover:shadow-blue-500/15",
-    badge: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/20",
-    title: "hover:text-blue-600 dark:hover:text-blue-400",
-    iconColor: "text-blue-500",
-    borderLeft: "border-l-blue-500",
+    // 0 - Blue
+    name: "Blue",
+    gradient: "from-blue-500/40 via-blue-400/20 to-transparent",
+    border: "border-blue-500 hover:border-blue-700",
+    borderStrong: "border-blue-600",
+    shadow: "shadow-blue-500/10 hover:shadow-blue-500/25",
+    text: "text-blue-600 dark:text-blue-300",
+    iconBg: "bg-blue-600",
+    iconColor: "text-white",
+    badgeBg: "bg-blue-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-blue-700",
   },
   {
-    gradient: "from-purple-500/20 via-purple-400/10 to-transparent",
-    border: "border-purple-500/25 hover:border-purple-500/50",
-    shadow: "shadow-purple-500/5 hover:shadow-purple-500/15",
-    badge:
-      "bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/20",
-    title: "hover:text-purple-600 dark:hover:text-purple-400",
-    iconColor: "text-purple-500",
-    borderLeft: "border-l-purple-500",
+    // 1 - Purple
+    name: "Purple",
+    gradient: "from-purple-500/40 via-purple-400/20 to-transparent",
+    border: "border-purple-500 hover:border-purple-700",
+    borderStrong: "border-purple-600",
+    shadow: "shadow-purple-500/10 hover:shadow-purple-500/25",
+    text: "text-purple-600 dark:text-purple-300",
+    iconBg: "bg-purple-600",
+    iconColor: "text-white",
+    badgeBg: "bg-purple-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-purple-700",
   },
   {
-    gradient: "from-emerald-500/20 via-emerald-400/10 to-transparent",
-    border: "border-emerald-500/25 hover:border-emerald-500/50",
-    shadow: "shadow-emerald-500/5 hover:shadow-emerald-500/15",
-    badge:
-      "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-    title: "hover:text-emerald-600 dark:hover:text-emerald-400",
-    iconColor: "text-emerald-500",
-    borderLeft: "border-l-emerald-500",
+    // 2 - Green
+    name: "Green",
+    gradient: "from-emerald-500/40 via-emerald-400/20 to-transparent",
+    border: "border-emerald-500 hover:border-emerald-700",
+    borderStrong: "border-emerald-600",
+    shadow: "shadow-emerald-500/10 hover:shadow-emerald-500/25",
+    text: "text-emerald-600 dark:text-emerald-300",
+    iconBg: "bg-emerald-600",
+    iconColor: "text-white",
+    badgeBg: "bg-emerald-600",
+    badgeColor: "text-white",
+    badgeBorder: "border-emerald-700",
   },
   {
-    gradient: "from-rose-500/20 via-rose-400/10 to-transparent",
-    border: "border-rose-500/25 hover:border-rose-500/50",
-    shadow: "shadow-rose-500/5 hover:shadow-rose-500/15",
-    badge: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20",
-    title: "hover:text-rose-600 dark:hover:text-rose-400",
-    iconColor: "text-rose-500",
-    borderLeft: "border-l-rose-500",
+    // 3 - Blue (Alternate)
+    name: "Blue Alt",
+    gradient: "from-blue-600/40 via-blue-500/20 to-transparent",
+    border: "border-blue-600 hover:border-blue-800",
+    borderStrong: "border-blue-700",
+    shadow: "shadow-blue-600/10 hover:shadow-blue-600/25",
+    text: "text-blue-700 dark:text-blue-200",
+    iconBg: "bg-blue-700",
+    iconColor: "text-white",
+    badgeBg: "bg-blue-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-blue-800",
   },
   {
-    gradient: "from-amber-500/20 via-amber-400/10 to-transparent",
-    border: "border-amber-500/25 hover:border-amber-500/50",
-    shadow: "shadow-amber-500/5 hover:shadow-amber-500/15",
-    badge:
-      "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
-    title: "hover:text-amber-600 dark:hover:text-amber-400",
-    iconColor: "text-amber-500",
-    borderLeft: "border-l-amber-500",
+    // 4 - Purple (Alternate)
+    name: "Purple Alt",
+    gradient: "from-purple-600/40 via-purple-500/20 to-transparent",
+    border: "border-purple-600 hover:border-purple-800",
+    borderStrong: "border-purple-700",
+    shadow: "shadow-purple-600/10 hover:shadow-purple-600/25",
+    text: "text-purple-700 dark:text-purple-200",
+    iconBg: "bg-purple-700",
+    iconColor: "text-white",
+    badgeBg: "bg-purple-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-purple-800",
   },
   {
-    gradient: "from-indigo-500/20 via-indigo-400/10 to-transparent",
-    border: "border-indigo-500/25 hover:border-indigo-500/50",
-    shadow: "shadow-indigo-500/5 hover:shadow-indigo-500/15",
-    badge:
-      "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
-    title: "hover:text-indigo-600 dark:hover:text-indigo-400",
-    iconColor: "text-indigo-500",
-    borderLeft: "border-l-indigo-500",
+    // 5 - Green (Alternate)
+    name: "Green Alt",
+    gradient: "from-emerald-600/40 via-emerald-500/20 to-transparent",
+    border: "border-emerald-600 hover:border-emerald-800",
+    borderStrong: "border-emerald-700",
+    shadow: "shadow-emerald-600/10 hover:shadow-emerald-600/25",
+    text: "text-emerald-700 dark:text-emerald-200",
+    iconBg: "bg-emerald-700",
+    iconColor: "text-white",
+    badgeBg: "bg-emerald-700",
+    badgeColor: "text-white",
+    badgeBorder: "border-emerald-800",
   },
 ];
 
@@ -155,24 +182,33 @@ export default function DevPlatformPage() {
               { badge: t("whyBadge1"), text: t("whyText1"), colorIndex: 0 },
               { badge: t("whyBadge2"), text: t("whyText2"), colorIndex: 1 },
             ].map((item, idx) => {
-              const color = CARD_COLORS[item.colorIndex % CARD_COLORS.length];
+              const color =
+                OFFICIAL_COLORS[item.colorIndex % OFFICIAL_COLORS.length];
               return (
                 <div
                   key={idx}
                   className={`
-                    rounded-2xl p-6 card
+                    rounded-2xl p-6
                     bg-gradient-to-br ${color.gradient}
-                    border ${color.border}
+                    border-2 ${color.border}
                     shadow-lg ${color.shadow}
                     transition-all duration-300
                     hover:-translate-y-2 hover:shadow-xl ${color.shadow}
                   `}
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    backdropFilter: "blur(12px)",
+                  }}
                 >
+                  <div
+                    className={`w-full h-1 rounded-t-2xl ${color.borderStrong} mb-4 -mt-6`}
+                  />
                   <span
                     className={`
                       inline-flex items-center px-3 py-1 rounded-full
                       text-[10px] font-mono font-semibold tracking-wider uppercase
-                      ${color.badge}
+                      ${color.badgeBg} ${color.badgeColor}
+                      border ${color.badgeBorder}
                     `}
                   >
                     {item.badge}
@@ -207,19 +243,27 @@ export default function DevPlatformPage() {
               { text: t("substanceText1"), colorIndex: 2 },
               { text: t("substanceText2"), colorIndex: 3 },
             ].map((item, idx) => {
-              const color = CARD_COLORS[item.colorIndex % CARD_COLORS.length];
+              const color =
+                OFFICIAL_COLORS[item.colorIndex % OFFICIAL_COLORS.length];
               return (
                 <div
                   key={idx}
                   className={`
-                    rounded-2xl p-6 card
+                    rounded-2xl p-6
                     bg-gradient-to-br ${color.gradient}
-                    border ${color.border}
+                    border-2 ${color.border}
                     shadow-lg ${color.shadow}
                     transition-all duration-300
                     hover:-translate-y-2 hover:shadow-xl ${color.shadow}
                   `}
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    backdropFilter: "blur(12px)",
+                  }}
                 >
+                  <div
+                    className={`w-full h-1 rounded-t-2xl ${color.borderStrong} mb-4 -mt-6`}
+                  />
                   <p className="text-[var(--text-secondary)] leading-relaxed">
                     {item.text}
                   </p>
@@ -259,20 +303,27 @@ export default function DevPlatformPage() {
                 colorIndex: 3,
               },
             ].map((layer, idx) => {
-              const color = CARD_COLORS[layer.colorIndex % CARD_COLORS.length];
+              const color =
+                OFFICIAL_COLORS[layer.colorIndex % OFFICIAL_COLORS.length];
               return (
                 <div
                   key={idx}
                   className={`
-                    rounded-2xl p-6 card
+                    rounded-2xl p-6
                     bg-gradient-to-br ${color.gradient}
-                    border ${color.border}
-                    border-l-[3px] ${color.borderLeft}
+                    border-2 ${color.border}
                     shadow-lg ${color.shadow}
                     transition-all duration-300
                     hover:-translate-y-1 hover:shadow-xl ${color.shadow}
                   `}
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    backdropFilter: "blur(12px)",
+                  }}
                 >
+                  <div
+                    className={`w-full h-1 rounded-t-2xl ${color.borderStrong} mb-4 -mt-6`}
+                  />
                   <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                     {layer.title}
                   </h3>
@@ -319,24 +370,32 @@ export default function DevPlatformPage() {
               },
             ].map((principle, idx) => {
               const color =
-                CARD_COLORS[principle.colorIndex % CARD_COLORS.length];
+                OFFICIAL_COLORS[principle.colorIndex % OFFICIAL_COLORS.length];
               return (
                 <div
                   key={idx}
                   className={`
-                    rounded-2xl p-6 card
+                    rounded-2xl p-6
                     bg-gradient-to-br ${color.gradient}
-                    border ${color.border}
+                    border-2 ${color.border}
                     shadow-lg ${color.shadow}
                     transition-all duration-300
                     hover:-translate-y-2 hover:shadow-xl ${color.shadow}
                   `}
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    backdropFilter: "blur(12px)",
+                  }}
                 >
+                  <div
+                    className={`w-full h-1 rounded-t-2xl ${color.borderStrong} mb-4 -mt-6`}
+                  />
                   <span
                     className={`
                       inline-flex items-center px-3 py-1 rounded-full
                       text-[10px] font-mono font-semibold tracking-wider uppercase
-                      ${color.badge}
+                      ${color.badgeBg} ${color.badgeColor}
+                      border ${color.badgeBorder}
                     `}
                   >
                     {principle.badge}
@@ -392,22 +451,37 @@ export default function DevPlatformPage() {
                 isTrigger: true,
               },
             ].map((item, idx) => {
-              const color = CARD_COLORS[item.colorIndex % CARD_COLORS.length];
+              const color =
+                OFFICIAL_COLORS[item.colorIndex % OFFICIAL_COLORS.length];
               return (
                 <div
                   key={idx}
                   className={`
-                    text-center p-6 rounded-2xl card
+                    text-center p-6 rounded-2xl
                     bg-gradient-to-br ${color.gradient}
-                    border ${color.border}
+                    border-2 ${color.border}
                     shadow-lg ${color.shadow}
                     transition-all duration-300
                     hover:-translate-y-2 hover:shadow-xl ${color.shadow}
                   `}
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    backdropFilter: "blur(12px)",
+                  }}
                 >
-                  <i
-                    className={`fas ${item.icon} text-3xl ${color.iconColor} mb-4 block`}
-                  ></i>
+                  <div
+                    className={`w-full h-1 rounded-t-2xl ${color.borderStrong} mb-4 -mt-6`}
+                  />
+                  <div
+                    className={`
+                      w-14 h-14 rounded-xl
+                      flex items-center justify-center mx-auto
+                      ${color.iconBg} ${color.iconColor}
+                      mb-4 shadow-md
+                    `}
+                  >
+                    <i className={`fas ${item.icon} text-2xl`}></i>
+                  </div>
                   <h3 className="text-[var(--text-primary)] font-semibold">
                     {item.title}
                   </h3>
@@ -418,7 +492,7 @@ export default function DevPlatformPage() {
                     <EarlyAccessTrigger
                       className={`
                         inline-block mt-4 text-sm font-medium
-                        ${color.iconColor} hover:${color.title}
+                        ${color.text} hover:${color.text}
                         transition-colors cursor-pointer
                       `}
                     >
@@ -429,7 +503,7 @@ export default function DevPlatformPage() {
                       href="#"
                       className={`
                         inline-block mt-4 text-sm font-medium
-                        ${color.iconColor} hover:${color.title}
+                        ${color.text} hover:${color.text}
                         transition-colors
                       `}
                     >

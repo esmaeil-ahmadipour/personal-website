@@ -249,5 +249,11 @@
   "viewAllPosts": "View all posts",
   "viewAll": "All",
   "teamSubtitle": "The people behind Tarvix engineering",
-  "errorLoadingPost": "Error loading post"
+  "errorLoadingPost": "Error loading post",
+  "edTech": "Ed-Tech",
+  "logistics": "Logistics",
+  "retailGrocery": "Retail & Grocery",
+  "finTechLeanTech": "Fin-Tech/Lean-Tech",
+  "principle4Title": "Real engineering work with real impact",
+  "web3Blockchain": "Web3 & Blockchain"
 }
