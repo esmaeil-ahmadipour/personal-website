@@ -47,15 +47,15 @@ export function BlogPageSizeSelector({
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            px-3 py-1.5 pr-8 text-sm rounded-lg
+            px-3 py-1.5 text-sm rounded-lg
             bg-white dark:bg-[var(--bg-elevated)]
-            border border-gray-300 dark:border-[var(--border-strong)]
-            text-gray-700 dark:text-gray-200
+            border border-gray-500 dark:border-[var(--border-strong)]
+            text-gray-700 dark:text-gray-500
             hover:border-[var(--accent-blue)]/50
             focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)]
             outline-none transition-all
             cursor-pointer min-w-[70px]
-            ${isRTL ? "text-right" : "text-left"}
+            ${isRTL ? "pl-8 text-right" : "pr-8 text-left"}
           `}
         >
           {value}
@@ -64,9 +64,9 @@ export function BlogPageSizeSelector({
         {/* آیکون فلش پایین */}
         <div
           className={`
-          absolute inset-y-0 flex items-center pointer-events-none
-          ${isRTL ? "left-2" : "right-2"}
-        `}
+            absolute inset-y-0 flex items-center pointer-events-none
+            ${isRTL ? "left-3" : "right-3"}
+          `}
         >
           <svg
             className={`w-4 h-4 text-gray-400 dark:text-[var(--text-muted)] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
@@ -89,7 +89,7 @@ export function BlogPageSizeSelector({
             className={`
               absolute top-full mt-2 w-full min-w-[70px] rounded-lg shadow-lg z-50
               bg-white dark:bg-[#1f2937]
-              border border-gray-200 dark:border-[var(--border-strong)]
+              border border-gray-600 dark:border-[var(--border-strong)]
               overflow-hidden py-1
               ${isRTL ? "left-0 text-right" : "left-0 text-left"}
             `}
@@ -105,8 +105,8 @@ export function BlogPageSizeSelector({
                   w-full px-3 py-1.5 text-sm text-left transition-colors
                   ${
                     value === size
-                      ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      ? "bg-blue-300 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
+                      : "text-gray-900 dark:text-gray-400 hover:bg-gray-400 dark:hover:bg-gray-700/50"
                   }
                 `}
               >

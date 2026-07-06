@@ -2,7 +2,7 @@
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 
-// Roboto for English
+// Roboto for English‍
 export const roboto = Inter({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],

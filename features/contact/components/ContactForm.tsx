@@ -165,37 +165,55 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
           >
             <option
               value="flutter"
-              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+              className={`
+                  w-full px-3 py-1.5 text-sm transition-colors
+                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
+                `}
             >
               {t("serviceFlutter")}
             </option>
             <option
               value="web"
-              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+              className={`
+                  w-full px-3 py-1.5 text-sm transition-colors
+                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
+                `}
             >
               {t("serviceWeb")}
             </option>
             <option
               value="web3"
-              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+              className={`
+                  w-full px-3 py-1.5 text-sm transition-colors
+                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
+                `}
             >
               {t("serviceWeb3")}
             </option>
             <option
               value="consulting"
-              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+              className={`
+                  w-full px-3 py-1.5 text-sm transition-colors
+                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
+                `}
             >
               {t("serviceConsulting")}
             </option>
             <option
               value="foundation"
-              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+              className={`
+                  w-full px-3 py-1.5 text-sm transition-colors
+                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
+                `}
             >
               {t("serviceFoundation")}
             </option>
             <option
               value="audit"
-              className="text-[var(--text-primary)] bg-[var(--bg-surface)]"
+              className={`
+                  w-full px-3 py-1.5 text-sm transition-colors
+                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
+                `}
             >
               {t("serviceAudit")}
             </option>
