@@ -2,7 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import type { BlogPost } from "../types/get-blog-post.types";
-
+import { BlogImageWithPlaceholder } from "@/components/BlogImageWithPlaceholder";
+ 
 interface BlogPostPageProps {
   post: BlogPost;
   locale: "en" | "fa";
@@ -81,7 +82,7 @@ export function BlogPostPage({ post, locale }: BlogPostPageProps) {
     headline: title,
     description: excerpt || title,
     image:
-      post.coverImageUrl || "https://tarvix.org/images/default-blog-cover.jpg",
+      post.coverImageUrl || "https://tarvix.org/images/default-blog-cover.webp",
     datePublished: post.publishedAt?.toISOString(),
     dateModified: post.updatedAt?.toISOString(),
     author: {
@@ -160,27 +161,31 @@ export function BlogPostPage({ post, locale }: BlogPostPageProps) {
 
           {/* نویسنده */}
           <div className="flex items-center gap-3 pt-4">
-            {hasAuthorAvatar && (
-              <img
-                src={post.author.avatarUrl!}
-                alt={authorName}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-background shadow-sm"
-              />
-            )}
+            <BlogImageWithPlaceholder
+              src={post.author.avatarUrl}
+              alt={authorName}
+              className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
+              fill={false}
+              width={40}
+              height={40}
+            />
             <span className="font-semibold text-foreground">{authorName}</span>
           </div>
         </header>
 
         {/* --- تصویر شاخص --- */}
-        {hasCoverImage && (
-          <figure className="rounded-2xl overflow-hidden aspect-video max-h-[450px] shadow-lg border border-border/20">
-            <img
-              src={post.coverImageUrl!}
-              alt={title}
-              className="w-full h-full object-cover"
-            />
-          </figure>
-        )}
+        <figure className="rounded-2xl overflow-hidden aspect-video max-h-[450px] shadow-lg border border-border/20">
+          <BlogImageWithPlaceholder
+            src={post.coverImageUrl}
+            alt={title}
+            className="w-full h-full"
+            fill={false}
+            width={1200}
+            height={675}
+            priority={true}
+            sizes="(max-width: 768px) 100vw, 1200px"
+          />
+        </figure>
 
         {/* --- بدنه محتوا --- */}
         <main
@@ -215,13 +220,14 @@ export function BlogPostPage({ post, locale }: BlogPostPageProps) {
           {hasAuthorBio && (
             <section className="p-6 rounded-xl bg-muted/30 border border-border/60">
               <div className="flex items-start gap-4">
-                {hasAuthorAvatar && (
-                  <img
-                    src={post.author.avatarUrl!}
-                    alt={authorName}
-                    className="w-12 h-12 rounded-full object-cover border border-border"
-                  />
-                )}
+                <BlogImageWithPlaceholder
+                  src={post.author.avatarUrl}
+                  alt={authorName}
+                  className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0"
+                  fill={false}
+                  width={48}
+                  height={48}
+                />
                 <div className="space-y-1">
                   <h3 className="font-semibold text-foreground">
                     {authorName}

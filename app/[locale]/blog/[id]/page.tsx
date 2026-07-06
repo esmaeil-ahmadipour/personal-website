@@ -92,7 +92,7 @@ export async function generateMetadata({
   const description = isFa
     ? post.seoDescriptionFa || post.excerptFa
     : post.seoDescriptionEn || post.excerptEn;
-  const imageUrl = post.coverImageUrl || "/images/default-blog-cover.jpg";
+  const imageUrl = "/images/default-blog-cover.webp";
   const url = `https://tarvix.org/${locale}/blog/${post.slug}`;
 
   return {

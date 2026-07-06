@@ -6,6 +6,7 @@ import { useBlogListQuery } from "@/features/blog-list";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
+import { BlogImageWithPlaceholder } from "@/components/BlogImageWithPlaceholder";
 
 interface LatestPostsProps {
   limit?: number;
@@ -18,7 +19,7 @@ const OFFICIAL_COLORS = [
   {
     // Blue - Trust, Professional
     gradient: "from-blue-500/20 via-blue-400/10 to-transparent",
-    border: "border-blue-500/40 hover:border-blue-500/70", // Increased opacity for light theme
+    border: "border-blue-500/40 hover:border-blue-500/70",
     shadow: "shadow-blue-500/5 hover:shadow-blue-500/15",
     badge: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30",
     title: "group-hover:text-blue-600 dark:group-hover:text-blue-400",
@@ -167,24 +168,26 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
             `}
             dir={isRTL ? "rtl" : "ltr"}
           >
-            {post.coverImageUrl && (
-              <div className="relative w-full aspect-[16/9] bg-[var(--bg-elevated)] overflow-hidden">
-                <Image
-                  src={post.coverImageUrl}
-                  alt={post.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-                <div
-                  className={`
-                    absolute inset-0 opacity-0 group-hover:opacity-100 
-                    transition-opacity duration-500
-                    bg-gradient-to-t from-black/30 via-transparent to-transparent
-                  `}
-                />
-              </div>
-            )}
+            {/* تصویر با placeholder */}
+            <div className="relative w-full aspect-[16/9] bg-[var(--bg-elevated)] overflow-hidden">
+              <BlogImageWithPlaceholder
+                src={post.coverImageUrl}
+                alt={post.title}
+                className="w-full h-full"
+                fill={false}
+                width={1200}
+                height={675}
+                priority={index < 2}
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div
+                className={`
+                  absolute inset-0 opacity-0 group-hover:opacity-100 
+                  transition-opacity duration-500
+                  bg-gradient-to-t from-black/30 via-transparent to-transparent
+                `}
+              />
+            </div>
 
             <div className="p-4 md:p-5">
               {post.category && (

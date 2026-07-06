@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Post } from "@/features/blog/types/blog.types";
+import { BlogImageWithPlaceholder } from "@/components/BlogImageWithPlaceholder";
 
 interface BlogCardProps {
   post: Post;
@@ -155,17 +156,11 @@ export function BlogCard({ post, locale }: BlogCardProps) {
       />
 
       {/* Cover Image */}
-      {post.coverImageUrl && (
-        <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4 bg-[var(--bg-secondary)]">
-          <img
-            src={post.coverImageUrl}
-            alt={post.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        </div>
-      )}
+      <BlogImageWithPlaceholder
+        src={post.coverImageUrl}
+        alt={post.title}
+        className="w-full aspect-[16/9]"
+      />
 
       {/* Badge: Category */}
       <div

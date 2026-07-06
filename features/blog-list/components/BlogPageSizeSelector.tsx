@@ -38,7 +38,7 @@ export function BlogPageSizeSelector({
       ref={dropdownRef}
     >
       <label className="text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">
-        {isRTL ? "نمایش:" : "Show:"}
+        {isRTL ? "نمایش" : "Show"}
       </label>
 
       {/* کانتینر اصلی دراپ‌داون */}

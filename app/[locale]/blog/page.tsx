@@ -24,27 +24,32 @@ export default async function BlogPage() {
       <Navbar showBack />
       <div className="min-h-screen pt-20">
         <div className="max-w-7xl mx-auto px-4 py-12">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm mb-6">
-            <Link
-              href={`/${locale}`}
-              className="text-[var(--text-muted)] hover:text-[var(--accent-blue)] transition-colors"
-            >
-              {t("home")}
-            </Link>
-            <span className="text-[var(--border-strong)]">
-              {isRTL ? "«" : "/"}
-            </span>
-            <span className="text-[var(--text-primary)] font-medium">
+          {/* Breadcrumb + Badge */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm">
+              <Link
+                href={`/${locale}`}
+                className="text-[var(--text-muted)] hover:text-[var(--accent-blue)] transition-colors"
+              >
+                {t("home")}
+              </Link>
+              <span className="text-[var(--border-strong)]">
+                {isRTL ? "«" : "/"}
+              </span>
+              <span className="text-[var(--text-primary)] font-medium">
+                {t("blogBadge")}
+              </span>
+            </div>
+
+            {/* Badge - سمت راست */}
+            <span className="inline-block text-xs font-mono tracking-[0.2em] uppercase text-[var(--accent-blue)] bg-[var(--accent-blue-bg)] px-4 py-1.5 rounded-full border border-[var(--border-subtle)] whitespace-nowrap">
               {t("blogBadge")}
             </span>
           </div>
 
           {/* Header */}
           <div className="mb-12">
-            <span className="inline-block text-xs font-mono tracking-[0.2em] uppercase text-[var(--accent-blue)] bg-[var(--accent-blue-bg)] px-4 py-1.5 rounded-full border border-[var(--border-subtle)] mb-4">
-              {t("blogBadge")}
-            </span>
             <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-4">
               {t("blogTitle")}
             </h1>
