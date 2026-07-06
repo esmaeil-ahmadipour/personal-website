@@ -167,7 +167,7 @@ const featuresData = [
 ];
 
 export default function Features() {
-  const { t } = useTranslation();
+  const { t, isRTL } = useTranslation();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -198,10 +198,10 @@ export default function Features() {
     <section
       id="services"
       ref={sectionRef}
-      className="py-24 px-4 border-t border-[var(--border-subtle)]"
+      className={`py-24 px-4 border-t border-[var(--border-subtle)] ${isRTL ? "rtl" : ""}`}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className={`text-center mb-16 ${isRTL ? "rtl" : ""}`}>
           <span className="inline-block text-xs font-mono tracking-[0.2em] uppercase text-[var(--accent-blue)] bg-[var(--accent-blue-bg)] px-4 py-1.5 rounded-full border border-[var(--accent-blue)]/10 mb-4">
             {t("capabilities")}
           </span>
@@ -228,12 +228,14 @@ export default function Features() {
                   transition-all duration-300 
                   hover:-translate-y-2 hover:shadow-xl ${color.shadow}
                   opacity-0
+                  ${isRTL ? "rtl" : ""}
                 `}
               >
                 <div
                   className={`
                     w-12 h-12 rounded-xl bg-gradient-to-br ${color.iconBg}
                     flex items-center justify-center ${color.iconColor} mb-4
+                    ${isRTL ? "ml-auto mr-0" : ""}
                   `}
                 >
                   <i className={`fas ${feature.icon} text-xl`}></i>
@@ -244,14 +246,19 @@ export default function Features() {
                     text-[10px] font-mono font-semibold tracking-wider uppercase
                     ${color.badgeBg} ${color.badgeColor}
                     border ${color.badgeBorder}
+                    ${isRTL ? "flex-row-reverse" : ""}
                   `}
                 >
                   {t(feature.badgeKey)}
                 </span>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mt-3 mb-2">
+                <h3
+                  className={`text-lg font-semibold text-[var(--text-primary)] mt-3 mb-2 ${isRTL ? "text-right" : ""}`}
+                >
                   {t(feature.titleKey)}
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                <p
+                  className={`text-sm text-[var(--text-secondary)] leading-relaxed ${isRTL ? "text-right" : ""}`}
+                >
                   {t(feature.descKey)}
                 </p>
               </div>

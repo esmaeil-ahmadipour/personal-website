@@ -133,10 +133,10 @@ export function StatsIndustries() {
 
         {/* Industries */}
         <div>
-          <p className="text-sm font-medium text-[var(--text-secondary)] text-center mb-6">
+          <p className="text-xl font-bold text-[var(--text-secondary)] text-center mb-6">
             {t("industriesTitle")}
           </p>
-          <p className="text-xs text-[var(--text-muted)] text-center mb-6 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--text-muted)] text-center mb-6 max-w-2xl mx-auto">
             {t("industriesSub")}
           </p>
           <div className="flex flex-wrap justify-center gap-3">

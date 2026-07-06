@@ -33,7 +33,7 @@ export default function Navbar() {
         fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3
         transition-all duration-300
         header-glass
-        ${isScrolled ? "border-b border-[var(--border-subtle)]/50" : "border-b border-transparent"}
+        ${isScrolled ? "scrolled" : ""}
       `}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">

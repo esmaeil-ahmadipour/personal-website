@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import LanguageSwitcher from "@/components/SwitchLanguage";
 import ThemeSwitcherWrapper from "./ThemeSwitcherWrapper";
+import { useState, useEffect } from "react";
 
 interface NavbarProps {
   showBack?: boolean;
@@ -14,6 +15,15 @@ interface NavbarProps {
 export function Navbar({ showBack = false, backUrl = "/" }: NavbarProps) {
   const router = useRouter();
   const { t } = useTranslation();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleBack = () => {
     if (backUrl) {
@@ -24,7 +34,13 @@ export function Navbar({ showBack = false, backUrl = "/" }: NavbarProps) {
   };
 
   return (
-    <nav className="header-glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3">
+    <nav
+      className={`
+        header-glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3
+        transition-all duration-300
+        ${isScrolled ? "scrolled" : ""}
+      `}
+    >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3 group">

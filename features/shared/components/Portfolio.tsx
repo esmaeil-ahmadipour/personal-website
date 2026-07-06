@@ -115,7 +115,7 @@ const projectsData = [
 ];
 
 export default function Portfolio() {
-  const { t } = useTranslation();
+  const { t, isRTL } = useTranslation();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -146,10 +146,10 @@ export default function Portfolio() {
     <section
       id="portfolio"
       ref={sectionRef}
-      className="py-24 px-4 border-t border-[var(--border-subtle)]"
+      className={`py-24 px-4 border-t border-[var(--border-subtle)] ${isRTL ? "rtl" : ""}`}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className={`text-center mb-16 ${isRTL ? "rtl" : ""}`}>
           <span className="inline-block text-xs font-mono tracking-[0.2em] uppercase text-[var(--accent-purple)] bg-[var(--accent-purple)]/10 px-4 py-1.5 rounded-full border border-[var(--accent-purple)]/10 mb-4">
             {t("work")}
           </span>
@@ -172,12 +172,14 @@ export default function Portfolio() {
                 transition-all duration-300 
                 hover:-translate-y-2 hover:shadow-xl
                 opacity-0
+                ${isRTL ? "rtl" : ""}
               `}
             >
               <div
                 className={`
                   w-12 h-12 rounded-xl bg-gradient-to-br ${proj.iconBg}
                   flex items-center justify-center ${proj.iconColor} mb-4
+                  ${isRTL ? "ml-auto mr-0" : ""}
                 `}
               >
                 <i className={`fas ${proj.icon} text-xl`}></i>
@@ -188,23 +190,32 @@ export default function Portfolio() {
                   text-[10px] font-mono font-semibold tracking-wider uppercase
                   ${proj.badgeBg} ${proj.badgeColor}
                   border ${proj.badgeBorder}
+                  ${isRTL ? "flex-row-reverse" : ""}
                 `}
               >
                 {t(proj.categoryKey)}
               </span>
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mt-3">
+              <h3
+                className={`text-lg font-semibold text-[var(--text-primary)] mt-3 ${isRTL ? "text-right" : ""}`}
+              >
                 {t(proj.titleKey)}
               </h3>
-              <p className="text-sm text-[var(--text-secondary)] mt-1">
+              <p
+                className={`text-sm text-[var(--text-secondary)] mt-1 ${isRTL ? "text-right" : ""}`}
+              >
                 <span className="text-[var(--text-primary)] font-medium">
                   {t("tarvixRole")}:
                 </span>{" "}
                 {t(proj.roleKey)}
               </p>
-              <p className="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
+              <p
+                className={`text-sm text-[var(--text-muted)] mt-2 leading-relaxed ${isRTL ? "text-right" : ""}`}
+              >
                 {t(proj.descriptionKey)}
               </p>
-              <div className="flex flex-wrap gap-2 mt-4">
+              <div
+                className={`flex flex-wrap gap-2 mt-4 ${isRTL ? "flex-row-reverse" : ""}`}
+              >
                 {proj.technologies.map((tech, i) => (
                   <span
                     key={i}

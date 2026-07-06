@@ -143,6 +143,7 @@ export function BlogCard({ post, locale }: BlogCardProps) {
         cursor-pointer overflow-hidden
       `}
       onClick={() => router.push(`/${locale}/blog/${post.id}`)}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Glow Effect on Hover */}
       <div
@@ -167,7 +168,9 @@ export function BlogCard({ post, locale }: BlogCardProps) {
       )}
 
       {/* Badge: Category */}
-      <div className="flex items-center gap-2 mb-3">
+      <div
+        className={`flex items-center gap-2 mb-3 ${isRTL ? "flex-row-reverse" : "flex-row"}`}
+      >
         <span
           className={`
             inline-flex items-center px-3 py-1 rounded-full
@@ -192,6 +195,7 @@ export function BlogCard({ post, locale }: BlogCardProps) {
           text-lg font-semibold text-[var(--text-primary)] mb-2 
           line-clamp-2 transition-colors duration-200
           group-hover:text-[var(--accent-blue)]
+          ${isRTL ? "text-right" : "text-left"}
         `}
       >
         {post.title}
@@ -199,14 +203,20 @@ export function BlogCard({ post, locale }: BlogCardProps) {
 
       {/* Excerpt */}
       {post.excerpt && (
-        <p className="text-sm text-[var(--text-secondary)] line-clamp-3 leading-relaxed">
+        <p
+          className={`text-sm text-[var(--text-secondary)] line-clamp-3 leading-relaxed ${isRTL ? "text-right" : "text-left"}`}
+        >
           {post.excerpt}
         </p>
       )}
 
       {/* Footer: Author + Reading Time */}
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border-subtle)]/50">
-        <div className="flex items-center gap-2">
+      <div
+        className={`flex items-center justify-between mt-4 pt-4 border-t border-[var(--border-subtle)]/50 ${isRTL ? "flex-row-reverse" : "flex-row"}`}
+      >
+        <div
+          className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : "flex-row"}`}
+        >
           {post.author?.avatarUrl ? (
             <img
               src={post.author.avatarUrl}
@@ -232,7 +242,9 @@ export function BlogCard({ post, locale }: BlogCardProps) {
 
         {/* Reading Time */}
         {readingTime > 0 && (
-          <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+          <div
+            className={`flex items-center gap-1 text-xs text-[var(--text-muted)] ${isRTL ? "flex-row-reverse" : "flex-row"}`}
+          >
             <svg
               className="w-3 h-3"
               fill="none"
@@ -255,7 +267,9 @@ export function BlogCard({ post, locale }: BlogCardProps) {
 
       {/* Tags */}
       {post.tags && post.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[var(--border-subtle)]/30">
+        <div
+          className={`flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[var(--border-subtle)]/30 ${isRTL ? "flex-row-reverse" : "flex-row"}`}
+        >
           {post.tags.slice(0, 3).map((tag) => (
             <span
               key={tag.id}

@@ -8,7 +8,7 @@ import { Navbar } from "@/features/shared/components/SimpleNavbar";
 import type { BlogPost } from "@/features/get-blog-post/types/get-blog-post.types";
 
 interface PageProps {
-  params: Promise<{ id: string; locale: string }>;
+  params: Promise<{ id: string; locale: "en" | "fa" }>;
   searchParams?: Promise<{ lang?: "en" | "fa" }>;
 }
 
