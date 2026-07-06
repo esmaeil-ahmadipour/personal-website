@@ -40,14 +40,21 @@ export function BlogPagination({
 
   return (
     <nav
-      className="flex justify-center items-center gap-1 mt-10"
+      className="flex justify-center items-center gap-2 mt-10"
       aria-label="Pagination"
     >
       {/* Previous */}
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-3.5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className={`
+          px-3.5 py-2 text-sm font-medium rounded-xl
+          bg-[var(--bg-surface)] text-[var(--text-secondary)]
+          border border-[var(--border-subtle)]
+          hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]
+          disabled:opacity-30 disabled:cursor-not-allowed
+          transition-all duration-200
+        `}
         aria-label="Previous page"
       >
         {isRTL ? "→" : "←"}
@@ -59,23 +66,38 @@ export function BlogPagination({
           return (
             <span
               key={`ellipsis-${index}`}
-              className="px-3 py-2 text-sm text-gray-500 dark:text-gray-500"
+              className="px-3 py-2 text-sm text-[var(--text-muted)]"
             >
               …
             </span>
           );
         }
 
+        const isActive = currentPage === page;
+
         return (
           <button
             key={page}
             onClick={() => onPageChange(page as number)}
-            className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
-              currentPage === page
-                ? "bg-blue-600 text-white border border-blue-600 hover:bg-blue-700"
-                : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-            }`}
-            aria-current={currentPage === page ? "page" : undefined}
+            className={`
+              px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200
+              ${
+                isActive
+                  ? `
+                    bg-gradient-to-r from-blue-500 to-purple-500
+                    text-white shadow-lg shadow-blue-500/25
+                    hover:shadow-blue-500/40 hover:-translate-y-0.5
+                    border border-blue-500/20
+                  `
+                  : `
+                    bg-[var(--bg-surface)] text-[var(--text-secondary)]
+                    border border-[var(--border-subtle)]
+                    hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]
+                    hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]
+                  `
+              }
+            `}
+            aria-current={isActive ? "page" : undefined}
           >
             {page}
           </button>
@@ -86,7 +108,14 @@ export function BlogPagination({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-3.5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className={`
+          px-3.5 py-2 text-sm font-medium rounded-xl
+          bg-[var(--bg-surface)] text-[var(--text-secondary)]
+          border border-[var(--border-subtle)]
+          hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]
+          disabled:opacity-30 disabled:cursor-not-allowed
+          transition-all duration-200
+        `}
         aria-label="Next page"
       >
         {isRTL ? "←" : "→"}

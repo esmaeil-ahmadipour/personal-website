@@ -11,7 +11,16 @@ const projectsData = [
     descriptionKey: "projectPactusDesc",
     technologies: ["Flutter", "gRPC", "Blockchain"],
     icon: "fa-link",
-    gradient: "from-blue-500/10 to-cyan-500/10",
+    gradient: "from-blue-500/20 via-blue-400/10 to-transparent",
+    borderColor: "border-blue-500/25",
+    iconBg: "from-blue-500/25 to-blue-400/15",
+    iconColor: "text-blue-500",
+    badgeBg: "bg-blue-500/15",
+    badgeColor: "text-blue-600 dark:text-blue-400",
+    badgeBorder: "border-blue-500/20",
+    techBg: "bg-blue-500/8",
+    techBorder: "border-blue-500/15",
+    techColor: "text-blue-600 dark:text-blue-400",
   },
   {
     titleKey: "projectDaneshjouyarTitle",
@@ -20,7 +29,16 @@ const projectsData = [
     descriptionKey: "projectDaneshjouyarDesc",
     technologies: ["Flutter", "Clean Architecture", "BLoC"],
     icon: "fa-graduation-cap",
-    gradient: "from-purple-500/10 to-pink-500/10",
+    gradient: "from-purple-500/20 via-purple-400/10 to-transparent",
+    borderColor: "border-purple-500/25",
+    iconBg: "from-purple-500/25 to-purple-400/15",
+    iconColor: "text-purple-500",
+    badgeBg: "bg-purple-500/15",
+    badgeColor: "text-purple-600 dark:text-purple-400",
+    badgeBorder: "border-purple-500/20",
+    techBg: "bg-purple-500/8",
+    techBorder: "border-purple-500/15",
+    techColor: "text-purple-600 dark:text-purple-400",
   },
   {
     titleKey: "projectTONTitle",
@@ -29,7 +47,16 @@ const projectsData = [
     descriptionKey: "projectTONDesc",
     technologies: ["Golang", "Smart Contracts", "TON"],
     icon: "fa-coins",
-    gradient: "from-emerald-500/10 to-teal-500/10",
+    gradient: "from-emerald-500/20 via-emerald-400/10 to-transparent",
+    borderColor: "border-emerald-500/25",
+    iconBg: "from-emerald-500/25 to-emerald-400/15",
+    iconColor: "text-emerald-500",
+    badgeBg: "bg-emerald-500/15",
+    badgeColor: "text-emerald-600 dark:text-emerald-400",
+    badgeBorder: "border-emerald-500/20",
+    techBg: "bg-emerald-500/8",
+    techBorder: "border-emerald-500/15",
+    techColor: "text-emerald-600 dark:text-emerald-400",
   },
   {
     titleKey: "projectAdminTitle",
@@ -38,7 +65,16 @@ const projectsData = [
     descriptionKey: "projectAdminDesc",
     technologies: ["Nest.js", "Docker", "RabbitMQ"],
     icon: "fa-server",
-    gradient: "from-orange-500/10 to-amber-500/10",
+    gradient: "from-amber-500/20 via-amber-400/10 to-transparent",
+    borderColor: "border-amber-500/25",
+    iconBg: "from-amber-500/25 to-amber-400/15",
+    iconColor: "text-amber-500",
+    badgeBg: "bg-amber-500/15",
+    badgeColor: "text-amber-600 dark:text-amber-400",
+    badgeBorder: "border-amber-500/20",
+    techBg: "bg-amber-500/8",
+    techBorder: "border-amber-500/15",
+    techColor: "text-amber-600 dark:text-amber-400",
   },
   {
     titleKey: "projectMohsenTitle",
@@ -47,7 +83,16 @@ const projectsData = [
     descriptionKey: "projectMohsenDesc",
     technologies: ["Flutter", "Bluetooth", "Geolocation"],
     icon: "fa-shopping-cart",
-    gradient: "from-rose-500/10 to-red-500/10",
+    gradient: "from-rose-500/20 via-rose-400/10 to-transparent",
+    borderColor: "border-rose-500/25",
+    iconBg: "from-rose-500/25 to-rose-400/15",
+    iconColor: "text-rose-500",
+    badgeBg: "bg-rose-500/15",
+    badgeColor: "text-rose-600 dark:text-rose-400",
+    badgeBorder: "border-rose-500/20",
+    techBg: "bg-rose-500/8",
+    techBorder: "border-rose-500/15",
+    techColor: "text-rose-600 dark:text-rose-400",
   },
   {
     titleKey: "projectPackagesTitle",
@@ -56,7 +101,16 @@ const projectsData = [
     descriptionKey: "projectPackagesDesc",
     technologies: ["Flutter", "Dart", "Pub.dev"],
     icon: "fa-box",
-    gradient: "from-indigo-500/10 to-blue-500/10",
+    gradient: "from-indigo-500/20 via-indigo-400/10 to-transparent",
+    borderColor: "border-indigo-500/25",
+    iconBg: "from-indigo-500/25 to-indigo-400/15",
+    iconColor: "text-indigo-500",
+    badgeBg: "bg-indigo-500/15",
+    badgeColor: "text-indigo-600 dark:text-indigo-400",
+    badgeBorder: "border-indigo-500/20",
+    techBg: "bg-indigo-500/8",
+    techBorder: "border-indigo-500/15",
+    techColor: "text-indigo-600 dark:text-indigo-400",
   },
 ];
 
@@ -111,21 +165,38 @@ export default function Portfolio() {
           {projectsData.map((proj, idx) => (
             <div
               key={idx}
-              className="project-card rounded-2xl p-6 bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-card)] hover-lift transition-all duration-300 hover:shadow-[var(--shadow-glow)] hover:-translate-y-1 opacity-0"
+              className={`
+                project-card rounded-2xl p-6 card
+                bg-gradient-to-br ${proj.gradient}
+                border ${proj.borderColor}
+                transition-all duration-300 
+                hover:-translate-y-2 hover:shadow-xl
+                opacity-0
+              `}
             >
               <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${proj.gradient} flex items-center justify-center text-[var(--accent-blue)] mb-4`}
+                className={`
+                  w-12 h-12 rounded-xl bg-gradient-to-br ${proj.iconBg}
+                  flex items-center justify-center ${proj.iconColor} mb-4
+                `}
               >
                 <i className={`fas ${proj.icon} text-xl`}></i>
               </div>
-              <span className="badge text-xs font-mono tracking-wider uppercase">
+              <span
+                className={`
+                  inline-flex items-center px-3 py-1 rounded-full
+                  text-[10px] font-mono font-semibold tracking-wider uppercase
+                  ${proj.badgeBg} ${proj.badgeColor}
+                  border ${proj.badgeBorder}
+                `}
+              >
                 {t(proj.categoryKey)}
               </span>
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mt-2">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mt-3">
                 {t(proj.titleKey)}
               </h3>
               <p className="text-sm text-[var(--text-secondary)] mt-1">
-                <span className="text-[var(--text-primary)]">
+                <span className="text-[var(--text-primary)] font-medium">
                   {t("tarvixRole")}:
                 </span>{" "}
                 {t(proj.roleKey)}
@@ -137,7 +208,11 @@ export default function Portfolio() {
                 {proj.technologies.map((tech, i) => (
                   <span
                     key={i}
-                    className="text-xs px-3 py-1 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)]"
+                    className={`
+                      text-[10px] px-3 py-1 rounded-full font-medium
+                      ${proj.techBg} ${proj.techColor}
+                      border ${proj.techBorder}
+                    `}
                   >
                     {tech}
                   </span>

@@ -3,31 +3,12 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import LanguageSwitcher from "@/components/SwitchLanguage";
-
-// ✅ تابع برای دریافت مقدار اولیه از localStorage
-const getInitialTheme = (): "light" | "dark" => {
-  if (typeof window === "undefined") return "dark";
-
-  const saved = localStorage.getItem("tarvix_theme") as "light" | "dark" | null;
-  if (saved) return saved;
-
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return prefersDark ? "dark" : "light";
-};
+import ThemeSwitcherWrapper from "./ThemeSwitcherWrapper";
 
 export default function Navbar() {
   const { t, locale, isRTL } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
-  // ✅ مقدار اولیه رو از localStorage می‌گیریم
-  const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
-
-  // ✅ تم رو روی body اعمال کن
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("tarvix_theme", theme);
-  }, [theme]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,10 +17,6 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   const navLinks = [
     { label: t("home"), href: "#home" },
@@ -55,8 +32,8 @@ export default function Navbar() {
       className={`
         fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3
         transition-all duration-300
-        bg-[var(--bg-surface)] shadow-[var(--shadow-card)]
-        ${isScrolled ? "border-b border-[var(--border-subtle)]" : "border-b border-transparent"}
+        header-glass
+        ${isScrolled ? "border-b border-[var(--border-subtle)]/50" : "border-b border-transparent"}
       `}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -82,12 +59,8 @@ export default function Navbar() {
             </a>
           ))}
           <LanguageSwitcher />
-          <button
-            onClick={toggleTheme}
-            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 font-medium"
-          >
-            {theme === "dark" ? "☀️" : "🌙"}
-          </button>
+          <ThemeSwitcherWrapper />
+
           <a
             href="#contact"
             className="px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-semibold hover:shadow-lg hover:shadow-blue-500/25 transition-all btn-press"
@@ -96,7 +69,7 @@ export default function Navbar() {
           </a>
           <a
             href="/dev"
-            className="px-4 py-2 rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] text-sm font-medium hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] transition-all"
+            className="px-4 py-2 rounded-full border border-[var(--border-subtle)]/50 text-[var(--text-secondary)] text-sm font-medium hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] transition-all"
           >
             {t("viewEngineeringSystem")}
           </a>
@@ -105,12 +78,8 @@ export default function Navbar() {
         {/* Mobile Controls */}
         <div className="flex md:hidden items-center gap-3">
           <LanguageSwitcher />
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors text-[var(--text-secondary)]"
-          >
-            {theme === "dark" ? "☀️" : "🌙"}
-          </button>
+          <ThemeSwitcherWrapper />
+
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors"
@@ -145,7 +114,10 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div
         className={`
-          md:hidden absolute top-full left-0 right-0 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] shadow-[var(--shadow-card)]
+          md:hidden absolute top-full left-0 right-0
+          bg-[var(--bg-surface)]/80 backdrop-blur-xl
+          border-b border-[var(--border-subtle)]/50
+          shadow-[var(--shadow-card)]
           transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
           ${isMenuOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-4 pointer-events-none"}
         `}
@@ -171,7 +143,7 @@ export default function Navbar() {
           <a
             href="/dev"
             onClick={() => setIsMenuOpen(false)}
-            className="block px-4 py-3 rounded-lg text-center border border-[var(--border-subtle)] text-[var(--text-secondary)] text-sm font-medium hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] transition-colors"
+            className="block px-4 py-3 rounded-lg text-center border border-[var(--border-subtle)]/50 text-[var(--text-secondary)] text-sm font-medium hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] transition-colors"
           >
             {t("viewEngineeringSystem")}
           </a>

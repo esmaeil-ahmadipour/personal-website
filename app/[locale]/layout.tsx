@@ -8,6 +8,7 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales } from "@/i18n/request";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -48,7 +49,7 @@ export default async function LocaleLayout({
   const acceptLanguage = headersList.get("accept-language") || "";
   //suppressHydrationWarning
   return (
-    <html lang={locale} dir={locale === "fa" ? "rtl" : "ltr"}>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
@@ -62,7 +63,9 @@ export default async function LocaleLayout({
       <body className={`${inter.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
           <main className="container mx-auto px-4 py-8">
-            <QueryProvider>{children}</QueryProvider>
+            <QueryProvider>
+              <ThemeProvider>{children}</ThemeProvider>
+            </QueryProvider>
           </main>
         </NextIntlClientProvider>
       </body>

@@ -171,7 +171,7 @@ export default async function BlogPostPageWrapper({ params }: PageProps) {
 
   return (
     <>
-      <Navbar showBack />
+      <Navbar showBack backUrl={`/${locale}/blog`} />
       <div className="pt-20">
         <BlogPostPage post={post} locale={lang} />
       </div>

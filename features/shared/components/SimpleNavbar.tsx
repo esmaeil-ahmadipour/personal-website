@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
-import { useState, useEffect } from "react";
 import LanguageSwitcher from "@/components/SwitchLanguage";
+import ThemeSwitcherWrapper from "./ThemeSwitcherWrapper";
 
 interface NavbarProps {
   showBack?: boolean;
@@ -14,25 +14,6 @@ interface NavbarProps {
 export function Navbar({ showBack = false, backUrl = "/" }: NavbarProps) {
   const router = useRouter();
   const { t } = useTranslation();
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("tarvix_theme") as
-      | "light"
-      | "dark"
-      | null;
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    setTheme(saved || (prefersDark ? "dark" : "light"));
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("tarvix_theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   const handleBack = () => {
     if (backUrl) {
@@ -43,7 +24,7 @@ export function Navbar({ showBack = false, backUrl = "/" }: NavbarProps) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)]">
+    <nav className="header-glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3 group">
@@ -64,13 +45,7 @@ export function Navbar({ showBack = false, backUrl = "/" }: NavbarProps) {
             </button>
           )}
           <LanguageSwitcher />
-
-          <button
-            onClick={toggleTheme}
-            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            {theme === "dark" ? "☀️" : "🌙"}
-          </button>
+          <ThemeSwitcherWrapper />
         </div>
       </div>
     </nav>
