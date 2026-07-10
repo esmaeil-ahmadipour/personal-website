@@ -5,6 +5,36 @@ const os = require("os");
 const fs = require("fs");
 const path = require("path");
 
+// پرامپت ثابت برای ارسال به LLM
+const COMMIT_PROMPT = `Generate a Conventional Commit message from this git diff.
+
+## Rules
+- Analyze the ENTIRE diff before writing the message — cover all meaningful changes, not just the first file
+- Use Conventional Commits format: \\\`<type>(<scope>): <subject>\\\`
+- Choose the best type: feat, fix, refactor, chore, docs, test, build, ci
+- Scope is optional, add it only if obvious from the changed paths
+- Subject must be short, imperative, present tense, under 72 characters
+- Body bullet points must be accurate to the diff, do not invent changes
+- Do not explain anything outside the required output
+- Output only the two variants below, nothing else
+- result EXACT to be show in 2 Markdown module for easy Copy/Paste.
+
+## Output Format
+Wrap the entire output in ONE markdown code block (\\\`\\\`\\\`text ... \\\`\\\`\\\`) with this exact structure:
+
+### Simplified
+<type>(<scope>): <subject>
+
+### Detailed
+<type>(<scope>): <subject>
+
+- <key change 1>
+- <key change 2>
+- <key change 3 if needed>
+
+## Git diff
+`;
+
 function getClipboardCommand() {
   const platform = os.platform();
 
@@ -78,11 +108,16 @@ function main() {
       process.exit(1);
     }
 
-    if (copyToClipboard(diff)) {
-      const lines = diff.split("\n").length;
-      const sizeKB = Math.round(diff.length / 1024);
-      console.log(`✅ Git diff (staged) copied to clipboard`);
-      console.log(`   📊 ${lines} lines | ${sizeKB} KB`);
+    // الحاق پرامپت به ابتدای Git Diff
+    const formattedPayload = `${COMMIT_PROMPT}\n${diff}`;
+
+    if (copyToClipboard(formattedPayload)) {
+      const lines = formattedPayload.split("\n").length;
+      const sizeKB = Math.round(
+        Buffer.byteLength(formattedPayload, "utf8") / 1024,
+      );
+      console.log(`✅ Git diff with Prompt successfully copied to clipboard`);
+      console.log(`   📊 ${lines} lines (including prompt) | ${sizeKB} KB`);
     } else {
       process.exit(1);
     }

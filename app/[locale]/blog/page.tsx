@@ -2,7 +2,7 @@
 
 import { Metadata } from "next";
 import { BlogList } from "@/features/blog-list";
-import { Navbar } from "@/features/shared/components/SimpleNavbar";
+import Navbar from "@/features/shared/components/Navbar";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 

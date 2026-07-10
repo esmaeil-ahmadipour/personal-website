@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
+import Logo from "@/components/Logo";
 
 // ============================================
 // OFFICIAL COLOR PALETTE FOR SOCIAL ICONS
@@ -46,9 +47,7 @@ export default function Footer() {
           {/* Brand - Full width on mobile, 1 column on desktop */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-3 group mb-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-blue-500/20 flex-shrink-0">
-                T
-              </div>
+              <Logo size="sm" />
               <span className="text-lg font-bold gradient-text">Tarvix</span>
             </Link>
             <p className="text-xs md:text-sm text-[var(--text-secondary)] leading-relaxed max-w-xs">

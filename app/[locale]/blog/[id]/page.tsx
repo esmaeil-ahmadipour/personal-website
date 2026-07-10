@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { BlogPostPage } from "@/features/get-blog-post/components/BlogPostPage";
-import { Navbar } from "@/features/shared/components/SimpleNavbar";
+import Navbar from "@/features/shared/components/Navbar";
 import type { BlogPost } from "@/features/get-blog-post/types/get-blog-post.types";
 
 interface PageProps {

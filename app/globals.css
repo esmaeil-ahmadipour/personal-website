@@ -344,6 +344,20 @@
 
 @layer utilities {
   /* Glassmorphism */
+  .header-glass {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background: color-mix(in srgb, var(--glass-bg) 45%, transparent);
+  }
+
+  .header-glass.scrolled {
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    background: color-mix(in srgb, var(--glass-bg) 80%, transparent);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  }
+
   .glass {
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(20px) saturate(1.4);

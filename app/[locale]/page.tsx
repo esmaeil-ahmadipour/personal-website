@@ -24,7 +24,7 @@ export default function HomePage() {
 
   return (
     <div className="relative">
-      <Navbar />
+      <Navbar  />
       <Hero />
       <StatsIndustries />
       <Features />

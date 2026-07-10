@@ -6,6 +6,8 @@ import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import { EarlyAccessModal, EarlyAccessTrigger } from "@/features/early-access";
 import LanguageSwitcher from "@/components/SwitchLanguage";
 import ThemeSwitcherWrapper from "@/features/shared/components/ThemeSwitcherWrapper";
+import Logo from "@/components/Logo";
+import Navbar from "@/features/shared/components/Navbar";
 
 // ============================================
 // OFFICIAL COLOR PALETTE - Blue, Purple, Green
@@ -103,33 +105,9 @@ export default function DevPlatformPage() {
 
   return (
     <>
-      {/* Navbar */}
-      <nav className="header-glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/20">
-                T
-              </div>
-              <span className="text-lg font-bold gradient-text">Tarvix</span>
-            </Link>
-            <span className="hidden sm:inline-block text-[10px] font-mono tracking-widest uppercase text-[var(--text-muted)] border border-[var(--border-subtle)] px-2 py-0.5 rounded-full">
-              Dev
-            </span>
-          </div>
+      {/* Navbar یکپارچه با حالت simple و دکمه بازگشت */}
+      <Navbar variant="simple" showBack backUrl="/" />
 
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
-            <ThemeSwitcherWrapper />
-            <Link
-              href="/"
-              className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              ← Back
-            </Link>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section id="hero" className="relative pt-32 pb-16 px-4">
