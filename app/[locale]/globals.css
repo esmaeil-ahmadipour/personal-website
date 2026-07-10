@@ -11,7 +11,7 @@
     /* Light Mode - Soft Pastel */
     --bg-primary: 210 40% 98%;
     --bg-secondary: 220 30% 96%;
-    --bg-surface: 0 0% 100%;
+    --bg-surface: 0 0% 100%; /* ← این متغیر باید به درستی تعریف شود */
     --bg-elevated: 220 25% 95%;
 
     --text-primary: 222 20% 15%;
@@ -51,7 +51,7 @@
     /* Dark Mode - Soft Pastel */
     --bg-primary: 228 20% 8%;
     --bg-secondary: 228 18% 12%;
-    --bg-surface: 228 15% 14%;
+    --bg-surface: 228 15% 14%; /* ← این متغیر برای تم تاریک */
     --bg-elevated: 228 14% 20%;
 
     --text-primary: 240 20% 96%;

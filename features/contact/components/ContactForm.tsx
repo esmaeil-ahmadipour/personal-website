@@ -154,7 +154,21 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
           </label>
           <select
             id="service"
-            className="w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none appearance-none"
+            className="
+    w-full rounded-xl 
+    px-4 py-2.5 
+    text-sm font-medium
+    transition-all duration-200
+    bg-white dark:bg-gray-800
+    text-gray-900 dark:text-gray-100
+    border border-gray-200 dark:border-gray-700
+    focus:border-blue-500 
+    focus:ring-2 focus:ring-blue-500/20 
+    focus:outline-none
+    appearance-none
+    cursor-pointer
+    hover:border-gray-300 dark:hover:border-gray-600
+  "
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
@@ -165,55 +179,37 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
           >
             <option
               value="flutter"
-              className={`
-                  w-full px-3 py-1.5 text-sm transition-colors
-                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
-                `}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               {t("serviceFlutter")}
             </option>
             <option
               value="web"
-              className={`
-                  w-full px-3 py-1.5 text-sm transition-colors
-                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
-                `}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               {t("serviceWeb")}
             </option>
             <option
               value="web3"
-              className={`
-                  w-full px-3 py-1.5 text-sm transition-colors
-                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
-                `}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               {t("serviceWeb3")}
             </option>
             <option
               value="consulting"
-              className={`
-                  w-full px-3 py-1.5 text-sm transition-colors
-                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
-                `}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               {t("serviceConsulting")}
             </option>
             <option
               value="foundation"
-              className={`
-                  w-full px-3 py-1.5 text-sm transition-colors
-                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
-                `}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               {t("serviceFoundation")}
             </option>
             <option
               value="audit"
-              className={`
-                  w-full px-3 py-1.5 text-sm transition-colors
-                  ${"text-gray-700 dark:text-gray-900 bg-blue-800 dark:bg-blue-900/50  hover:bg-gray-600 dark:hover:bg-gray-900/30"}
-                `}
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               {t("serviceAudit")}
             </option>
