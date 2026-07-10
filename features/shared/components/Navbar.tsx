@@ -141,8 +141,10 @@ export default function Navbar({
   }, []);
 
   // تشخیص سکشن فعال (فقط در صفحه اصلی)
+
   useEffect(() => {
-    if (!isHomePage || externalActiveSection) return;
+    // اگر activeSection از خارج داده شده یا صفحه dev است، observer رو اجرا نکن
+    if (externalActiveSection || isDevPage) return;
 
     const sections = document.querySelectorAll("section[id]");
     const observer = new IntersectionObserver(
@@ -168,8 +170,7 @@ export default function Navbar({
         observer.unobserve(section);
       });
     };
-  }, [isHomePage, externalActiveSection]);
-
+  }, [externalActiveSection, isDevPage]); // ✅ isDevPage رو هم به وابستگی‌ها اضافه کنید
   const activeSection = externalActiveSection || internalActiveSection;
 
   useEffect(() => {
@@ -195,6 +196,7 @@ export default function Navbar({
   const getNavLinkItems = (): NavLinkItem[] => {
     return currentNavItems.map((item) => ({
       ...item,
+      label: t(item.label), // ✅ بازنویسی label با مقدار ترجمه شده
       isActive: activeSection === item.id || pathname === item.href,
       onClick: () => setIsMenuOpen(false),
     }));

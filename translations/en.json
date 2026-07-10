@@ -255,5 +255,17 @@
   "retailGrocery": "Retail & Grocery",
   "finTechLeanTech": "Fin-Tech/Lean-Tech",
   "principle4Title": "Real engineering work with real impact",
-  "web3Blockchain": "Web3 & Blockchain"
+  "web3Blockchain": "Web3 & Blockchain",
+  "devNavDashboard": "Dashboard",
+  "devNavWhy": "Why",
+  "devNavSubstance": "Substance",
+  "devNavLayers": "Layers",
+  "devNavPrinciples": "Principles",
+  "devNavAccess": "Access",
+  "exploreSystem": "Explore System ↓",
+  "viewLayers": "View Layers →",
+  "engineeringSystem": "Engineering System",
+  "accessSub": "Access the patterns, standards, and implementations that define how we build production systems.",
+  "tarvixLogo": "Tarvix",
+  "tarvixBrand": "Tarvix"
 }
