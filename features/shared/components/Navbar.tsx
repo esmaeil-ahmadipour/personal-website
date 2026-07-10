@@ -1,151 +1,134 @@
+// src/shared/components/Navbar.tsx
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useState, useEffect, ReactNode } from "react";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import Logo from "@/components/Logo";
-import PreferencesDialog from "@/components/PreferencesDialog";
 import BrandName from "@/components/BrandName";
+import PreferencesDialog from "@/components/PreferencesDialog";
+
+import {
+  HomeIcon,
+  CapabilitiesIcon,
+  WorkIcon,
+  BlogIcon,
+  TeamIcon,
+  ContactIcon,
+} from "../icons";
+
+import { NavLinkItem, NavLinks } from "./NavLinks";
+
+// تعریف تایپ برای آیتم‌های ناوبری
+export interface NavItem {
+  id: string;
+  label: string;
+  href: string;
+  icon: ReactNode;
+}
 
 interface NavbarProps {
   variant?: "default" | "simple";
   showBack?: boolean;
   backUrl?: string;
-}
-
-type NavIconKey =
-  | "home"
-  | "capabilities"
-  | "work"
-  | "blog"
-  | "team"
-  | "contact";
-
-function NavIcon({
-  name,
-  className = "w-5 h-5",
-}: {
-  name: NavIconKey;
+  navItems?: NavItem[]; // ✅ لیست ورودی از صفحات
+  activeSection?: string; // ✅ سکشن فعال از بیرون
   className?: string;
-}) {
-  switch (name) {
-    case "home":
-      return (
-        <svg
-          className={className}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M3 10.5L12 3l9 7.5" />
-          <path d="M5.25 9.75V20a1 1 0 001 1H9.5v-5.25A.75.75 0 0110.25 15h3.5a.75.75 0 01.75.75V21h3.25a1 1 0 001-1V9.75" />
-        </svg>
-      );
-    case "capabilities":
-      return (
-        <svg
-          className={className}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="3" y="4" width="18" height="12" rx="2" />
-          <path d="M8 20h8" />
-          <path d="M10 16v4" />
-          <path d="M14 16v4" />
-        </svg>
-      );
-    case "work":
-      return (
-        <svg
-          className={className}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="3" y="4" width="8" height="7" rx="1.5" />
-          <rect x="13" y="4" width="8" height="7" rx="1.5" />
-          <rect x="3" y="13" width="8" height="7" rx="1.5" />
-          <rect x="13" y="13" width="8" height="7" rx="1.5" />
-        </svg>
-      );
-    case "blog":
-      return (
-        <svg
-          className={className}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M6 4.75h8.5a2.5 2.5 0 012.5 2.5V19a.75.75 0 01-1.2.6L13.5 18H6A2 2 0 014 16V6.75a2 2 0 012-2z" />
-          <path d="M8 9h6" />
-          <path d="M8 12h6" />
-          <path d="M8 15h4" />
-        </svg>
-      );
-    case "team":
-      return (
-        <svg
-          className={className}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M16 19v-1a4 4 0 00-8 0v1" />
-          <circle cx="12" cy="11" r="3" />
-          <path d="M6 19v-.5a3.5 3.5 0 013-3.465" />
-          <path d="M18 19v-.5a3.5 3.5 0 00-3-3.465" />
-          <circle cx="5.5" cy="11.5" r="2" />
-          <circle cx="18.5" cy="11.5" r="2" />
-        </svg>
-      );
-    case "contact":
-      return (
-        <svg
-          className={className}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="3" y="5" width="18" height="14" rx="2" />
-          <path d="M4 7l8 6 8-6" />
-        </svg>
-      );
-    default:
-      return null;
-  }
 }
+
+// پیش‌فرض برای ناوبری اصلی
+export const DEFAULT_NAV_ITEMS: NavItem[] = [
+  {
+    id: "home",
+    label: "home",
+    href: "#home",
+    icon: <HomeIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "services",
+    label: "capabilities",
+    href: "#services",
+    icon: <CapabilitiesIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "portfolio",
+    label: "work",
+    href: "#portfolio",
+    icon: <WorkIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "blog",
+    label: "blogBadge",
+    href: "#blog",
+    icon: <BlogIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "team",
+    label: "team",
+    href: "#team",
+    icon: <TeamIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "contact",
+    label: "contact",
+    href: "#contact",
+    icon: <ContactIcon className="w-4.5 h-4.5" />,
+  },
+];
+
+// ناوبری Dev
+const DEV_NAV_ITEMS: NavItem[] = [
+  // {
+  //   id: "dev-dashboard",
+  //   label: "Dashboard",
+  //   href: "/dev",
+  //   icon: <HomeIcon className="w-4.5 h-4.5" />,
+  // },
+  // {
+  //   id: "dev-components",
+  //   label: "Components",
+  //   href: "/dev/components",
+  //   icon: <CapabilitiesIcon className="w-4.5 h-4.5" />,
+  // },
+  // {
+  //   id: "dev-docs",
+  //   label: "Documentation",
+  //   href: "/dev/docs",
+  //   icon: <BlogIcon className="w-4.5 h-4.5" />,
+  // },
+  // {
+  //   id: "dev-settings",
+  //   label: "Settings",
+  //   href: "/dev/settings",
+  //   icon: <ContactIcon className="w-4.5 h-4.5" />,
+  // },
+];
 
 export default function Navbar({
   variant = "default",
   showBack = false,
   backUrl = "/",
+  navItems = DEFAULT_NAV_ITEMS,
+  activeSection: externalActiveSection,
+  className = "",
 }: NavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { t, locale } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>("home");
+  const [internalActiveSection, setInternalActiveSection] =
+    useState<string>("home");
+
+  // تشخیص صفحه فعلی
+  const isHomePage =
+    pathname === "/" || pathname === `/${locale}` || pathname === `/${locale}/`;
+  const isDevPage = pathname?.includes("/dev");
+
+  // انتخاب آیتم‌ها بر اساس صفحه
+  const currentNavItems = navItems;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -157,14 +140,16 @@ export default function Navbar({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // تشخیص سکشن فعال با IntersectionObserver
+  // تشخیص سکشن فعال (فقط در صفحه اصلی)
   useEffect(() => {
+    if (!isHomePage || externalActiveSection) return;
+
     const sections = document.querySelectorAll("section[id]");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
+            setInternalActiveSection(entry.target.id);
           }
         });
       },
@@ -183,7 +168,9 @@ export default function Navbar({
         observer.unobserve(section);
       });
     };
-  }, []);
+  }, [isHomePage, externalActiveSection]);
+
+  const activeSection = externalActiveSection || internalActiveSection;
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -204,49 +191,18 @@ export default function Navbar({
     }
   };
 
-  const navLinks: {
-    label: string;
-    href: string;
-    icon: NavIconKey;
-    id: string;
-  }[] = [
-    {
-      label: t("home"),
-      href: "#home",
-      icon: "home",
-      id: "home",
-    },
-    {
-      label: t("capabilities"),
-      href: "#services",
-      icon: "capabilities",
-      id: "services",
-    },
-    {
-      label: t("work"),
-      href: "#portfolio",
-      icon: "work",
-      id: "portfolio",
-    },
-    {
-      label: t("blogBadge"),
-      href: "#blog",
-      icon: "blog",
-      id: "blog",
-    },
-    {
-      label: t("team"),
-      href: "#team",
-      icon: "team",
-      id: "team",
-    },
-    {
-      label: t("contact"),
-      href: "#contact",
-      icon: "contact",
-      id: "contact",
-    },
-  ];
+  // تبدیل NavItem به NavLinkItem با اطلاعات فعال بودن
+  const getNavLinkItems = (): NavLinkItem[] => {
+    return currentNavItems.map((item) => ({
+      ...item,
+      isActive: activeSection === item.id || pathname === item.href,
+      onClick: () => setIsMenuOpen(false),
+    }));
+  };
+
+  const handleNavLinkClick = (item: NavLinkItem) => {
+    setIsMenuOpen(false);
+  };
 
   if (variant === "simple") {
     return (
@@ -260,6 +216,7 @@ export default function Navbar({
                 ? "bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border-color)]"
                 : "bg-transparent"
             }
+            ${className}
           `}
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
@@ -280,7 +237,6 @@ export default function Navbar({
                 </button>
               )}
 
-              {/* Preferences Button - Simple - فقط آیکون تنظیمات */}
               <button
                 onClick={() => setIsPreferencesOpen(true)}
                 className="
@@ -323,11 +279,6 @@ export default function Navbar({
     );
   }
 
-  // تابع بررسی فعال بودن لینک
-  const isLinkActive = (linkId: string) => {
-    return activeSection === linkId;
-  };
-
   return (
     <>
       <nav
@@ -339,17 +290,16 @@ export default function Navbar({
               ? "bg-[var(--bg-primary)]/75 backdrop-blur-xl border-b border-[var(--border-color)] shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
               : "bg-transparent"
           }
+          ${className}
         `}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* سمت چپ: لوگو + دکمه Preferences */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3 group">
               <Logo size="md" />
               <BrandName />
             </Link>
 
-            {/* Preferences Button - کنار لوگو */}
             <button
               onClick={() => setIsPreferencesOpen(true)}
               className="
@@ -382,7 +332,6 @@ export default function Navbar({
             </button>
           </div>
 
-          {/* سمت راست: فقط دکمه همبرگر */}
           <button
             onClick={() => setIsMenuOpen((prev) => !prev)}
             className="p-2.5 rounded-xl bg-[var(--bg-elevated)]/55 backdrop-blur-md border border-[var(--border-subtle)]/35 hover:bg-[var(--bg-elevated)]/75 transition-colors"
@@ -416,7 +365,6 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Backdrop overlay */}
       <div
         onClick={() => setIsMenuOpen(false)}
         className={`
@@ -430,7 +378,6 @@ export default function Navbar({
         aria-hidden="true"
       />
 
-      {/* Mobile / Hamburger menu */}
       <div
         id="mobile-menu"
         className={`
@@ -456,56 +403,17 @@ export default function Navbar({
           "
         >
           <div className="p-3 sm:p-4 max-h-[calc(100vh-96px)] overflow-y-auto">
-            <div className="space-y-1">
-              {navLinks.map((link) => {
-                const isActive = isLinkActive(link.id);
-                return (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`
-                      flex items-center gap-3
-                      px-4 py-3
-                      rounded-xl
-                      transition-all duration-200
-                      text-sm font-medium
-                      group
-                      ${
-                        isActive
-                          ? "bg-[var(--bg-elevated)]/80 text-[var(--text-primary)] border border-[var(--border-subtle)]/40"
-                          : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]/50"
-                      }
-                    `}
-                  >
-                    <span
-                      className={`
-                        flex items-center justify-center
-                        w-9 h-9 rounded-lg
-                        border transition-colors
-                        ${
-                          isActive
-                            ? "bg-gradient-to-br from-blue-500/15 to-purple-500/15 border-blue-500/30 text-blue-500"
-                            : "bg-[var(--bg-elevated)]/65 border-[var(--border-subtle)]/30 text-[var(--text-muted)] group-hover:text-[var(--text-primary)] group-hover:border-[var(--border-subtle)]/50"
-                        }
-                      `}
-                    >
-                      <NavIcon name={link.icon} className="w-4.5 h-4.5" />
-                    </span>
-                    <span>{link.label}</span>
-                    {isActive && (
-                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
-                    )}
-                  </a>
-                );
-              })}
-            </div>
+            {/* ✅ استفاده از NavLinks با لیست ورودی */}
+            <NavLinks
+              items={getNavLinkItems()}
+              onItemClick={handleNavLinkClick}
+            />
 
             <div className="border-t border-[var(--border-subtle)]/30 my-3" />
 
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 pt-1">
               <a
-                href="#contact"
+                href={isHomePage ? "#contact" : "/#contact"}
                 onClick={() => setIsMenuOpen(false)}
                 className="
                   inline-flex items-center justify-center
@@ -550,7 +458,6 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Preferences Dialog */}
       <PreferencesDialog
         open={isPreferencesOpen}
         onClose={() => setIsPreferencesOpen(false)}

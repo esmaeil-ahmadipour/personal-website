@@ -1,3 +1,4 @@
+// app/[locale]/dev/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,6 +9,50 @@ import LanguageSwitcher from "@/components/SwitchLanguage";
 import ThemeSwitcherWrapper from "@/features/shared/components/ThemeSwitcherWrapper";
 import Logo from "@/components/Logo";
 import Navbar from "@/features/shared/components/Navbar";
+import {
+  HomeIcon,
+  CapabilitiesIcon,
+  WorkIcon,
+  BlogIcon,
+  TeamIcon,
+  ContactIcon,
+} from "@/features/shared/icons";
+
+// ============================================
+// DEV NAVIGATION ITEMS - مخصوص صفحه Dev
+// ============================================
+const DEV_NAV_ITEMS = [
+  {
+    id: "dev-why",
+    label: "Why",
+    href: "#why",
+    icon: <CapabilitiesIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "dev-substance",
+    label: "Substance",
+    href: "#substance",
+    icon: <WorkIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "dev-layers",
+    label: "Layers",
+    href: "#layers",
+    icon: <BlogIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "dev-principles",
+    label: "Principles",
+    href: "#principles",
+    icon: <TeamIcon className="w-4.5 h-4.5" />,
+  },
+  {
+    id: "dev-access",
+    label: "Access",
+    href: "#access",
+    icon: <ContactIcon className="w-4.5 h-4.5" />,
+  },
+];
 
 // ============================================
 // OFFICIAL COLOR PALETTE - Blue, Purple, Green
@@ -105,12 +150,12 @@ export default function DevPlatformPage() {
 
   return (
     <>
-      {/* Navbar یکپارچه با حالت simple و دکمه بازگشت */}
-      <Navbar variant="simple" showBack backUrl="/" />
+      <Navbar navItems={DEV_NAV_ITEMS} showBack backUrl="/" />
 
-
-      {/* Hero Section */}
-      <section id="hero" className="relative pt-32 pb-16 px-4">
+      {/* ============================================
+          Hero Section
+          ============================================ */}
+      <section id="dev-dashboard" className="relative pt-32 pb-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)]/50 backdrop-blur-sm mb-6">
             <span className="relative flex h-2 w-2">
@@ -123,42 +168,56 @@ export default function DevPlatformPage() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
-            <span className="gradient-text">{t("heroTitleDev")}</span>
+            <span className="gradient-text">The Tarvix Engineering System</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-[var(--text-secondary)] max-w-3xl mx-auto mb-6 leading-relaxed">
-            {t("heroSubDev")}
+            A modular, production-grade platform designed for scale,
+            maintainability, and developer experience.
           </p>
 
           <div className="max-w-2xl mx-auto text-sm text-[var(--text-muted)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl p-4 mb-8">
-            <i className="fas fa-check-circle text-[var(--accent-blue)] mr-2"></i>
-            {t("heroIntent")}
+            <span className="text-emerald-500 mr-2">✓</span>
+            Built with Next.js 16, TypeScript 5, Prisma, and Tailwind CSS
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <EarlyAccessTrigger className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold text-lg hover:shadow-xl hover:shadow-blue-500/25 transition-all btn-press">
-              {t("requestAccess")} →
+              Explore the System ↓
             </EarlyAccessTrigger>
             <a
               href="#layers"
               className="px-8 py-4 rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] font-medium transition-all btn-press"
             >
-              Explore System ↓
+              View Layers →
             </a>
           </div>
         </div>
       </section>
 
-      {/* Why Section */}
-      <section className="py-16 px-4 border-t border-[var(--border-subtle)]">
+      {/* ============================================
+          Why This System Exists
+          ============================================ */}
+      <section
+        id="why"
+        className="py-16 px-4 border-t border-[var(--border-subtle)]"
+      >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 gradient-text">
-            {t("whyTitle")}
+            Why This System Exists
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { badge: t("whyBadge1"), text: t("whyText1"), colorIndex: 0 },
-              { badge: t("whyBadge2"), text: t("whyText2"), colorIndex: 1 },
+              {
+                badge: "Complexity",
+                text: "Modern applications demand modular, scalable architectures. This system was built to handle complex business logic while maintaining clarity and developer velocity.",
+                colorIndex: 0,
+              },
+              {
+                badge: "Consistency",
+                text: "From authentication to database operations, every layer follows the same patterns. This reduces cognitive load and makes onboarding seamless.",
+                colorIndex: 1,
+              },
             ].map((item, idx) => {
               const color =
                 OFFICIAL_COLORS[item.colorIndex % OFFICIAL_COLORS.length];
@@ -199,27 +258,36 @@ export default function DevPlatformPage() {
             })}
           </div>
           <p className="text-center text-[var(--text-muted)] mt-6 text-sm">
-            {t("whyFooter")}
+            This isn't just another boilerplate — it's a battle-tested
+            foundation for enterprise applications.
           </p>
         </div>
       </section>
 
-      {/* Substance Section */}
+      {/* ============================================
+          Substance Section
+          ============================================ */}
       <section
         id="substance"
         className="py-16 px-4 border-t border-[var(--border-subtle)]"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-2 gradient-text">
-            {t("substanceTitle")}
+            System Substance
           </h2>
           <p className="text-center text-[var(--text-secondary)] mb-12">
-            {t("substanceSub")}
+            What makes this system different from the rest.
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { text: t("substanceText1"), colorIndex: 2 },
-              { text: t("substanceText2"), colorIndex: 3 },
+              {
+                text: "Every feature is isolated in its own directory with clear boundaries. Components, hooks, services, and schemas are co-located for maximum cohesion.",
+                colorIndex: 2,
+              },
+              {
+                text: "Authentication is handled via JWT with httpOnly cookies. Role-based access control (RBAC) is enforced at both middleware and API levels.",
+                colorIndex: 3,
+              },
             ].map((item, idx) => {
               const color =
                 OFFICIAL_COLORS[item.colorIndex % OFFICIAL_COLORS.length];
@@ -251,33 +319,53 @@ export default function DevPlatformPage() {
           </div>
           <div className="mt-6 rounded-2xl p-6 bg-[var(--accent-blue-bg)] border border-[var(--accent-blue)]/10 text-center">
             <p className="text-[var(--text-primary)] font-medium">
-              {t("substancePrinciple")}
+              Principle: "Write code that is easy to delete, not easy to
+              extend."
             </p>
           </div>
         </div>
       </section>
 
-      {/* Layers Section */}
+      {/* ============================================
+          System Layers
+          ============================================ */}
       <section
         id="layers"
         className="py-16 px-4 border-t border-[var(--border-subtle)]"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-2 gradient-text">
-            {t("layersTitle")}
+            System Layers
           </h2>
           <p className="text-center text-[var(--text-secondary)] mb-12">
-            {t("layersSub")}
+            A clean, layered architecture that separates concerns.
           </p>
           <div className="space-y-4">
             {[
-              { title: t("layer1"), content: t("layer1Text"), colorIndex: 0 },
-              { title: t("layer2"), content: t("layer2Text"), colorIndex: 1 },
-              { title: t("layer3"), content: t("layer3Text"), colorIndex: 2 },
               {
-                title: t("layer4"),
-                content: t("layer4Text"),
-                footer: t("layer4Footer"),
+                title: "Presentation Layer",
+                content:
+                  "Next.js App Router with React Server Components. Pages, layouts, and client components live here. All UI logic is isolated from business logic.",
+                colorIndex: 0,
+              },
+              {
+                title: "Feature Layer",
+                content:
+                  "Domain-driven modules under `src/features/`. Each feature contains its own components, hooks, services, schemas, and types. Features are isolated and communicate through explicit public APIs.",
+                colorIndex: 1,
+              },
+              {
+                title: "Infrastructure Layer",
+                content:
+                  "Shared utilities in `src/lib/` including API clients, authentication, database connections, and error handling. This layer is framework-agnostic.",
+                colorIndex: 2,
+              },
+              {
+                title: "Data Layer",
+                content:
+                  "Prisma ORM with PostgreSQL. All database operations are type-safe and managed through repositories. Migrations are version-controlled.",
+                footer:
+                  "→ Every layer has a single responsibility and a single reason to change.",
                 colorIndex: 3,
               },
             ].map((layer, idx) => {
@@ -320,30 +408,35 @@ export default function DevPlatformPage() {
         </div>
       </section>
 
-      {/* Principles Section */}
-      <section className="py-16 px-4 border-t border-[var(--border-subtle)]">
+      {/* ============================================
+          Operating Principles
+          ============================================ */}
+      <section
+        id="principles"
+        className="py-16 px-4 border-t border-[var(--border-subtle)]"
+      >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 gradient-text">
-            {t("principlesTitle")}
+            Operating Principles
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                badge: t("principle1Badge"),
-                title: t("principle1Title"),
-                text: t("principle1Text"),
+                badge: "01",
+                title: "Separation of Concerns",
+                text: "Each layer has one responsibility. UI components never touch the database. Services never handle HTTP responses.",
                 colorIndex: 0,
               },
               {
-                badge: t("principle2Badge"),
-                title: t("principle2Title"),
-                text: t("principle2Text"),
+                badge: "02",
+                title: "Type Safety First",
+                text: "TypeScript is strictly enforced. No 'any' types. Prisma ensures type-safe database operations. Zod validates all inputs.",
                 colorIndex: 1,
               },
               {
-                badge: t("principle3Badge"),
-                title: t("principle3Title"),
-                text: t("principle3Text"),
+                badge: "03",
+                title: "Security by Design",
+                text: "JWT authentication, RBAC, rate limiting, audit logging, and input validation are built into every layer.",
                 colorIndex: 2,
               },
             ].map((principle, idx) => {
@@ -391,40 +484,42 @@ export default function DevPlatformPage() {
         </div>
       </section>
 
-      {/* Access Section */}
+      {/* ============================================
+          Explore the Engineering System
+          ============================================ */}
       <section
         id="access"
         className="py-16 px-4 border-t border-[var(--border-subtle)]"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-4 gradient-text">
-            {t("accessTitle")}
+            Explore the Engineering System
           </h2>
           <p className="text-center text-[var(--text-secondary)] max-w-2xl mx-auto mb-12">
-            Explore the engineering system, inspect implementations, or request
-            a review.
+            Dive into the codebase, inspect implementations, and see how
+            everything fits together.
           </p>
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
                 icon: "fa-book",
-                title: t("accessGuide"),
-                text: t("accessGuideText"),
-                link: t("accessGuideLink"),
+                title: "Developer Guide",
+                text: "Complete technical documentation covering architecture, standards, and best practices.",
+                link: "/docs",
                 colorIndex: 0,
               },
               {
                 icon: "fa-github",
-                title: t("accessGithub"),
-                text: t("accessGithubText"),
-                link: t("accessGithubLink"),
+                title: "Source Code",
+                text: "Browse the repository, explore features, and see how each layer is implemented.",
+                link: "https://github.com",
                 colorIndex: 1,
               },
               {
                 icon: "fa-microphone-alt",
-                title: t("accessReview"),
-                text: t("accessReviewText"),
-                link: t("requestAccess"),
+                title: "Request a Review",
+                text: "Schedule a walkthrough with the engineering team to review the system.",
+                link: "Request Access",
                 colorIndex: 2,
                 isTrigger: true,
               },
@@ -478,7 +573,7 @@ export default function DevPlatformPage() {
                     </EarlyAccessTrigger>
                   ) : (
                     <a
-                      href="#"
+                      href={item.link}
                       className={`
                         inline-block mt-4 text-sm font-medium
                         ${color.text} hover:${color.text}
@@ -493,37 +588,53 @@ export default function DevPlatformPage() {
             })}
           </div>
           <div className="mt-8 text-center text-sm text-[var(--text-muted)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl p-4 max-w-3xl mx-auto">
-            <i className="fas fa-quote-left text-[var(--accent-blue)] mr-2"></i>
-            {t("accessFooter")}
+            <span className="text-blue-500 mr-2">💡</span>
+            "The best way to understand the system is to run it locally.
+            <br className="sm:hidden" />{" "}
+            <code className="px-2 py-1 bg-[var(--bg-primary)] rounded text-xs font-mono">
+              pnpm dev
+            </code>
+            "
           </div>
         </div>
       </section>
 
-      {/* Final Section */}
+      {/* ============================================
+          Final CTA
+          ============================================ */}
       <section className="py-16 px-4 border-t border-[var(--border-subtle)]">
         <div className="max-w-3xl mx-auto text-center rounded-2xl p-8 bg-[var(--accent-blue-bg)] border border-[var(--accent-blue)]/10">
           <p className="text-lg font-semibold text-[var(--text-primary)]">
-            {t("finalTitle")}
+            Ready to build with Tarvix?
           </p>
           <p className="text-sm text-[var(--text-secondary)] mt-2">
-            {t("finalText")}
+            Start by exploring the{" "}
+            <Link href="/docs" className="text-blue-500 hover:underline">
+              Developer Guide
+            </Link>{" "}
+            or{" "}
+            <EarlyAccessTrigger className="text-blue-500 hover:underline cursor-pointer">
+              request early access
+            </EarlyAccessTrigger>
+            .
           </p>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ============================================
+          Footer
+          ============================================ */}
       <footer className="border-t border-[var(--border-subtle)] py-8 px-4 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-sm text-[var(--text-muted)]">
-            © 2025 Tarvix — {t("footer")}
+            © 2025 Tarvix — Built with Next.js, TypeScript, and ❤️
           </p>
           <p className="text-xs text-[var(--text-muted)]/70 mt-2">
-            {t("footerTags")}
+            Engineering System v1.0 • Open Source • MIT License
           </p>
         </div>
       </footer>
 
-      {/* Early Access Modal */}
       <EarlyAccessModal />
     </>
   );

@@ -3,7 +3,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeftIcon } from "@/features/shared/components/icons/ArrowLeftIcon";
+import { ArrowLeftIcon } from "@/features/shared/icons/ArrowLeftIcon";
 
 export function Navbar() {
   const pathname = usePathname();

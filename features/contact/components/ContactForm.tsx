@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ContactSchema, type ContactData } from "../schemas/contact.schema";
 import { useContact } from "../hooks/useContact";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
-import { CheckIcon } from "@/features/shared/components/icons/CheckIcon";
+import { CheckIcon } from "@/features/shared/icons/CheckIcon";
 import { useEffect, useState } from "react";
 
 interface ContactFormProps {
