@@ -57,13 +57,20 @@ model Author {
   email     String?  @unique
   avatarUrl String?
   
+  // انگلیسی
   firstNameEn String
   lastNameEn  String
   bioEn       String?
   
+  // فارسی
   firstNameFa String
   lastNameFa  String
   bioFa       String?
+  
+  // عربی 🇸🇦
+  firstNameAr String?
+  lastNameAr  String?
+  bioAr       String?
   
   posts     Post[]
   createdAt DateTime @default(now())
@@ -77,11 +84,17 @@ model Category {
   id          String   @id @default(cuid())
   slug        String   @unique
   
+  // انگلیسی
   nameEn      String
   descriptionEn String?
   
+  // فارسی
   nameFa      String
   descriptionFa String?
+  
+  // عربی 🇸🇦
+  nameAr      String?
+  descriptionAr String?
   
   posts       Post[]
   createdAt   DateTime @default(now())
@@ -95,8 +108,14 @@ model Tag {
   id        String   @id @default(cuid())
   slug      String   @unique
   
+  // انگلیسی
   nameEn    String
+  
+  // فارسی
   nameFa    String
+  
+  // عربی 🇸🇦
+  nameAr    String?
   
   posts     PostTag[]
   createdAt DateTime @default(now())
@@ -110,17 +129,26 @@ model Post {
   id             String      @id @default(cuid())
   slug           String      @unique
   
+  // انگلیسی
   titleEn        String
   excerptEn      String?
   contentEn      String
   seoTitleEn     String?
   seoDescriptionEn String?
   
+  // فارسی
   titleFa        String
   excerptFa      String?
   contentFa      String
   seoTitleFa     String?
   seoDescriptionFa String?
+  
+  // عربی 🇸🇦
+  titleAr        String?
+  excerptAr      String?
+  contentAr      String?
+  seoTitleAr     String?
+  seoDescriptionAr String?
   
   coverImageUrl  String?
   readingTimeMin Int?

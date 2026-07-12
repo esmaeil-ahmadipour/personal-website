@@ -6,7 +6,7 @@ async function main() {
   console.log("🌱 Seeding database...");
 
   // ============================================
-  // 1. ایجاد یا به‌روزرسانی Author
+  // 1. ایجاد یا به‌روزرسانی Author با پشتیبانی از هر سه زبان
   // ============================================
   const author = await prisma.author.upsert({
     where: { slug: "esmaeil-ahmadipour" },
@@ -14,22 +14,32 @@ async function main() {
     create: {
       slug: "esmaeil-ahmadipour",
       email: "esmaeil@tarvix.org",
+      avatarUrl: "/images/authors/avatar-esmaeil.png",
+
+      // انگلیسی
       firstNameEn: "Esmaeil",
       lastNameEn: "Ahmadipour",
       bioEn:
         "Founder & Lead Frontend/Mobile Engineer with 8+ years in mobile and web development. Leads architecture and delivery for enterprise Flutter, React, and Next.js applications.",
+
+      // فارسی
       firstNameFa: "اسماعیل",
       lastNameFa: "احمدی‌پور",
       bioFa:
         "بنیان‌گذار و مهندس ارشد فرانت‌اند و موبایل با بیش از ۸ سال تجربه در توسعه موبایل و وب. رهبری معماری و تحویل برنامه‌های سازمانی فلاتر، React و Next.js.",
-      avatarUrl: "/images/authors/avatar-esmaeil.png",
+
+      // عربی 🇸🇦
+      firstNameAr: "إسماعیل",
+      lastNameAr: "أحمدي‌بور",
+      bioAr:
+        "مؤسس ومهندس رئيسي للواجهة الأمامية والهواتف المحمولة مع أكثر من 8 سنوات من الخبرة في تطوير الهواتف المحمولة والويب. يقود الهندسة المعمارية وتسليم تطبيقات المؤسسات Flutter و React و Next.js.",
     },
   });
 
   console.log(`✅ Author: ${author.firstNameEn} ${author.lastNameEn}`);
 
   // ============================================
-  // 2. ایجاد یا به‌روزرسانی Category
+  // 2. ایجاد یا به‌روزرسانی Category با پشتیبانی از هر سه زبان
   // ============================================
   const categories = [
     {
@@ -38,6 +48,8 @@ async function main() {
       descriptionEn: "Software engineering insights and best practices",
       nameFa: "مهندسی نرم‌افزار",
       descriptionFa: "نکات و تجربیات مهندسی نرم‌افزار و بهترین روش‌ها",
+      nameAr: "الهندسة",
+      descriptionAr: "رؤى هندسة البرمجيات وأفضل الممارسات",
     },
     {
       slug: "architecture",
@@ -45,6 +57,8 @@ async function main() {
       descriptionEn: "System architecture and design patterns",
       nameFa: "معماری",
       descriptionFa: "معماری سیستم و الگوهای طراحی",
+      nameAr: "الهندسة المعمارية",
+      descriptionAr: "هندسة النظم وأنماط التصميم",
     },
     {
       slug: "flutter",
@@ -52,6 +66,8 @@ async function main() {
       descriptionEn: "Flutter development tips and techniques",
       nameFa: "فلاتر",
       descriptionFa: "نکات و تکنیک‌های توسعه فلاتر",
+      nameAr: "فلاتر",
+      descriptionAr: "نصائح وتقنيات تطوير فلاتر",
     },
     {
       slug: "web3",
@@ -59,6 +75,8 @@ async function main() {
       descriptionEn: "Blockchain and Web3 development",
       nameFa: "وب۳",
       descriptionFa: "توسعه بلاکچین و وب۳",
+      nameAr: "ويب 3",
+      descriptionAr: "تطوير البلوكشين والويب 3",
     },
   ];
 
@@ -75,21 +93,57 @@ async function main() {
   console.log(`✅ Categories: ${createdCategories.length}`);
 
   // ============================================
-  // 3. ایجاد یا به‌روزرسانی Tags
+  // 3. ایجاد یا به‌روزرسانی Tags با پشتیبانی از هر سه زبان
   // ============================================
   const tagData = [
-    { slug: "flutter", nameEn: "Flutter", nameFa: "فلاتر" },
-    { slug: "architecture", nameEn: "Architecture", nameFa: "معماری" },
-    { slug: "nextjs", nameEn: "Next.js", nameFa: "نکست‌جی‌اس" },
-    { slug: "react", nameEn: "React", nameFa: "ری‌اکت" },
-    { slug: "web3", nameEn: "Web3", nameFa: "وب۳" },
-    { slug: "blockchain", nameEn: "Blockchain", nameFa: "بلاکچین" },
+    {
+      slug: "flutter",
+      nameEn: "Flutter",
+      nameFa: "فلاتر",
+      nameAr: "فلاتر",
+    },
+    {
+      slug: "architecture",
+      nameEn: "Architecture",
+      nameFa: "معماری",
+      nameAr: "الهندسة المعمارية",
+    },
+    {
+      slug: "nextjs",
+      nameEn: "Next.js",
+      nameFa: "نکست‌جی‌اس",
+      nameAr: "نيكست جي إس",
+    },
+    {
+      slug: "react",
+      nameEn: "React",
+      nameFa: "ری‌اکت",
+      nameAr: "رياكت",
+    },
+    {
+      slug: "web3",
+      nameEn: "Web3",
+      nameFa: "وب۳",
+      nameAr: "ويب 3",
+    },
+    {
+      slug: "blockchain",
+      nameEn: "Blockchain",
+      nameFa: "بلاکچین",
+      nameAr: "بلوكشين",
+    },
     {
       slug: "clean-architecture",
       nameEn: "Clean Architecture",
       nameFa: "معماری تمیز",
+      nameAr: "الهندسة النظيفة",
     },
-    { slug: "typescript", nameEn: "TypeScript", nameFa: "تایپ‌اسکریپت" },
+    {
+      slug: "typescript",
+      nameEn: "TypeScript",
+      nameFa: "تایپ‌اسکریپت",
+      nameAr: "تايب سكريبت",
+    },
   ];
 
   const createdTags = await Promise.all(
@@ -105,11 +159,13 @@ async function main() {
   console.log(`✅ Tags: ${createdTags.length}`);
 
   // ============================================
-  // 4. ایجاد پست‌های نمونه
+  // 4. ایجاد پست‌های نمونه با پشتیبانی از هر سه زبان
   // ============================================
   const posts = [
     {
       slug: "introducing-tarvix-engineering-system",
+
+      // انگلیسی
       titleEn: "Introducing the Tarvix Engineering System",
       excerptEn:
         "A codified engineering system for Flutter, Web, and Web3. Built to resolve active constraints across high-stakes domains.",
@@ -130,6 +186,8 @@ async function main() {
         
         <p>The platform gives you visibility into how we build. The system provides patterns you can adapt. A shared foundation grounded in engineering reality.</p>
       `,
+
+      // فارسی
       titleFa: "معرفی سیستم مهندسی Tarvix",
       excerptFa:
         "یک سیستم مهندسی مدون برای فلاتر، وب و وب۳. ساخته شده برای حل چالش‌های پیش رو در حوزه‌های پرریسک.",
@@ -150,15 +208,40 @@ async function main() {
         
         <p>این پلتفرم به شما دیدگاهی از نحوه ساخت ما می‌دهد. سیستم الگوهایی را ارائه می‌دهد که می‌توانید تطبیق دهید. یک بنیاد مشترک مبتنی بر واقعیت مهندسی.</p>
       `,
+
+      // عربی 🇸🇦
+      titleAr: "تقديم نظام Tarvix الهندسي",
+      excerptAr:
+        "نظام هندسي مدون لـ Flutter و Web و Web3. تم بناؤه لحل القيود النشطة عبر المجالات عالية المخاطر.",
+      contentAr: `
+        <h2>ما هو نظام Tarvix الهندسي؟</h2>
+        <p>نظام Tarvix الهندسي هو مجموعة مدونة من القرارات المعمارية ومعايير الجودة وأنماط الأتمتة. يمثل ما تعلمناه من حل المشكلات المعقدة في مجالات التكنولوجيا المالية و Web3 والخدمات اللوجستية والتعليم التقني.</p>
+        
+        <h3>المبادئ الرئيسية</h3>
+        <ul>
+          <li><strong>حدود المجال المعيارية</strong> — تنظيم قائم على الميزات مع فصل نظيف بين منطق المجال والوصول إلى البيانات والعرض.</li>
+          <li><strong>التوثيق الحي</strong> — سجلات القرارات المعمارية (ADRs) كمواطنين من الدرجة الأولى.</li>
+          <li><strong>بوابات الجودة الآلية</strong> — التكامل المستمر الذي يفرض قواعد الهندسة المعمارية قبل الدمج.</li>
+          <li><strong>التطبيقات المرجعية</strong> — أمثلة تطبيقية توضح القرارات المعمارية.</li>
+        </ul>
+        
+        <h3>لماذا هذا مهم</h3>
+        <p>عندما يتم توثيق وتطبيق القرارات المعمارية، تتوقف الفرق عن مناقشة نفس الأسئلة. عندما تكون الجودة آلية، تذهب الطاقة البشرية إلى قيمة المنتج، وليس إلى مكافحة الحرائق.</p>
+        
+        <p>تمنحك المنصة رؤية لكيفية بنائنا. يوفر النظام أنماطًا يمكنك تكييفها. أساس مشترك مبني على الواقع الهندسي.</p>
+      `,
+
       coverImageUrl: "/images/blog/engineering-system.jpg",
       readingTimeMin: 5,
-      status: PostStatus.published, // ✅ استفاده از enum
+      status: PostStatus.published,
       publishedAt: new Date("2025-01-15"),
       categorySlug: "engineering",
       tagSlugs: ["flutter", "architecture", "clean-architecture"],
     },
     {
       slug: "flutter-clean-architecture-patterns",
+
+      // انگلیسی
       titleEn: "Flutter Clean Architecture: Patterns That Scale",
       excerptEn:
         "Learn how to structure Flutter applications with clean architecture for long-term maintainability.",
@@ -178,6 +261,8 @@ async function main() {
         
         <p>The result is a codebase that remains maintainable as your application grows.</p>
       `,
+
+      // فارسی
       titleFa: "معماری تمیز فلاتر: الگوهای مقیاس‌پذیر",
       excerptFa:
         "یاد بگیرید چگونه برنامه‌های فلاتر را با معماری تمیز برای نگهداری طولانی‌مدت ساختاردهی کنید.",
@@ -197,15 +282,39 @@ async function main() {
         
         <p>نتیجه یک کدبیس است که با رشد برنامه شما قابل نگهداری باقی می‌ماند.</p>
       `,
+
+      // عربی 🇸🇦
+      titleAr: "هندسة فلاتر النظيفة: أنماط قابلة للتوسع",
+      excerptAr:
+        "تعلم كيفية هيكلة تطبيقات فلاتر باستخدام الهندسة النظيفة للصيانة طويلة المدى.",
+      contentAr: `
+        <h2>الهندسة النظيفة في فلاتر</h2>
+        <p>الهندسة النظيفة لا تتعلق بهيكل المجلدات - بل تتعلق باتجاه التبعية. المبدأ الأساسي هو أن التبعيات تشير إلى الداخل، نحو طبقة المجال.</p>
+        
+        <h3>الطبقات الثلاث</h3>
+        <ul>
+          <li><strong>طبقة المجال</strong> — الكيانات وحالات الاستخدام وواجهات المستودع. هذا هو قلب تطبيقك.</li>
+          <li><strong>طبقة البيانات</strong> — تطبيقات المستودع ومصادر البيانات والنماذج. تطبق هذه الطبقة عقود المجال.</li>
+          <li><strong>طبقة العرض</strong> — مكونات واجهة المستخدم وإدارة الحالة والتنقل. تعتمد هذه الطبقة على طبقة المجال.</li>
+        </ul>
+        
+        <h3>لماذا يعمل هذا</h3>
+        <p>من خلال عكس التبعيات، يمكنك إنشاء نظام يكون فيه منطق الأعمال مستقلاً عن الاهتمامات الخارجية. هذا يجعل الاختبار أسهل، ويقلل من الاقتران، ويسمح بالتطور المستقل لكل طبقة.</p>
+        
+        <p>والنتيجة هي قاعدة شيفرة تظل قابلة للصيانة مع نمو تطبيقك.</p>
+      `,
+
       coverImageUrl: "/images/blog/flutter-clean-architecture.jpg",
       readingTimeMin: 8,
-      status: PostStatus.published, // ✅ استفاده از enum
+      status: PostStatus.published,
       publishedAt: new Date("2025-02-20"),
       categorySlug: "flutter",
       tagSlugs: ["flutter", "clean-architecture", "architecture"],
     },
     {
       slug: "web3-development-best-practices",
+
+      // انگلیسی
       titleEn: "Web3 Development: Best Practices for Production",
       excerptEn:
         "Essential patterns and practices for building production-ready Web3 applications.",
@@ -224,6 +333,8 @@ async function main() {
         <h3>The Future of Web3</h3>
         <p>Web3 is evolving rapidly. Stay current with the latest standards, but always prioritize security and user experience over features.</p>
       `,
+
+      // فارسی
       titleFa: "توسعه وب۳: بهترین روش‌ها برای تولید",
       excerptFa:
         "الگوها و روش‌های ضروری برای ساخت برنامه‌های Web3 آماده تولید.",
@@ -242,9 +353,30 @@ async function main() {
         <h3>آینده Web3</h3>
         <p>Web3 به سرعت در حال تکامل است. با آخرین استانداردها به‌روز بمانید، اما همیشه امنیت و تجربه کاربری را بر ویژگی‌ها ترجیح دهید.</p>
       `,
+
+      // عربی 🇸🇦
+      titleAr: "تطوير Web3: أفضل الممارسات للإنتاج",
+      excerptAr:
+        "الأنماط والممارسات الأساسية لبناء تطبيقات Web3 جاهزة للإنتاج.",
+      contentAr: `
+        <h2>تطوير Web3 في الإنتاج</h2>
+        <p>يتطلب بناء تطبيقات Web3 عقلية مختلفة. فيما يلي الأنماط الرئيسية التي تعلمناها من شحن منتجات Web3 الإنتاجية.</p>
+        
+        <h3>الممارسات الرئيسية</h3>
+        <ul>
+          <li><strong>تحسين الغاز</strong> — كل معاملة تكلف مالاً. تحسين استدعاءات العقود الذكية والعمليات المجمعة.</li>
+          <li><strong>معالجة الأخطاء</strong> — يمكن أن تفشل معاملات Web3 لأسباب عديدة. تنفيذ معالجة قوية للأخطاء وملاحظات المستخدم.</li>
+          <li><strong>إدارة الحالة</strong> — حالة البلوكشين غير متزامنة. استخدم أنماط إدارة الحالة المناسبة للتعامل مع حالات التحميل والنجاح والخطأ.</li>
+          <li><strong>الأمان أولاً</strong> — تدقيق العقود الذكية، واستخدام المكتبات المختبرة جيداً، وتنفيذ ضوابط الوصول المناسبة.</li>
+        </ul>
+        
+        <h3>مستقبل Web3</h3>
+        <p>يتطور Web3 بسرعة. ابق على اطلاع بأحدث المعايير، ولكن دائمًا أعط الأولوية للأمان وتجربة المستخدم على الميزات.</p>
+      `,
+
       coverImageUrl: "/images/blog/web3-development.jpg",
       readingTimeMin: 6,
-      status: PostStatus.published, // ✅ استفاده از enum
+      status: PostStatus.published,
       publishedAt: new Date("2025-03-10"),
       categorySlug: "web3",
       tagSlugs: ["web3", "blockchain", "typescript"],
@@ -283,15 +415,25 @@ async function main() {
     const post = await prisma.post.create({
       data: {
         slug: postData.slug,
+
+        // انگلیسی
         titleEn: postData.titleEn,
         excerptEn: postData.excerptEn,
         contentEn: postData.contentEn,
+
+        // فارسی
         titleFa: postData.titleFa,
         excerptFa: postData.excerptFa,
         contentFa: postData.contentFa,
+
+        // عربی 🇸🇦
+        titleAr: postData.titleAr,
+        excerptAr: postData.excerptAr,
+        contentAr: postData.contentAr,
+
         coverImageUrl: postData.coverImageUrl,
         readingTimeMin: postData.readingTimeMin,
-        status: postData.status, // ✅ الان درست است
+        status: postData.status,
         publishedAt: postData.publishedAt,
         authorId: author.id,
         categoryId: category.id,

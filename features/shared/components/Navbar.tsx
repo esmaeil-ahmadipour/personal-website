@@ -196,7 +196,7 @@ export default function Navbar({
   const getNavLinkItems = (): NavLinkItem[] => {
     return currentNavItems.map((item) => ({
       ...item,
-      label: t(item.label), // ✅ بازنویسی label با مقدار ترجمه شده
+      label: t(item.label),
       isActive: activeSection === item.id || pathname === item.href,
       onClick: () => setIsMenuOpen(false),
     }));

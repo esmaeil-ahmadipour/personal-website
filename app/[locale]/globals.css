@@ -4,6 +4,7 @@
    ============================================ */
 
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 /* ----- Custom Properties ----- */
 @layer base {
