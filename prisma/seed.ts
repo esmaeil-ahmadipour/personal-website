@@ -1,12 +1,14 @@
+// prisma/seed.ts
+
 import { PrismaClient, PostStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log("🌱 Seeding database with 3-language support...");
 
   // ============================================
-  // 1. ایجاد یا به‌روزرسانی Author با پشتیبانی از هر سه زبان
+  // 1. ایجاد Author با پشتیبانی از هر سه زبان + فیلدهای جدید
   // ============================================
   const author = await prisma.author.upsert({
     where: { slug: "esmaeil-ahmadipour" },
@@ -16,34 +18,42 @@ async function main() {
       email: "esmaeil@tarvix.org",
       avatarUrl: "/images/authors/avatar-esmaeil.png",
 
+      // فیلدهای جدید - شبکه‌های اجتماعی
+      twitter: "https://twitter.com/esmaeil",
+      github: "https://github.com/esmaeil-ahmadipour",
+      website: "https://tarvix.org",
+      linkedin: "https://linkedin.com/in/esmaeil-ahmadipour",
+
       // انگلیسی
       firstNameEn: "Esmaeil",
       lastNameEn: "Ahmadipour",
       bioEn:
-        "Founder & Lead Frontend/Mobile Engineer with 8+ years in mobile and web development. Leads architecture and delivery for enterprise Flutter, React, and Next.js applications.",
+        "Founder & Lead Frontend/Mobile Engineer with 8+ years in mobile and web development. Leads architecture and delivery for enterprise Flutter, React, and Next.js applications. Open source contributor and Pactus GUI manager.",
 
       // فارسی
       firstNameFa: "اسماعیل",
       lastNameFa: "احمدی‌پور",
       bioFa:
-        "بنیان‌گذار و مهندس ارشد فرانت‌اند و موبایل با بیش از ۸ سال تجربه در توسعه موبایل و وب. رهبری معماری و تحویل برنامه‌های سازمانی فلاتر، React و Next.js.",
+        "بنیان‌گذار و مهندس ارشد فرانت‌اند و موبایل با بیش از ۸ سال تجربه در توسعه موبایل و وب. رهبری معماری و تحویل برنامه‌های سازمانی فلاتر، React و Next.js. مشارکت‌کننده متن‌باز و مدیر GUI Pactus.",
 
-      // عربی 🇸🇦
+      // عربی
       firstNameAr: "إسماعیل",
       lastNameAr: "أحمدي‌بور",
       bioAr:
-        "مؤسس ومهندس رئيسي للواجهة الأمامية والهواتف المحمولة مع أكثر من 8 سنوات من الخبرة في تطوير الهواتف المحمولة والويب. يقود الهندسة المعمارية وتسليم تطبيقات المؤسسات Flutter و React و Next.js.",
+        "مؤسس ومهندس رئيسي للواجهة الأمامية والهواتف المحمولة مع أكثر من 8 سنوات من الخبرة في تطوير الهواتف المحمولة والويب. يقود الهندسة المعمارية وتسليم تطبيقات المؤسسات Flutter و React و Next.js. مساهم في المصادر المفتوحة ومدير واجهة Pactus.",
     },
   });
 
   console.log(`✅ Author: ${author.firstNameEn} ${author.lastNameEn}`);
 
   // ============================================
-  // 2. ایجاد یا به‌روزرسانی Category با پشتیبانی از هر سه زبان
+  // 2. ایجاد Categories با فیلدهای جدید
   // ============================================
-  const categories = [
+  const categoriesData = [
     {
       slug: "engineering",
+      order: 1,
+      isActive: true,
       nameEn: "Engineering",
       descriptionEn: "Software engineering insights and best practices",
       nameFa: "مهندسی نرم‌افزار",
@@ -53,6 +63,8 @@ async function main() {
     },
     {
       slug: "architecture",
+      order: 2,
+      isActive: true,
       nameEn: "Architecture",
       descriptionEn: "System architecture and design patterns",
       nameFa: "معماری",
@@ -62,6 +74,8 @@ async function main() {
     },
     {
       slug: "flutter",
+      order: 3,
+      isActive: true,
       nameEn: "Flutter",
       descriptionEn: "Flutter development tips and techniques",
       nameFa: "فلاتر",
@@ -71,6 +85,8 @@ async function main() {
     },
     {
       slug: "web3",
+      order: 4,
+      isActive: true,
       nameEn: "Web3",
       descriptionEn: "Blockchain and Web3 development",
       nameFa: "وب۳",
@@ -81,10 +97,19 @@ async function main() {
   ];
 
   const createdCategories = await Promise.all(
-    categories.map(async (cat) => {
+    categoriesData.map(async (cat) => {
       return prisma.category.upsert({
         where: { slug: cat.slug },
-        update: {},
+        update: {
+          order: cat.order,
+          isActive: cat.isActive,
+          nameEn: cat.nameEn,
+          descriptionEn: cat.descriptionEn,
+          nameFa: cat.nameFa,
+          descriptionFa: cat.descriptionFa,
+          nameAr: cat.nameAr,
+          descriptionAr: cat.descriptionAr,
+        },
         create: cat,
       });
     }),
@@ -93,64 +118,94 @@ async function main() {
   console.log(`✅ Categories: ${createdCategories.length}`);
 
   // ============================================
-  // 3. ایجاد یا به‌روزرسانی Tags با پشتیبانی از هر سه زبان
+  // 3. ایجاد Tags با فیلدهای جدید (رنگ و آیکون)
   // ============================================
-  const tagData = [
+  const tagsData = [
     {
       slug: "flutter",
       nameEn: "Flutter",
       nameFa: "فلاتر",
       nameAr: "فلاتر",
+      color: "#42a5f5",
+      icon: "smartphone",
     },
     {
       slug: "architecture",
       nameEn: "Architecture",
       nameFa: "معماری",
       nameAr: "الهندسة المعمارية",
+      color: "#7c3aed",
+      icon: "layers",
     },
     {
       slug: "nextjs",
       nameEn: "Next.js",
       nameFa: "نکست‌جی‌اس",
       nameAr: "نيكست جي إس",
+      color: "#000000",
+      icon: "code",
     },
     {
       slug: "react",
       nameEn: "React",
       nameFa: "ری‌اکت",
       nameAr: "رياكت",
+      color: "#61dafb",
+      icon: "atom",
     },
     {
       slug: "web3",
       nameEn: "Web3",
       nameFa: "وب۳",
       nameAr: "ويب 3",
+      color: "#3b82f6",
+      icon: "globe",
     },
     {
       slug: "blockchain",
       nameEn: "Blockchain",
       nameFa: "بلاکچین",
       nameAr: "بلوكشين",
+      color: "#f59e0b",
+      icon: "link",
     },
     {
       slug: "clean-architecture",
       nameEn: "Clean Architecture",
       nameFa: "معماری تمیز",
       nameAr: "الهندسة النظيفة",
+      color: "#10b981",
+      icon: "archive",
     },
     {
       slug: "typescript",
       nameEn: "TypeScript",
       nameFa: "تایپ‌اسکریپت",
       nameAr: "تايب سكريبت",
+      color: "#3178c6",
+      icon: "file-code",
+    },
+    {
+      slug: "productivity",
+      nameEn: "Productivity",
+      nameFa: "بهره‌وری",
+      nameAr: "الإنتاجية",
+      color: "#8b5cf6",
+      icon: "zap",
     },
   ];
 
   const createdTags = await Promise.all(
-    tagData.map(async (tag) => {
+    tagsData.map(async (tag) => {
       return prisma.tag.upsert({
         where: { slug: tag.slug },
-        update: {},
+        update: {
+          nameEn: tag.nameEn,
+          nameFa: tag.nameFa,
+          nameAr: tag.nameAr,
+          color: tag.color,
+          icon: tag.icon,
+        },
         create: tag,
       });
     }),
@@ -159,11 +214,18 @@ async function main() {
   console.log(`✅ Tags: ${createdTags.length}`);
 
   // ============================================
-  // 4. ایجاد پست‌های نمونه با پشتیبانی از هر سه زبان
+  // 4. ایجاد پست‌های نمونه با پشتیبانی کامل از ۳ زبان
   // ============================================
-  const posts = [
+  const postsData = [
     {
       slug: "introducing-tarvix-engineering-system",
+
+      // فیلدهای متا
+      isFeatured: true,
+      isTrending: true,
+      isPinned: false,
+      priority: 1,
+      language: "en",
 
       // انگلیسی
       titleEn: "Introducing the Tarvix Engineering System",
@@ -186,6 +248,11 @@ async function main() {
         
         <p>The platform gives you visibility into how we build. The system provides patterns you can adapt. A shared foundation grounded in engineering reality.</p>
       `,
+      seoTitleEn: "Tarvix Engineering System - Production-Ready Patterns",
+      seoDescriptionEn:
+        "Discover the Tarvix Engineering System: codified architectural decisions, quality standards, and automation patterns for Flutter, Web, and Web3.",
+      keywordsEn: "engineering system, architecture, flutter, web3, quality automation",
+      ogImageEn: "/images/og/tarvix-engineering-system.jpg",
 
       // فارسی
       titleFa: "معرفی سیستم مهندسی Tarvix",
@@ -208,8 +275,13 @@ async function main() {
         
         <p>این پلتفرم به شما دیدگاهی از نحوه ساخت ما می‌دهد. سیستم الگوهایی را ارائه می‌دهد که می‌توانید تطبیق دهید. یک بنیاد مشترک مبتنی بر واقعیت مهندسی.</p>
       `,
+      seoTitleFa: "سیستم مهندسی Tarvix - الگوهای آماده تولید",
+      seoDescriptionFa:
+        "سیستم مهندسی Tarvix را کشف کنید: تصمیمات معماری مدون، استانداردهای کیفیت و الگوهای اتوماسیون برای فلاتر، وب و وب۳.",
+      keywordsFa: "سیستم مهندسی، معماری، فلاتر، وب۳، اتوماسیون کیفیت",
+      ogImageFa: "/images/og/tarvix-engineering-system-fa.jpg",
 
-      // عربی 🇸🇦
+      // عربی
       titleAr: "تقديم نظام Tarvix الهندسي",
       excerptAr:
         "نظام هندسي مدون لـ Flutter و Web و Web3. تم بناؤه لحل القيود النشطة عبر المجالات عالية المخاطر.",
@@ -230,6 +302,11 @@ async function main() {
         
         <p>تمنحك المنصة رؤية لكيفية بنائنا. يوفر النظام أنماطًا يمكنك تكييفها. أساس مشترك مبني على الواقع الهندسي.</p>
       `,
+      seoTitleAr: "نظام Tarvix الهندسي - أنماط جاهزة للإنتاج",
+      seoDescriptionAr:
+        "اكتشف نظام Tarvix الهندسي: القرارات المعمارية المدونة ومعايير الجودة وأنماط الأتمتة لـ Flutter و Web و Web3.",
+      keywordsAr: "نظام هندسي، معمارية، فلاتر، ويب 3، أتمتة الجودة",
+      ogImageAr: "/images/og/tarvix-engineering-system-ar.jpg",
 
       coverImageUrl: "/images/blog/engineering-system.jpg",
       readingTimeMin: 5,
@@ -240,6 +317,12 @@ async function main() {
     },
     {
       slug: "flutter-clean-architecture-patterns",
+
+      isFeatured: true,
+      isTrending: false,
+      isPinned: false,
+      priority: 2,
+      language: "en",
 
       // انگلیسی
       titleEn: "Flutter Clean Architecture: Patterns That Scale",
@@ -261,6 +344,11 @@ async function main() {
         
         <p>The result is a codebase that remains maintainable as your application grows.</p>
       `,
+      seoTitleEn: "Flutter Clean Architecture - Scalable Patterns",
+      seoDescriptionEn:
+        "Master Flutter clean architecture with practical patterns for building scalable, maintainable applications.",
+      keywordsEn: "flutter, clean architecture, patterns, scalable, maintainable",
+      ogImageEn: "/images/og/flutter-clean-architecture.jpg",
 
       // فارسی
       titleFa: "معماری تمیز فلاتر: الگوهای مقیاس‌پذیر",
@@ -282,8 +370,13 @@ async function main() {
         
         <p>نتیجه یک کدبیس است که با رشد برنامه شما قابل نگهداری باقی می‌ماند.</p>
       `,
+      seoTitleFa: "معماری تمیز فلاتر - الگوهای مقیاس‌پذیر",
+      seoDescriptionFa:
+        "معماری تمیز فلاتر را با الگوهای عملی برای ساخت برنامه‌های مقیاس‌پذیر و قابل نگهداری بیاموزید.",
+      keywordsFa: "فلاتر، معماری تمیز، الگوها، مقیاس‌پذیر، قابل نگهداری",
+      ogImageFa: "/images/og/flutter-clean-architecture-fa.jpg",
 
-      // عربی 🇸🇦
+      // عربی
       titleAr: "هندسة فلاتر النظيفة: أنماط قابلة للتوسع",
       excerptAr:
         "تعلم كيفية هيكلة تطبيقات فلاتر باستخدام الهندسة النظيفة للصيانة طويلة المدى.",
@@ -303,6 +396,11 @@ async function main() {
         
         <p>والنتيجة هي قاعدة شيفرة تظل قابلة للصيانة مع نمو تطبيقك.</p>
       `,
+      seoTitleAr: "هندسة فلاتر النظيفة - أنماط قابلة للتوسع",
+      seoDescriptionAr:
+        "أتقن هندسة فلاتر النظيفة مع أنماط عملية لبناء تطبيقات قابلة للتوسع وقابلة للصيانة.",
+      keywordsAr: "فلاتر، هندسة نظيفة، أنماط، قابلة للتوسع، قابلة للصيانة",
+      ogImageAr: "/images/og/flutter-clean-architecture-ar.jpg",
 
       coverImageUrl: "/images/blog/flutter-clean-architecture.jpg",
       readingTimeMin: 8,
@@ -313,6 +411,12 @@ async function main() {
     },
     {
       slug: "web3-development-best-practices",
+
+      isFeatured: false,
+      isTrending: true,
+      isPinned: false,
+      priority: 3,
+      language: "en",
 
       // انگلیسی
       titleEn: "Web3 Development: Best Practices for Production",
@@ -333,6 +437,11 @@ async function main() {
         <h3>The Future of Web3</h3>
         <p>Web3 is evolving rapidly. Stay current with the latest standards, but always prioritize security and user experience over features.</p>
       `,
+      seoTitleEn: "Web3 Development Best Practices for Production",
+      seoDescriptionEn:
+        "Learn essential patterns and practices for building production-ready Web3 applications with security and scalability in mind.",
+      keywordsEn: "web3, blockchain, smart contracts, production, best practices",
+      ogImageEn: "/images/og/web3-development.jpg",
 
       // فارسی
       titleFa: "توسعه وب۳: بهترین روش‌ها برای تولید",
@@ -353,8 +462,13 @@ async function main() {
         <h3>آینده Web3</h3>
         <p>Web3 به سرعت در حال تکامل است. با آخرین استانداردها به‌روز بمانید، اما همیشه امنیت و تجربه کاربری را بر ویژگی‌ها ترجیح دهید.</p>
       `,
+      seoTitleFa: "بهترین روش‌های توسعه Web3 برای تولید",
+      seoDescriptionFa:
+        "الگوها و روش‌های ضروری برای ساخت برنامه‌های Web3 آماده تولید با امنیت و مقیاس‌پذیری.",
+      keywordsFa: "وب۳، بلاکچین، قرارداد هوشمند، تولید، بهترین روش‌ها",
+      ogImageFa: "/images/og/web3-development-fa.jpg",
 
-      // عربی 🇸🇦
+      // عربی
       titleAr: "تطوير Web3: أفضل الممارسات للإنتاج",
       excerptAr:
         "الأنماط والممارسات الأساسية لبناء تطبيقات Web3 جاهزة للإنتاج.",
@@ -373,6 +487,11 @@ async function main() {
         <h3>مستقبل Web3</h3>
         <p>يتطور Web3 بسرعة. ابق على اطلاع بأحدث المعايير، ولكن دائمًا أعط الأولوية للأمان وتجربة المستخدم على الميزات.</p>
       `,
+      seoTitleAr: "أفضل ممارسات تطوير Web3 للإنتاج",
+      seoDescriptionAr:
+        "تعلم الأنماط والممارسات الأساسية لبناء تطبيقات Web3 جاهزة للإنتاج مع الأمان وقابلية التوسع.",
+      keywordsAr: "ويب 3، بلوكشين، عقود ذكية، إنتاج، أفضل الممارسات",
+      ogImageAr: "/images/og/web3-development-ar.jpg",
 
       coverImageUrl: "/images/blog/web3-development.jpg",
       readingTimeMin: 6,
@@ -383,7 +502,8 @@ async function main() {
     },
   ];
 
-  for (const postData of posts) {
+  // ایجاد پست‌ها
+  for (const postData of postsData) {
     const category = await prisma.category.findUnique({
       where: { slug: postData.categorySlug },
     });
@@ -416,20 +536,39 @@ async function main() {
       data: {
         slug: postData.slug,
 
+        // فیلدهای متا
+        isFeatured: postData.isFeatured,
+        isTrending: postData.isTrending,
+        isPinned: postData.isPinned,
+        priority: postData.priority,
+        language: postData.language,
+
         // انگلیسی
         titleEn: postData.titleEn,
         excerptEn: postData.excerptEn,
         contentEn: postData.contentEn,
+        seoTitleEn: postData.seoTitleEn,
+        seoDescriptionEn: postData.seoDescriptionEn,
+        keywordsEn: postData.keywordsEn,
+        ogImageEn: postData.ogImageEn,
 
         // فارسی
         titleFa: postData.titleFa,
         excerptFa: postData.excerptFa,
         contentFa: postData.contentFa,
+        seoTitleFa: postData.seoTitleFa,
+        seoDescriptionFa: postData.seoDescriptionFa,
+        keywordsFa: postData.keywordsFa,
+        ogImageFa: postData.ogImageFa,
 
-        // عربی 🇸🇦
+        // عربی
         titleAr: postData.titleAr,
         excerptAr: postData.excerptAr,
         contentAr: postData.contentAr,
+        seoTitleAr: postData.seoTitleAr,
+        seoDescriptionAr: postData.seoDescriptionAr,
+        keywordsAr: postData.keywordsAr,
+        ogImageAr: postData.ogImageAr,
 
         coverImageUrl: postData.coverImageUrl,
         readingTimeMin: postData.readingTimeMin,
@@ -445,10 +584,16 @@ async function main() {
       },
     });
 
-    console.log(`✅ Post created: ${post.titleEn}`);
+    console.log(`✅ Post created: ${post.titleEn} / ${post.titleFa} / ${post.titleAr}`);
   }
 
   console.log("🌱 Seeding complete!");
+  console.log("📊 Summary:");
+  console.log(`  - Author: 1`);
+  console.log(`  - Categories: ${createdCategories.length}`);
+  console.log(`  - Tags: ${createdTags.length}`);
+  console.log(`  - Posts: ${postsData.length}`);
+  console.log(`  ✅ All 3 languages supported (English, Persian, Arabic)`);
 }
 
 main()
