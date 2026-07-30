@@ -26,8 +26,6 @@ model RequestAccess {
   @@index([createdAt])
 }
 
-// prisma/schema.prisma
-
 model Contact {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -43,8 +41,6 @@ model Contact {
   @@index([createdAt])
 }
 
-
-
 enum PostStatus {
   draft
   pending
@@ -57,6 +53,12 @@ model Author {
   email     String?  @unique
   avatarUrl String?
   
+  // Social links - NEW
+  twitter   String?
+  github    String?
+  website   String?
+  linkedin  String?
+  
   // انگلیسی
   firstNameEn String
   lastNameEn  String
@@ -68,9 +70,9 @@ model Author {
   bioFa       String?
   
   // عربی 🇸🇦
-  firstNameAr String?
-  lastNameAr  String?
-  bioAr       String?
+  firstNameAr String @default("")
+  lastNameAr  String @default("")
+  bioAr       String @default("")
   
   posts     Post[]
   createdAt DateTime @default(now())
@@ -78,11 +80,17 @@ model Author {
 
   @@index([slug])
   @@index([createdAt])
+  @@index([email])
 }
 
 model Category {
   id          String   @id @default(cuid())
   slug        String   @unique
+  
+  // Order and hierarchy - NEW
+  order       Int      @default(0)
+  parentId    String?  @map("parent_id")
+  isActive    Boolean  @default(true)
   
   // انگلیسی
   nameEn      String
@@ -93,8 +101,8 @@ model Category {
   descriptionFa String?
   
   // عربی 🇸🇦
-  nameAr      String?
-  descriptionAr String?
+  nameAr      String @default("")
+  descriptionAr String @default("")
   
   posts       Post[]
   createdAt   DateTime @default(now())
@@ -102,11 +110,18 @@ model Category {
 
   @@index([slug])
   @@index([createdAt])
+  @@index([parentId])
+  @@index([isActive])
+  @@index([order])
 }
 
 model Tag {
   id        String   @id @default(cuid())
   slug      String   @unique
+  
+  // UI fields - NEW
+  color     String?  @default("#3b82f6")
+  icon      String?  // Icon name from Lucide or similar
   
   // انگلیسی
   nameEn    String
@@ -115,7 +130,7 @@ model Tag {
   nameFa    String
   
   // عربی 🇸🇦
-  nameAr    String?
+  nameAr    String @default("")
   
   posts     PostTag[]
   createdAt DateTime @default(now())
@@ -123,11 +138,19 @@ model Tag {
 
   @@index([slug])
   @@index([createdAt])
+  @@index([color])
 }
 
 model Post {
   id             String      @id @default(cuid())
   slug           String      @unique
+  
+  // Meta fields - NEW
+  isFeatured     Boolean     @default(false)
+  isTrending     Boolean     @default(false)
+  isPinned       Boolean     @default(false)
+  priority       Int         @default(0)  // For custom ordering
+  language       String?     @default("en")  // "en", "fa", "ar"
   
   // انگلیسی
   titleEn        String
@@ -135,6 +158,8 @@ model Post {
   contentEn      String
   seoTitleEn     String?
   seoDescriptionEn String?
+  keywordsEn     String?  // NEW - SEO keywords
+  ogImageEn      String?  // NEW - Open Graph image
   
   // فارسی
   titleFa        String
@@ -142,21 +167,28 @@ model Post {
   contentFa      String
   seoTitleFa     String?
   seoDescriptionFa String?
+  keywordsFa     String?  // NEW - SEO keywords
+  ogImageFa      String?  // NEW - Open Graph image
   
   // عربی 🇸🇦
-  titleAr        String?
-  excerptAr      String?
-  contentAr      String?
-  seoTitleAr     String?
-  seoDescriptionAr String?
+  titleAr        String @default("")
+  excerptAr      String @default("")
+  contentAr      String @default("")
+  seoTitleAr     String @default("")
+  seoDescriptionAr String @default("")
+  keywordsAr     String?  // NEW - SEO keywords
+  ogImageAr      String?  // NEW - Open Graph image
   
   coverImageUrl  String?
   readingTimeMin Int?
   status         PostStatus  @default(draft)
   publishedAt    DateTime?
   
-  views          Int         @default(0)  
-
+  views          Int         @default(0)
+  likes          Int         @default(0)  // NEW - Like count
+  comments       Int         @default(0)  // NEW - Comment count
+  
+  // Author and Category relations
   authorId       String
   categoryId     String
 
@@ -173,6 +205,11 @@ model Post {
   @@index([categoryId])
   @@index([slug])
   @@index([status, publishedAt])
+  @@index([isFeatured])    // NEW
+  @@index([isTrending])    // NEW
+  @@index([language])      // NEW
+  @@index([priority])
+  @@index([views])
 }
 
 model PostTag {

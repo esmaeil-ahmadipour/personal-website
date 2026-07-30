@@ -106,7 +106,7 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
   const { data, isLoading } = useBlogListQuery({
     page: 1,
     limit,
-    locale: locale as "en" | "fa",
+    locale: locale as "en" | "ar" | "fa",
   });
 
   if (isLoading) {
@@ -137,17 +137,33 @@ export function LatestPosts({ limit = 3 }: LatestPostsProps) {
     );
   }
 
-  const formattedDate = (date: Date | string | null | undefined) => {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString(
-      locale === "fa" ? "fa-IR" : "en-US",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      },
-    );
-  };
+const formattedDate = (date: Date | string | null | undefined) => {
+  if (!date) return "";
+  
+  let localeString: string;
+  
+  switch (locale) {
+    case "fa":
+      localeString = "fa-IR";
+      break;
+    case "ar":
+      localeString = "ar-SA";
+      break;
+    case "en":
+    default:
+      localeString = "en-US";
+      break;
+  }
+  
+  return new Date(date).toLocaleDateString(
+    localeString,
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    },
+  );
+};
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

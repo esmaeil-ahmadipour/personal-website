@@ -9,7 +9,7 @@ import { BlogImageWithPlaceholder } from "@/components/BlogImageWithPlaceholder"
 
 interface BlogCardProps {
   post: Post;
-  locale: "en" | "fa";
+  locale: "en" | "ar" | "fa";
 }
 
 // ============================================
@@ -120,15 +120,31 @@ export function BlogCard({ post, locale }: BlogCardProps) {
   const isRTL = locale === "fa";
   const colors = getCardColors(post.id);
 
-  const formatDate = (date: Date | string | null) => {
-    if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleDateString(locale === "fa" ? "fa-IR" : "en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+const formatDate = (date: Date | string | null) => {
+  if (!date) return "";
+  
+  let localeString: string;
+  
+  switch (locale) {
+    case "fa":
+      localeString = "fa-IR";
+      break;
+    case "ar":
+      localeString = "ar-SA";
+      break;
+    case "en":
+    default:
+      localeString = "en-US";
+      break;
+  }
+  
+  const d = new Date(date);
+  return d.toLocaleDateString(localeString, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
   const readingTime = post.readingTimeMin || 0;
 

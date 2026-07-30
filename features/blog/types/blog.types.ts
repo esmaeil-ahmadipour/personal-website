@@ -53,5 +53,5 @@ export interface PostsResponse {
 export interface GetPostsParams {
   page?: number;
   limit?: number;
-  locale?: "en" | "fa";
+  locale?: "en" | "fa" | "ar";
 }

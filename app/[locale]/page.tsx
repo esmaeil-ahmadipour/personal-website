@@ -29,10 +29,11 @@ export const viewport: Viewport = {
 // METADATA - با ترجمه از فایل‌های JSON
 // ============================================
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
+  const { locale } = await params;
   // استفاده از getTranslations برای خواندن از فایل‌های JSON
   const t = await getTranslations({ locale, namespace: "homePage" });
 
