@@ -167,7 +167,7 @@ const formattedDate = (date: Date | string | null | undefined) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {data.items.map((post, index) => {
+      {data.items.map((post: any, index: number) => {
         const color = OFFICIAL_COLORS[index % OFFICIAL_COLORS.length];
         return (
           <Link

@@ -24,134 +24,58 @@ function getLocalizedField<T>(en: T, fa: T, ar: T, locale: "en" | "fa" | "ar"): 
 // ============================================
 // ۲. تابع تبدیل داده‌ها با پشتیبانی از ۳ زبان
 // ============================================
+// app/[locale]/blog/[id]/page.tsx
+
+// ============================================
 function formatPostForLocale(rawPost: any, locale: "en" | "fa" | "ar"): BlogPost {
   return {
     id: rawPost.id,
     slug: rawPost.slug,
-    
-    // انگلیسی - همیشه موجود
+    authorId: rawPost.authorId,
+    categoryId: rawPost.categoryId,
+    // Keep all original localized fields
     titleEn: rawPost.titleEn,
-    excerptEn: rawPost.excerptEn || null,
+    excerptEn: rawPost.excerptEn,
     contentEn: rawPost.contentEn,
-    seoTitleEn: rawPost.seoTitleEn || null,
-    seoDescriptionEn: rawPost.seoDescriptionEn || null,
-    
-    // فارسی
+    seoTitleEn: rawPost.seoTitleEn,
+    seoDescriptionEn: rawPost.seoDescriptionEn,
     titleFa: rawPost.titleFa,
-    excerptFa: rawPost.excerptFa || null,
+    excerptFa: rawPost.excerptFa,
     contentFa: rawPost.contentFa,
-    seoTitleFa: rawPost.seoTitleFa || null,
-    seoDescriptionFa: rawPost.seoDescriptionFa || null,
-    
-    // عربی
-    titleAr: rawPost.titleAr || "",
-    excerptAr: rawPost.excerptAr || null,
-    contentAr: rawPost.contentAr || "",
-    seoTitleAr: rawPost.seoTitleAr || null,
-    seoDescriptionAr: rawPost.seoDescriptionAr || null,
-    
+    seoTitleFa: rawPost.seoTitleFa,
+    seoDescriptionFa: rawPost.seoDescriptionFa,
+    titleAr: rawPost.titleAr,
+    excerptAr: rawPost.excerptAr,
+    contentAr: rawPost.contentAr,
+    seoTitleAr: rawPost.seoTitleAr,
+    seoDescriptionAr: rawPost.seoDescriptionAr,
+    // Metadata
+    publishedAt: rawPost.publishedAt,
+    updatedAt: rawPost.updatedAt,
+    author: rawPost.author,
+    tags: rawPost.tags || [],
+    status: rawPost.status || 'published',
+    // All required fields from BlogPost type
+    isFeatured: rawPost.isFeatured ?? false,
+    language: rawPost.language || null,
+    isTrending: rawPost.isTrending ?? false,
+    isPinned: rawPost.isPinned ?? false,
+    keywordsAr: rawPost.keywordsAr || null,
+    keywordsEn: rawPost.keywordsEn || null,
+    keywordsFa: rawPost.keywordsFa || null,
+    ogImageAr: rawPost.ogImageAr || null,
+    ogImageEn: rawPost.ogImageEn || null,
+    ogImageFa: rawPost.ogImageFa || null,
+    priority: rawPost.priority ?? 0,
+    likes: rawPost.likes ?? 0,
     coverImageUrl: rawPost.coverImageUrl || null,
     readingTimeMin: rawPost.readingTimeMin || null,
-    status: rawPost.status,
-    publishedAt: rawPost.publishedAt,
-    views: rawPost.views || 0,
-    
-    // ============================================
-    // AUTHOR - کامل با تمام فیلدها
-    // ============================================
-    author: {
-      id: rawPost.author.id,
-      slug: rawPost.author.slug,
-      
-      // انگلیسی
-      firstNameEn: rawPost.author.firstNameEn,
-      lastNameEn: rawPost.author.lastNameEn,
-      bioEn: rawPost.author.bioEn || null,
-      
-      // فارسی
-      firstNameFa: rawPost.author.firstNameFa,
-      lastNameFa: rawPost.author.lastNameFa,
-      bioFa: rawPost.author.bioFa || null,
-      
-      // عربی
-      firstNameAr: rawPost.author.firstNameAr || "",
-      lastNameAr: rawPost.author.lastNameAr || "",
-      bioAr: rawPost.author.bioAr || null,
-      
-      // فیلدهای عمومی
-      avatarUrl: rawPost.author.avatarUrl || null,
-      email: rawPost.author.email || null,
-      
-      // شبکه‌های اجتماعی
-      website: rawPost.author.website || null,
-      twitter: rawPost.author.twitter || null,
-      github: rawPost.author.github || null,
-      linkedin: rawPost.author.linkedin || null,
-      
-      // فیلدهای زمانی
-      createdAt: rawPost.author.createdAt,
-      updatedAt: rawPost.author.updatedAt,
-    },
-    
-    // ============================================
-    // CATEGORY - کامل با تمام فیلدها
-    // ============================================
-    category: {
-      id: rawPost.category.id,
-      slug: rawPost.category.slug,
-      
-      // انگلیسی
-      nameEn: rawPost.category.nameEn,
-      descriptionEn: rawPost.category.descriptionEn || null,
-      
-      // فارسی
-      nameFa: rawPost.category.nameFa,
-      descriptionFa: rawPost.category.descriptionFa || null,
-      
-      // عربی
-      nameAr: rawPost.category.nameAr || "",
-      descriptionAr: rawPost.category.descriptionAr || null,
-      
-      // فیلدهای اضافی
-      order: rawPost.category.order || 0,
-      parentId: rawPost.category.parentId || null,
-      isActive: rawPost.category.isActive ?? true,
-      
-      // فیلدهای زمانی
-      createdAt: rawPost.category.createdAt,
-      updatedAt: rawPost.category.updatedAt,
-    },
-    
-    // ============================================
-    // TAGS - کامل با تمام فیلدها
-    // ============================================
-    tags: rawPost.tags.map((pt: any) => ({
-      id: pt.tag.id,
-      slug: pt.tag.slug,
-      
-      // انگلیسی
-      nameEn: pt.tag.nameEn,
-      
-      // فارسی
-      nameFa: pt.tag.nameFa,
-      
-      // عربی
-      nameAr: pt.tag.nameAr || "",
-      
-      // فیلدهای اضافی
-      color: pt.tag.color || "#3b82f6",
-      icon: pt.tag.icon || null,
-      
-      // فیلدهای زمانی
-      createdAt: pt.tag.createdAt,
-      updatedAt: pt.tag.updatedAt,
-    })),
-    
+    views: rawPost.views ?? 0,
+    category: rawPost.category,
+    comments: rawPost.comments || [],
     createdAt: rawPost.createdAt,
-    updatedAt: rawPost.updatedAt,
   };
 }
-
 // ============================================
 // ۳. متادیتا (SEO) با پشتیبانی از ۳ زبان
 // ============================================
@@ -184,12 +108,12 @@ export async function generateMetadata({
   }
 
   // انتخاب عنوان و توضیحات بر اساس زبان
-  const title = isAr 
+  const title = isAr
     ? post.seoTitleAr || post.titleAr || post.titleEn
-    : isFa 
-      ? post.seoTitleFa || post.titleFa 
+    : isFa
+      ? post.seoTitleFa || post.titleFa
       : post.seoTitleEn || post.titleEn;
-      
+
   const description = isAr
     ? post.seoDescriptionAr || post.excerptAr || post.excerptEn
     : isFa
@@ -197,7 +121,7 @@ export async function generateMetadata({
       : post.seoDescriptionEn || post.excerptEn;
 
   // انتخاب تصویر OG بر اساس زبان
-  const ogImage = isAr 
+  const ogImage = isAr
     ? post.ogImageAr || post.coverImageUrl || "/images/default-blog-cover.webp"
     : isFa
       ? post.ogImageFa || post.coverImageUrl || "/images/default-blog-cover.webp"

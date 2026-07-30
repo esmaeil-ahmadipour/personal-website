@@ -9,21 +9,60 @@ import { BlogPageSizeSelector } from "./BlogPageSizeSelector";
 import { BlogListSkeleton } from "./BlogListSkeleton";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 import type { PageSize } from "../schemas/blog-list.schema";
+import { Post } from "@/features/blog/types/blog.types";
+
+// Define the BlogPost type locally or import it
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  titleEn?: string;
+  titleFa?: string;
+  titleAr?: string;
+  excerptEn?: string;
+  excerptFa?: string;
+  excerptAr?: string;
+  contentEn?: string;
+  contentFa?: string;
+  contentAr?: string;
+  seoTitleEn?: string;
+  seoTitleFa?: string;
+  seoTitleAr?: string;
+  seoDescriptionEn?: string;
+  seoDescriptionFa?: string;
+  seoDescriptionAr?: string;
+  publishedAt: string;
+  updatedAt: string;
+  author?: string;
+  categories?: string[];
+  tags?: string[];
+  status?: 'draft' | 'published' | 'archived';
+  isFeatured?: boolean;
+  isTrending?: boolean;
+  isPinned?: boolean;
+  priority?: number;
+  views?: number;
+  readingTime?: number;
+  image?: string | null;
+  coverImage?: string | null;
+}
 
 interface BlogListProps {
   initialPage?: number;
   initialLimit?: PageSize;
-  locale: "en" | "fa";
+  locale: "en" | "fa" | "ar";
 }
 
 export function BlogList({
   initialPage = 1,
   initialLimit = 10,
-  locale,
-}: BlogListProps) {
-  const { t } = useTranslation();
-  const isRTL = locale === "fa";
-
+ }: BlogListProps) {
+  const {isRTL, t ,locale} = useTranslation();
+ 
   const { data, isLoading, error, handlePageChange, handleLimitChange, limit } =
     useBlogList({ initialPage, initialLimit, locale });
 
@@ -129,10 +168,10 @@ export function BlogList({
         <BlogPageSizeSelector value={limit} onChange={handleLimitChange} />
       </div>
 
-      {/* Blog Cards Grid */}
+      {/* Blog Cards Grid - Fixed: Added explicit type for post */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((post) => (
-          <BlogCard key={post.id} post={post} locale={locale} />
+        {items.map((post: Post) => (
+          <BlogCard post={post} key={post.id}  locale={locale} />
         ))}
       </div>
 

@@ -10,7 +10,7 @@ import type { PageSize } from "../schemas/blog-list.schema";
 interface UseBlogListOptions {
   initialPage?: number;
   initialLimit?: PageSize;
-  locale: "en" | "fa";
+  locale: "en" | "ar" | "fa";
 }
 
 export function useBlogList({

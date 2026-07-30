@@ -2,13 +2,22 @@
 
 import { z } from "zod";
 
-export const BlogListParamsSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(10),
-  locale: z.enum(["en", "fa", "ar"]).default("en"),
-});
-
-export const PageSizeOptions = [10, 15, 20, 25] as const;
+// Add these exports for the BlogPageSizeSelector component
+export const PageSizeOptions = [5, 10, 20, 50] as const;
 export type PageSize = (typeof PageSizeOptions)[number];
 
+// Define the schema
+export const BlogListParamsSchema = z.object({
+  locale: z.enum(["en", "fa", "ar"]),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(10),
+  category: z.string().optional(),
+  tag: z.string().optional(),
+  search: z.string().optional(),
+});
+
+// Export the type directly from the schema
 export type BlogListParams = z.infer<typeof BlogListParamsSchema>;
+
+// Also export a type for the locale to use elsewhere
+export type SupportedLocale = "en" | "fa" | "ar";
