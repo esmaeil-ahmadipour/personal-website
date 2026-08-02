@@ -30,10 +30,13 @@ export const viewport: Viewport = {
 // METADATA - صفحه Dev
 // ============================================
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
+  // ✅ Unwrap params with await
+  const { locale } = await params;
+  
   const t = await getTranslations({ locale, namespace: "devPage" });
 
   const currentUrl =
@@ -112,5 +115,5 @@ export async function generateMetadata({
 // PAGE COMPONENT
 // ============================================
 export default function DevPage() {
-  return <DevPlatformPage/>;
+  return <DevPlatformPage />;
 }

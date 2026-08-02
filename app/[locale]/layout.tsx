@@ -66,6 +66,21 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+      try {
+        const theme = localStorage.getItem('theme') || 'system';
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = theme === 'dark' || (theme === 'system' && systemDark) || (theme === null && systemDark);
+        document.documentElement.classList.toggle('dark', isDark);
+        // Prevent flash
+        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+      } catch (e) {}
+    `,
+          }}
+        />
+
         {/* Font Awesome */}
         <link
           rel="stylesheet"

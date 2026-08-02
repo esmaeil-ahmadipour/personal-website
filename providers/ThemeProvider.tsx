@@ -11,8 +11,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setMounted(true);
   }, []);
 
+  // Don't render anything during SSR
+  // This prevents the white flash
   if (!mounted) {
-    return null;
+    return <>{children}</>;
   }
 
   return (
