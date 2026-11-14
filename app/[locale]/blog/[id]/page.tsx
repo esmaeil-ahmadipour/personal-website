@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { BlogPostPage } from "@/features/get-blog-post/components/BlogPostPage";
 import Navbar from "@/features/shared/components/Navbar";
+import Footer from "@/features/shared/components/Footer";
+import { getRelatedPosts } from "@/features/get-blog-post/data/related";
 import type { BlogPost } from "@/features/get-blog-post/types/get-blog-post.types";
 
 interface PageProps {
@@ -86,8 +88,9 @@ export async function generateMetadata({
   const isFa = locale === "fa";
   const isAr = locale === "ar";
 
-  const post = await prisma.post.findUnique({
-    where: { id, status: "published" },
+  // Accept both the post id (old links) and the slug (new links).
+  const post = await prisma.post.findFirst({
+    where: { OR: [{ id }, { slug: id }], status: "published" },
   });
 
   if (!post) {
@@ -173,8 +176,8 @@ export default async function BlogPostPageWrapper({ params }: PageProps) {
 
   // دریافت پست با افزایش بازدید در یک تراکنش
   const rawPost = await prisma.$transaction(async (tx) => {
-    const post = await tx.post.findUnique({
-      where: { id, status: "published" },
+    const post = await tx.post.findFirst({
+      where: { OR: [{ id }, { slug: id }], status: "published" },
       include: {
         author: true,
         category: true,
@@ -188,7 +191,7 @@ export default async function BlogPostPageWrapper({ params }: PageProps) {
 
     if (post) {
       await tx.post.update({
-        where: { id },
+        where: { id: post.id },
         data: { views: { increment: 1 } },
       });
     }
@@ -203,43 +206,15 @@ export default async function BlogPostPageWrapper({ params }: PageProps) {
   // فرمت کردن پست با زبان فعلی
   const post = formatPostForLocale(rawPost, locale);
 
+  const related = await getRelatedPosts(post.id, post.categoryId, locale);
+
   return (
     <>
       <Navbar showBack backUrl={`/${locale}/blog`} />
-      <div className="pt-20">
-        <BlogPostPage post={post} locale={locale} />
-      </div>
+      <main>
+        <BlogPostPage post={post} locale={locale} related={related} />
+      </main>
+      <Footer />
     </>
   );
 }
-
-// ============================================
-// ۵. Static Paths (برای SSG)
-// ============================================
-export async function generateStaticParams() {
-  if (process.env.NODE_ENV === "development") {
-    return [];
-  }
-
-  try {
-    const posts = await prisma.post.findMany({
-      where: { status: "published" },
-      select: { id: true, slug: true },
-    });
-
-    // مسیرهای هر ۳ زبان
-    return posts.flatMap((post) => [
-      { id: post.id, locale: "en" },
-      { id: post.id, locale: "fa" },
-      { id: post.id, locale: "ar" },
-    ]);
-  } catch (error) {
-    console.error("Error in generateStaticParams:", error);
-    return [];
-  }
-}
-
-// ============================================
-// ۶. تنظیمات ریدایرکت برای SSG
-// ============================================
-export const dynamicParams = true;

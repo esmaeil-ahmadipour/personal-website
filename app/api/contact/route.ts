@@ -7,6 +7,11 @@ export async function POST(req: NextRequest) {
   try {
     // ۱. دریافت و اعتبارسنجی
     const body = await req.json();
+
+    // Honeypot: real users never fill this hidden field. Pretend success.
+    if (typeof body?.website === "string" && body.website.trim() !== "") {
+      return NextResponse.json({ success: true }, { status: 201 });
+    }
     const validated = ContactSchema.parse(body);
 
     // ۲. ذخیره در دیتابیس

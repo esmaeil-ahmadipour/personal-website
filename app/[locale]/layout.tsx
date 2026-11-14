@@ -35,9 +35,9 @@ const vazir = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "Tarvix | Architecture-First Engineering Studio",
+  title: "Tarvix | Engineering notes by Esmaeil Ahmadipour",
   description:
-    "Engineering systems for fintech, Web3, and SaaS products. Clean architecture, scalable foundations.",
+    "A personal technical publication: articles, a LinkedIn newsletter and free lessons for software engineers.",
 };
 
 type Props = {

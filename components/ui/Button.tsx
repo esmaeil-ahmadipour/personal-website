@@ -48,51 +48,44 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // ============================================
     // Variant Styles - مطابق با استایل‌های پروژه
     // ============================================
+    // Single accent: every legacy gradient-* variant now maps to the primary look.
+    const primary = "bg-[hsl(var(--accent))] text-[hsl(var(--accent-ink))] hover:bg-[hsl(var(--accent-hover))] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-[hsl(var(--bg-primary))]";
     const variantStyles = {
-      primary:
-        "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5",
-
-      "gradient-blue":
-        "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5",
-
-      "gradient-purple":
-        "bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/35 hover:-translate-y-0.5",
-
-      "gradient-emerald":
-        "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/35 hover:-translate-y-0.5",
-
-      "gradient-pink":
-        "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/35 hover:-translate-y-0.5",
+      primary,
+      "gradient-blue": primary,
+      "gradient-purple": primary,
+      "gradient-emerald": primary,
+      "gradient-pink": primary,
 
       secondary:
-        "bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] hover:-translate-y-0.5",
+        "bg-[hsl(var(--bg-elevated))] text-[hsl(var(--text-primary))] border border-[hsl(var(--border-subtle))] hover:border-[hsl(var(--accent))]",
 
       outline:
-        "border-2 border-[var(--border-subtle)] bg-transparent text-[var(--text-secondary)] hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] hover:-translate-y-0.5",
+        "border border-[hsl(var(--border-strong))] bg-transparent text-[hsl(var(--text-primary))] hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))]",
 
       ghost:
-        "bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
+        "bg-transparent text-[hsl(var(--text-secondary))] hover:bg-[hsl(var(--bg-elevated))] hover:text-[hsl(var(--text-primary))]",
 
       glass:
-        "bg-[var(--bg-surface)]/50 backdrop-blur-sm border border-[var(--border-subtle)] text-[var(--text-primary)] hover:bg-[var(--bg-surface)]/70 hover:-translate-y-0.5",
+        "bg-[hsl(var(--bg-surface)/0.6)] backdrop-blur-sm border border-[hsl(var(--border-subtle))] text-[hsl(var(--text-primary))] hover:border-[hsl(var(--accent))]",
 
       destructive:
-        "bg-red-600 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/35 hover:-translate-y-0.5 hover:bg-red-700",
+        "bg-[hsl(var(--accent-rose))] text-white hover:opacity-90",
 
-      link: "text-[var(--text-primary)] underline-offset-4 hover:underline",
+      link: "text-[hsl(var(--accent))] underline-offset-4 hover:underline",
     };
 
     // ============================================
     // Size Styles
     // ============================================
     const sizeStyles = {
-      sm: "h-8 px-4 py-1.5 text-xs rounded-full",
-      default: "h-10 px-6 py-2 rounded-full",
-      lg: "h-12 px-8 py-3 text-base rounded-full",
-      xl: "h-14 px-10 py-4 text-lg rounded-full",
-      icon: "h-10 w-10 rounded-full",
-      "icon-sm": "h-8 w-8 rounded-full",
-      "icon-lg": "h-12 w-12 rounded-full",
+      sm: "h-8 px-4 py-1.5 text-xs rounded-lg",
+      default: "h-10 px-6 py-2 rounded-lg",
+      lg: "h-12 px-8 py-3 text-base rounded-lg",
+      xl: "h-14 px-10 py-4 text-lg rounded-lg",
+      icon: "h-10 w-10 rounded-lg",
+      "icon-sm": "h-8 w-8 rounded-lg",
+      "icon-lg": "h-12 w-12 rounded-lg",
     };
 
     // ============================================

@@ -2,15 +2,26 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ContactSchema, type ContactData } from "../schemas/contact.schema";
+import {
+  CONTACT_TOPICS,
+  ContactSchema,
+  type ContactData,
+} from "../schemas/contact.schema";
 import { useContact } from "../hooks/useContact";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
-import { CheckIcon } from "@/features/shared/icons/CheckIcon";
-import { useEffect, useState } from "react";
+import { Field, Input, Select, Textarea } from "@/components/ui/Field";
+import { Button } from "@/components/ui/Button";
 
 interface ContactFormProps {
   onSuccess?: () => void;
 }
+
+const ERROR_KEYS: Record<string, string> = {
+  name: "fbErrName",
+  email: "fbErrEmail",
+  topic: "fbErrTopic",
+  message: "fbErrMessage",
+};
 
 export function ContactForm({ onSuccess }: ContactFormProps) {
   const { t } = useTranslation();
@@ -21,8 +32,6 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
     },
   });
 
-  const [showSuccess, setShowSuccess] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -30,224 +39,102 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
     reset,
   } = useForm<ContactData>({
     resolver: zodResolver(ContactSchema),
+    defaultValues: { fullName: "", email: "", message: "", website: "" },
   });
 
-  const onSubmit = (data: ContactData) => {
-    mutate(data);
-  };
+  const err = (message?: string) =>
+    message && ERROR_KEYS[message] ? t(ERROR_KEYS[message]) : undefined;
 
-  // Trigger slide-up animation when success
-  useEffect(() => {
-    if (isSuccess) {
-      const timer = setTimeout(() => setShowSuccess(true), 100);
-      return () => clearTimeout(timer);
-    }
-    setShowSuccess(false);
-  }, [isSuccess]);
-
-  // ===== SUCCESS STATE =====
   if (isSuccess) {
     return (
-      <div
-        className={`transition-all duration-500 ease-out ${
-          showSuccess ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+      <p
+        role="status"
+        className="rounded-lg border border-[hsl(var(--accent))] bg-[hsl(var(--accent-soft))] p-4 text-[hsl(var(--text-primary))]"
       >
-        <div className="text-center py-6 px-4">
-          {/* Animated checkmark */}
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-4 animate-in zoom-in duration-300">
-            <CheckIcon
-              size={32}
-              strokeWidth={2.5}
-              className="text-green-600 dark:text-green-400"
-            />
-          </div>
-
-          {/* Title */}
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1.5">
-            {t("contactSuccess1")}
-          </h3>
-
-          {/* Description */}
-          <p className="text-sm text-gray-600 dark:text-gray-400 max-w-sm mx-auto leading-relaxed">
-            {t("contactSuccessDesc1")}
-          </p>
-
-          {/* Confirmation chips */}
-          <div className="mt-4 flex justify-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-            <span className="flex items-center gap-1.5">
-              <CheckIcon
-                size={14}
-                strokeWidth={2.5}
-                className="text-green-500"
-              />
-              {t("emailSent")}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckIcon
-                size={14}
-                strokeWidth={2.5}
-                className="text-green-500"
-              />
-              {t("responseWithin24h")}
-            </span>
-          </div>
-        </div>
-      </div>
+        {t("fbSuccess")}
+      </p>
     );
   }
 
-  // ===== FORM =====
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <div className="space-y-4">
-        <div>
-          <label
-            htmlFor="fullName"
-            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
-          >
-            {t("fullName")}
-          </label>
-          <input
-            id="fullName"
-            type="text"
-            placeholder={t("fullName")}
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none ${
-              errors.fullName ? "border-red-500" : ""
-            }`}
-            {...register("fullName")}
-          />
-          {errors.fullName && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.fullName.message}
-            </p>
-          )}
-        </div>
+    <form
+      onSubmit={handleSubmit((data) => mutate(data))}
+      noValidate
+      className="grid gap-4 sm:grid-cols-2"
+    >
+      <Field label={t("fbName")} htmlFor="fb-name" error={err(errors.fullName?.message)}>
+        <Input
+          id="fb-name"
+          autoComplete="name"
+          aria-invalid={!!errors.fullName}
+          {...register("fullName")}
+        />
+      </Field>
 
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
-          >
-            {t("email")}
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder={t("email")}
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none ${
-              errors.email ? "border-red-500" : ""
-            }`}
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-          )}
-        </div>
+      <Field label={t("fbEmail")} htmlFor="fb-email" error={err(errors.email?.message)}>
+        <Input
+          id="fb-email"
+          type="email"
+          autoComplete="email"
+          dir="ltr"
+          aria-invalid={!!errors.email}
+          {...register("email")}
+        />
+      </Field>
 
-        <div>
-          <label
-            htmlFor="service"
-            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
-          >
-            {t("serviceSelect")}
-          </label>
-          <select
-            id="service"
-            className="
-    w-full rounded-xl 
-    px-4 py-2.5 
-    text-sm font-medium
-    transition-all duration-200
-    bg-white dark:bg-gray-800
-    text-gray-900 dark:text-gray-100
-    border border-gray-200 dark:border-gray-700
-    focus:border-blue-500 
-    focus:ring-2 focus:ring-blue-500/20 
-    focus:outline-none
-    appearance-none
-    cursor-pointer
-    hover:border-gray-300 dark:hover:border-gray-600
-  "
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "right 1rem center",
-              paddingRight: "2.5rem",
-            }}
-            {...register("service")}
-          >
-            <option
-              value="flutter"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              {t("serviceFlutter")}
-            </option>
-            <option
-              value="web"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              {t("serviceWeb")}
-            </option>
-            <option
-              value="web3"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              {t("serviceWeb3")}
-            </option>
-            <option
-              value="consulting"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              {t("serviceConsulting")}
-            </option>
-            <option
-              value="foundation"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              {t("serviceFoundation")}
-            </option>
-            <option
-              value="audit"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              {t("serviceAudit")}
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="message"
-            className="block text-sm font-semibold mb-1 text-[var(--text-primary)]"
-          >
-            {t("projectDesc")}
-          </label>
-          <textarea
-            id="message"
-            rows={4}
-            placeholder={t("projectDesc")}
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm transition-colors bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] border-[var(--border-subtle)] focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20 focus:outline-none resize-y ${
-              errors.message ? "border-red-500" : ""
-            }`}
-            {...register("message")}
-          />
-          {errors.message && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.message.message}
-            </p>
-          )}
-        </div>
-
-        {error && <p className="text-sm text-red-500">{error.message}</p>}
-
-        <button
-          type="submit"
-          disabled={isPending}
-          className="group relative px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold text-lg hover:shadow-xl hover:shadow-blue-500/25 transition-all btn-press overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+      <Field
+        label={t("fbTopic")}
+        htmlFor="fb-topic"
+        error={err(errors.service?.message)}
+        className="sm:col-span-2"
+      >
+        <Select
+          id="fb-topic"
+          defaultValue=""
+          aria-invalid={!!errors.service}
+          {...register("service")}
         >
-          {isPending ? t("submitting") : t("sendInquiry")} →
-        </button>
+          <option value="" disabled>
+            {t("fbTopicPlaceholder")}
+          </option>
+          {CONTACT_TOPICS.map((topic, i) => (
+            <option key={topic} value={topic}>
+              {t(`fbTopic${i + 1}`)}
+            </option>
+          ))}
+        </Select>
+      </Field>
+
+      <Field
+        label={t("fbMessage")}
+        htmlFor="fb-message"
+        error={err(errors.message?.message)}
+        className="sm:col-span-2"
+      >
+        <Textarea
+          id="fb-message"
+          aria-invalid={!!errors.message}
+          {...register("message")}
+        />
+      </Field>
+
+      {/* Honeypot: hidden from people and assistive tech, bots tend to fill it. */}
+      <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label>
+          Website
+          <input type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
+        </label>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
+        <Button type="submit" loading={isPending}>
+          {t("fbSend")}
+        </Button>
+        {error && (
+          <p role="alert" className="text-sm text-[hsl(var(--accent-rose))]">
+            {t("fbErrServer")}
+          </p>
+        )}
       </div>
     </form>
   );
