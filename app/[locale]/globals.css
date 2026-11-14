@@ -1,211 +1,139 @@
 /* ============================================
-   JELLY PASTEL DESIGN SYSTEM
-   Vibe: Soft, Playful, Glassmorphism
+   TARVIX DESIGN SYSTEM: tokens, base, motion
+   Source: design/Design-system-Foundations (HSL triplets).
+   Dark is the default theme (class "dark" on <html>, set by
+   next-themes); :root holds the light override.
+   Use colors as hsl(var(--token)). Never hard-code a color.
    ============================================ */
 
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
-/* Palette bridge (Tailwind 4): old blue/purple/... classes follow the accent */
-@theme inline {
-  --color-blue-50: var(--acc-50);
-  --color-blue-100: var(--acc-100);
-  --color-blue-200: var(--acc-200);
-  --color-blue-300: var(--acc-300);
-  --color-blue-400: var(--acc-400);
-  --color-blue-500: var(--acc-500);
-  --color-blue-600: var(--acc-600);
-  --color-blue-700: var(--acc-700);
-  --color-blue-800: var(--acc-800);
-  --color-blue-900: var(--acc-900);
-  --color-blue-950: var(--acc-950);
-  --color-purple-50: var(--acc-50);
-  --color-purple-100: var(--acc-100);
-  --color-purple-200: var(--acc-200);
-  --color-purple-300: var(--acc-300);
-  --color-purple-400: var(--acc-400);
-  --color-purple-500: var(--acc-500);
-  --color-purple-600: var(--acc-600);
-  --color-purple-700: var(--acc-700);
-  --color-purple-800: var(--acc-800);
-  --color-purple-900: var(--acc-900);
-  --color-purple-950: var(--acc-950);
-  --color-pink-50: var(--acc-50);
-  --color-pink-100: var(--acc-100);
-  --color-pink-200: var(--acc-200);
-  --color-pink-300: var(--acc-300);
-  --color-pink-400: var(--acc-400);
-  --color-pink-500: var(--acc-500);
-  --color-pink-600: var(--acc-600);
-  --color-pink-700: var(--acc-700);
-  --color-pink-800: var(--acc-800);
-  --color-pink-900: var(--acc-900);
-  --color-pink-950: var(--acc-950);
-  --color-cyan-50: var(--acc-50);
-  --color-cyan-100: var(--acc-100);
-  --color-cyan-200: var(--acc-200);
-  --color-cyan-300: var(--acc-300);
-  --color-cyan-400: var(--acc-400);
-  --color-cyan-500: var(--acc-500);
-  --color-cyan-600: var(--acc-600);
-  --color-cyan-700: var(--acc-700);
-  --color-cyan-800: var(--acc-800);
-  --color-cyan-900: var(--acc-900);
-  --color-cyan-950: var(--acc-950);
-  --color-indigo-50: var(--acc-50);
-  --color-indigo-100: var(--acc-100);
-  --color-indigo-200: var(--acc-200);
-  --color-indigo-300: var(--acc-300);
-  --color-indigo-400: var(--acc-400);
-  --color-indigo-500: var(--acc-500);
-  --color-indigo-600: var(--acc-600);
-  --color-indigo-700: var(--acc-700);
-  --color-indigo-800: var(--acc-800);
-  --color-indigo-900: var(--acc-900);
-  --color-indigo-950: var(--acc-950);
-  --color-violet-50: var(--acc-50);
-  --color-violet-100: var(--acc-100);
-  --color-violet-200: var(--acc-200);
-  --color-violet-300: var(--acc-300);
-  --color-violet-400: var(--acc-400);
-  --color-violet-500: var(--acc-500);
-  --color-violet-600: var(--acc-600);
-  --color-violet-700: var(--acc-700);
-  --color-violet-800: var(--acc-800);
-  --color-violet-900: var(--acc-900);
-  --color-violet-950: var(--acc-950);
-  --color-sky-50: var(--acc-50);
-  --color-sky-100: var(--acc-100);
-  --color-sky-200: var(--acc-200);
-  --color-sky-300: var(--acc-300);
-  --color-sky-400: var(--acc-400);
-  --color-sky-500: var(--acc-500);
-  --color-sky-600: var(--acc-600);
-  --color-sky-700: var(--acc-700);
-  --color-sky-800: var(--acc-800);
-  --color-sky-900: var(--acc-900);
-  --color-sky-950: var(--acc-950);
-  --color-fuchsia-50: var(--acc-50);
-  --color-fuchsia-100: var(--acc-100);
-  --color-fuchsia-200: var(--acc-200);
-  --color-fuchsia-300: var(--acc-300);
-  --color-fuchsia-400: var(--acc-400);
-  --color-fuchsia-500: var(--acc-500);
-  --color-fuchsia-600: var(--acc-600);
-  --color-fuchsia-700: var(--acc-700);
-  --color-fuchsia-800: var(--acc-800);
-  --color-fuchsia-900: var(--acc-900);
-  --color-fuchsia-950: var(--acc-950);
-}
-
-
 /* ----- Custom Properties ----- */
 @layer base {
+  /* Shared by both themes */
   :root {
-    /* Light: green on white */
-    --bg-primary: 60 23% 97%;
-    --bg-secondary: 60 14% 96%;
-    --bg-surface: 0 0% 100%;
-    --bg-elevated: 60 12% 94%;
+    /* Accents (same in both themes) */
+    --accent-blue: 217 90% 65%;
+    --accent-purple: 263 85% 70%;
+    --accent-pink: 340 80% 70%;
+    --accent-cyan: 189 80% 55%;
+    --accent-emerald: 160 80% 50%;
+    --accent-amber: 38 85% 55%;
 
-    --text-primary: 150 23% 10%;
-    --text-secondary: 150 8% 28%;
-    --text-muted: 146 8% 39%;
+    /* Brand gradient and its hover (Foundations: hex) */
+    --grad-from: #3b82f6;
+    --grad-to: #a855f7;
+    --grad-from-hover: #2563eb;
+    --grad-to-hover: #9333ea;
+
+    /* Ink for text placed on accent fills */
+    --ink-light: 0 0% 100%;
+    --ink-dark: 228 20% 8%;
+
+    /* Radius */
+    --radius-input: 12px;
+    --radius-poster: 14px;
+    --radius-header: 18px;
+    --radius-card: 20px;
+    --radius-pill: 999px;
+
+    /* Fonts: Inter; Vazirmatn for fa and ar (set below by :lang) */
+    --font-body: var(--font-inter), system-ui, sans-serif;
+    --font-heading: var(--font-body);
+
+    /* Error color (not part of the accent set) */
+    --accent-rose: 347 77% 50%;
+  }
+
+  /* Light override */
+  :root {
+    color-scheme: light;
+
+    --bg-primary: 210 40% 98%;
+    --bg-secondary: 220 30% 96%;
+    --bg-surface: 0 0% 100%;
+    --bg-elevated: 220 25% 95%;
+
+    --text-primary: 222 20% 15%;
+    --text-secondary: 222 15% 35%;
+    /* AA: Foundations 55% gives 3.45:1, darkened to reach 4.5:1+ */
+    --text-muted: 222 12% 44%;
     --text-inverse: 0 0% 100%;
 
-    --border-subtle: 90 8% 89%;
-    --border-strong: 120 6% 78%;
+    --border-subtle: 220 20% 92%;
+    --border-strong: 220 15% 85%;
 
-    /* Single brand accent (replaces the old multi-color pastel set) */
-    --accent: 156 78% 27%;
-    --accent-hover: 156 78% 21%;
-    --accent-ink: 0 0% 100%; /* text on top of accent */
-    --accent-soft: 156 45% 93%;
-    --accent-blue: var(--accent);
-    --accent-purple: var(--accent);
-    --accent-pink: var(--accent);
-    --accent-cyan: var(--accent);
-    --accent-emerald: var(--accent);
-    --accent-mint: var(--accent);
-    --accent-lavender: var(--accent);
-    --accent-blue-hover: var(--accent-hover);
-    --accent-purple-hover: var(--accent-hover);
-    --accent-blue-bg: var(--accent-soft);
-    --accent-purple-bg: var(--accent-soft);
-    --accent-pink-bg: var(--accent-soft);
-    --accent-cyan-bg: var(--accent-soft);
-    --accent-emerald-bg: var(--accent-soft);
-    --accent-rose: 347 77% 50%;
-    --accent-amber: 32 95% 37%;
+    /* AA: accent used as text or focus ring on light surfaces */
+    --accent-text: 217 90% 45%;
+    --focus-ring: 217 90% 45%;
+    /* Share of the accent in badge text (rest is text-primary) */
+    --badge-mix: 40%;
 
-    --po-0-bg: #0F7B4F; --po-0-fg: #FFFFFF;
-    --po-1-bg: #DDEBD8; --po-1-fg: #0F3D1F;
-    --po-2-bg: #12180F; --po-2-fg: #E6F2DF;
+    --glass: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --card-glass: rgba(255, 255, 255, 0.7);
+    --shadow-header: 0 4px 24px rgba(200, 180, 255, 0.06);
+    --shadow-card: 0 8px 32px rgba(200, 180, 255, 0.12);
+    --shadow-card-hover: 0 16px 48px rgba(180, 150, 255, 0.18);
 
-    --shadow-card: 0 1px 2px rgba(20, 32, 26, 0.06);
-    --shadow-card-hover: 0 8px 24px rgba(20, 32, 26, 0.10);
+    /* Compat aliases for components not yet restyled.
+       Removed once phase 5b lands. */
+    --accent: var(--accent-text);
+    --accent-hover: 217 90% 38%;
+    --accent-ink: 0 0% 100%;
+    --accent-soft: 217 90% 95%;
+    --accent-blue-hover: 221 83% 53%;
+    --accent-purple-hover: 271 81% 56%;
+    --accent-blue-bg: 217 90% 95%;
+    --accent-purple-bg: 263 85% 95%;
+    --accent-pink-bg: 340 80% 95%;
+    --accent-cyan-bg: 189 80% 95%;
+    --accent-emerald-bg: 160 80% 95%;
+    --shadow-soft: var(--shadow-header);
     --shadow-glow: 0 0 0 rgba(0, 0, 0, 0);
-    --shadow-soft: 0 1px 2px rgba(20, 32, 26, 0.04);
   }
 
+  /* Dark (default) */
   .dark {
-    /* Dark (default): yellow on black */
-    --bg-primary: 60 5% 4%;
-    --bg-secondary: 60 5% 7%;
-    --bg-surface: 60 5% 8%;
-    --bg-elevated: 60 4% 11%;
+    color-scheme: dark;
 
-    --text-primary: 50 32% 93%;
-    --text-secondary: 55 12% 78%;
-    --text-muted: 50 9% 62%;
-    --text-inverse: 60 5% 4%;
+    --bg-primary: 228 20% 8%;
+    --bg-secondary: 228 18% 12%;
+    --bg-surface: 228 15% 14%;
+    --bg-elevated: 228 14% 20%;
 
-    --border-subtle: 60 4% 16%;
-    --border-strong: 60 4% 24%;
+    --text-primary: 240 20% 96%;
+    --text-secondary: 240 14% 80%;
+    --text-muted: 240 12% 60%;
+    --text-inverse: 228 20% 8%;
 
-    --accent: 50 100% 52%;
-    --accent-hover: 50 100% 70%;
-    --accent-ink: 60 5% 4%;
-    --accent-soft: 50 40% 14%;
-    --accent-blue: var(--accent);
-    --accent-purple: var(--accent);
-    --accent-pink: var(--accent);
-    --accent-cyan: var(--accent);
-    --accent-emerald: var(--accent);
-    --accent-mint: var(--accent);
-    --accent-lavender: var(--accent);
-    --accent-blue-hover: var(--accent-hover);
-    --accent-purple-hover: var(--accent-hover);
-    --accent-blue-bg: var(--accent-soft);
-    --accent-purple-bg: var(--accent-soft);
-    --accent-pink-bg: var(--accent-soft);
-    --accent-cyan-bg: var(--accent-soft);
-    --accent-emerald-bg: var(--accent-soft);
+    --border-subtle: 228 14% 22%;
+    --border-strong: 228 12% 30%;
+
+    --accent-text: 217 90% 65%;
+    --focus-ring: 217 90% 65%;
+    --badge-mix: 70%;
+
+    --glass: rgba(10, 10, 20, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --card-glass: rgba(30, 30, 50, 0.55);
+    --shadow-header: 0 4px 24px rgba(200, 180, 255, 0.06);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 12px 48px rgba(180, 150, 255, 0.08);
+
+    --accent: var(--accent-text);
+    --accent-hover: 217 90% 72%;
+    --accent-ink: 228 20% 8%;
+    --accent-soft: 224 40% 20%;
+    --accent-blue-hover: 221 83% 53%;
+    --accent-purple-hover: 271 81% 56%;
+    --accent-blue-bg: 217 35% 20%;
+    --accent-purple-bg: 263 35% 20%;
+    --accent-pink-bg: 340 35% 20%;
+    --accent-cyan-bg: 189 35% 20%;
+    --accent-emerald-bg: 160 35% 20%;
     --accent-rose: 347 85% 65%;
-    --accent-amber: 38 95% 60%;
-
-    --po-0-bg: #FFD60A; --po-0-fg: #0B0B0A;
-    --po-1-bg: #1F1F1D; --po-1-fg: #FFD60A;
-    --po-2-bg: #F2F0E6; --po-2-fg: #0B0B0A;
-
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.55);
-    --shadow-glow: 0 0 0 rgba(0, 0, 0, 0);
-    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Palette bridge: old components use blue/purple/... utilities.
-     Point them at the accent scale so the whole site re-themes now;
-     later steps replace these classes with semantic tokens. */
-  :root {
-    --acc-50: #E8F5EE; --acc-100: #CCE8D9; --acc-200: #A0D3B9; --acc-300: #6DB992;
-    --acc-400: #3A9C6C; --acc-500: #0F7B4F; --acc-600: #0C6641; --acc-700: #0A5235;
-    --acc-800: #083F29; --acc-900: #062E1E; --acc-950: #031A11;
-  }
-  .dark {
-    --acc-50: #FFFBE0; --acc-100: #FFF5B8; --acc-200: #FFEE85; --acc-300: #FFE552;
-    --acc-400: #FFDD2E; --acc-500: #FFD60A; --acc-600: #D9B500; --acc-700: #A68B00;
-    --acc-800: #735F00; --acc-900: #4A3D00; --acc-950: #2B2300;
   }
 }
 
@@ -220,15 +148,10 @@
     font-family: var(--font-vazir), system-ui, sans-serif;
   }
 
-  /* Font tokens: Latin = Inter + Space Grotesk, fa/ar = Vazirmatn */
-  :root {
-    --font-body: var(--font-inter), system-ui, sans-serif;
-    --font-heading: var(--font-grotesk), var(--font-inter), system-ui, sans-serif;
-  }
+  /* Latin = Inter. fa and ar = Vazirmatn (as in the old site). */
   :root:lang(fa),
   :root:lang(ar) {
-    --font-body: var(--font-vazir), system-ui, sans-serif;
-    --font-heading: var(--font-vazir), system-ui, sans-serif;
+    --font-body: var(--font-vazir), var(--font-inter), system-ui, sans-serif;
   }
 
   html {
@@ -240,6 +163,7 @@
     background: hsl(var(--bg-primary));
     color: hsl(var(--text-primary));
     font-family: var(--font-body);
+    line-height: 1.6;
     transition:
       background 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
       color 0.4s ease;
@@ -247,8 +171,14 @@
   }
 
   ::selection {
-    background: hsl(var(--accent) / 0.25);
+    background: hsl(var(--accent-blue) / 0.25);
     color: hsl(var(--text-primary));
+  }
+
+  /* Visible focus for every interactive element */
+  :focus-visible {
+    outline: 2px solid hsl(var(--focus-ring));
+    outline-offset: 2px;
   }
 
   /* Scrollbar */
@@ -276,6 +206,7 @@
     color: hsl(var(--text-primary));
     font-family: var(--font-heading);
     font-weight: 700;
+    line-height: 1.2;
     letter-spacing: -0.02em;
   }
 
@@ -285,12 +216,8 @@
   }
 
   a {
-    color: hsl(var(--accent-blue));
+    color: inherit;
     text-decoration: none;
-    transition: color 0.2s;
-  }
-  a:hover {
-    color: hsl(var(--accent-blue-hover));
   }
 }
 
@@ -351,6 +278,7 @@
 
   .animate-fade-up {
     animation: fade-up 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: var(--d, 0s);
     opacity: 0;
   }
 
@@ -384,6 +312,18 @@
   .animate-pulse-soft {
     animation: pulse-soft 3s ease-in-out infinite;
   }
+
+  /* Loading skeletons only */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--bg-elevated)) 25%,
+      hsl(var(--bg-surface)) 50%,
+      hsl(var(--bg-elevated)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
 }
 
 /* ============================================
@@ -406,18 +346,29 @@
     border-color: hsl(var(--accent) / 0.5);
   }
 
-  /* Header */
+  /* Header: floating glass bar (position and margins live in Navbar) */
   .header-glass {
-    background: hsl(var(--bg-primary) / 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid hsl(var(--border-subtle));
+    background: var(--glass);
+    backdrop-filter: blur(28px) saturate(2);
+    -webkit-backdrop-filter: blur(28px) saturate(2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-header);
+    box-shadow: var(--shadow-header);
   }
 
   /* Typographic poster (cover placeholder) */
-  .poster-0 { background: var(--po-0-bg); color: var(--po-0-fg); }
-  .poster-1 { background: var(--po-1-bg); color: var(--po-1-fg); }
-  .poster-2 { background: var(--po-2-bg); color: var(--po-2-fg); }
+  .poster-0 {
+    background: linear-gradient(135deg, hsl(var(--accent-blue)), hsl(var(--accent-purple)));
+    color: hsl(var(--ink-light));
+  }
+  .poster-1 {
+    background: linear-gradient(135deg, hsl(var(--accent-cyan)), hsl(var(--accent-blue)));
+    color: hsl(var(--ink-dark));
+  }
+  .poster-2 {
+    background: linear-gradient(135deg, hsl(var(--accent-pink)), hsl(var(--accent-amber)));
+    color: hsl(var(--ink-dark));
+  }
 
   /* Cards */
   .card {
@@ -626,6 +577,15 @@
 /* Direction comes from <html dir>. Components should use logical
    utilities (ps-*, pe-*, ms-*, me-*, text-start) instead of overrides. */
 
+/* fa/ar headings: no letter-spacing, taller line-height.
+   Matches by the element's own language, so an English fallback
+   body inside a fa/ar page keeps its Latin typography. */
+:is(h1, h2, h3, h4, h5, h6):lang(fa),
+:is(h1, h2, h3, h4, h5, h6):lang(ar) {
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
 [dir="rtl"] code,
 [dir="rtl"] pre,
 [dir="rtl"] .code-block,
@@ -828,3 +788,46 @@
 .article-body pre code { background: none; padding: 0; }
 .article-body .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; border: 1px solid hsl(var(--border-strong)); border-radius: 6px; background: hsl(var(--bg-elevated)); color: hsl(var(--text-secondary)); padding: 0.15rem 0.6rem; font-size: 0.75rem; cursor: pointer; }
 .article-body .copy-btn:hover { border-color: hsl(var(--accent)); color: hsl(var(--accent)); }
+
+/* ============================================
+   REDUCED MOTION
+   Unlayered on purpose: it must beat utilities.
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0s !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-fade-up {
+    animation: none;
+    opacity: 1;
+  }
+  .animate-float,
+  .animate-float-slow,
+  .animate-pulse-soft,
+  .animate-shimmer {
+    animation: none;
+  }
+
+  .card:hover,
+  .glass:hover,
+  .hover-lift:hover,
+  .btn:hover,
+  .btn:active,
+  .btn-primary:hover,
+  .btn-outline:hover,
+  .btn-press:active {
+    transform: none;
+  }
+}

@@ -1,6 +1,6 @@
 // مسیر: app/[locale]/layout.tsx
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, Vazirmatn } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
@@ -18,13 +18,6 @@ const inter = Inter({
   display: "swap",
   variable: "--font-inter",
   weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const grotesk = Space_Grotesk({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-grotesk",
-  weight: ["500", "700"],
 });
 
 const vazir = Vazirmatn({
@@ -69,7 +62,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRTL ? "rtl" : "ltr"}
-      className={`${inter.variable} ${grotesk.variable} ${vazir.variable}`}
+      className={`${inter.variable} ${vazir.variable}`}
       suppressHydrationWarning
     >
       <head>

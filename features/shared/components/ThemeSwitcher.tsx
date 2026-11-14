@@ -17,16 +17,10 @@ export function ThemeSwitcher() {
     <button
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative h-7 w-12 flex-shrink-0 rounded-full border border-[hsl(var(--border-strong))] bg-[hsl(var(--bg-surface))] transition-colors hover:border-[hsl(var(--accent))] focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]"
+      className="btn-press inline-flex h-8 flex-shrink-0 items-center justify-center rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--bg-elevated)/0.55)] px-3.5 text-[13px] leading-none text-[hsl(var(--text-secondary))] transition-colors hover:text-[hsl(var(--text-primary))]"
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
-      <span
-        className={`absolute start-0.5 top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--accent))] text-[10px] text-[hsl(var(--accent-ink))] transition-transform duration-200 ${
-          isDark ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0"
-        }`}
-      >
-        {isDark ? "🌙" : "☀️"}
-      </span>
+      <span aria-hidden>◐</span>
     </button>
   );
 }
