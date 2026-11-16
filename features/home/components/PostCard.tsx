@@ -1,11 +1,16 @@
 // features/home/components/PostCard.tsx
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { Badge } from "@/components/ui/Badge";
 import { Poster } from "@/components/ui/Poster";
+import { Reveal } from "@/components/ui/Reveal";
+import { accentStyle } from "@/lib/accent";
+import { formatShortDate } from "@/lib/format-date";
 import type { Post } from "@/features/blog/types/blog.types";
 
 export type PostCardData = Pick<Post, "id" | "slug" | "title" | "readingTimeMin"> & {
   excerpt?: string | null;
+  publishedAt?: Date | string | null;
   category: { name: string };
 };
 
@@ -20,60 +25,59 @@ export async function PostCard({ post, locale, index, variant = "card" }: PostCa
   const t = await getTranslations({ locale });
   const href = `/${locale}/blog/${post.slug}`;
   const meta = [
-    post.category.name,
     post.readingTimeMin ? t("hmMin", { n: post.readingTimeMin }) : null,
+    formatShortDate(post.publishedAt, locale),
   ]
     .filter(Boolean)
     .join(" · ");
 
   if (variant === "featured") {
     return (
-      <article className="grid items-center gap-6 md:grid-cols-2">
-        <Link href={href} tabIndex={-1} aria-hidden>
-          <Poster index={index} className="text-2xl">
-            {post.title}
-          </Poster>
-        </Link>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--accent))]">
-            {t("hmFeatured")}
-          </p>
-          <h3 className="mt-2 text-2xl font-bold leading-snug">
-            <Link href={href} className="hover:text-[hsl(var(--accent))]">
+      <Reveal as="article">
+        <Link
+          href={href}
+          className="card grid gap-0 p-0 md:grid-cols-[1.1fr_1fr]"
+          style={accentStyle(index)}
+        >
+          <div className="relative min-h-[200px] md:min-h-[260px]">
+            <Poster
+              aria-hidden
+              index={index}
+              height="100%"
+              className="absolute inset-0 rounded-none text-3xl"
+            >
               {post.title}
-            </Link>
-          </h3>
-          {post.excerpt && (
-            <p className="mt-3 text-[hsl(var(--text-secondary))]">{post.excerpt}</p>
-          )}
-          <p className="mt-3 text-sm text-[hsl(var(--text-muted))]">{meta}</p>
-          <Link
-            href={href}
-            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[hsl(var(--accent))] hover:underline"
-          >
-            {t("hmRead")} <span aria-hidden className="rtl-flip inline-block">→</span>
-          </Link>
-        </div>
-      </article>
+            </Poster>
+          </div>
+          <div className="flex flex-col items-start justify-center p-6 sm:p-8">
+            <Badge>{t("hmFeatured")}</Badge>
+            <h3 className="mb-2 mt-3 text-2xl sm:text-[28px]">{post.title}</h3>
+            {post.excerpt && (
+              <p className="text-base text-[hsl(var(--text-secondary))]">{post.excerpt}</p>
+            )}
+            {meta && <p className="mt-3 text-[13px] text-[hsl(var(--text-muted))]">{meta}</p>}
+            <span className="btn btn-sm mt-4">{t("hmRead")}</span>
+          </div>
+        </Link>
+      </Reveal>
     );
   }
 
   return (
-    <article className="card flex flex-col gap-3 p-3">
-      <Link href={href} tabIndex={-1} aria-hidden>
-        <Poster index={index}>{post.title}</Poster>
-      </Link>
-      <p className="px-1 text-xs text-[hsl(var(--text-muted))]">{meta}</p>
-      <h3 className="px-1 text-lg font-bold leading-snug">
-        <Link href={href} className="hover:text-[hsl(var(--accent))]">
+    <Reveal as="article" delay={Math.min(index, 6) * 0.05} className="h-full">
+      <Link href={href} className="card flex h-full flex-col" style={accentStyle(index)}>
+        <Poster aria-hidden index={index}>
           {post.title}
-        </Link>
-      </h3>
-      {post.excerpt && (
-        <p className="line-clamp-2 px-1 pb-1 text-sm text-[hsl(var(--text-secondary))]">
-          {post.excerpt}
-        </p>
-      )}
-    </article>
+        </Poster>
+        <div className="mt-3.5">
+          <Badge>{post.category.name}</Badge>
+        </div>
+        <h3 className="mb-2 mt-3 text-xl">{post.title}</h3>
+        <div className="mt-auto flex items-center justify-between border-t border-[hsl(var(--border-subtle)/0.5)] pt-3.5 text-sm text-[hsl(var(--text-secondary))]">
+          <span className="text-[13px] text-[hsl(var(--text-muted))]">{meta}</span>
+          <span aria-hidden className="rtl-flip inline-block">→</span>
+        </div>
+      </Link>
+    </Reveal>
   );
 }

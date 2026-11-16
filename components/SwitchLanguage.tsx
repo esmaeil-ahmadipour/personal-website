@@ -2,17 +2,19 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { locales } from "@/i18n/request";
 
 const LABELS: Record<string, { short: string; name: string }> = {
   en: { short: "EN", name: "English" },
-  fa: { short: "فا", name: "فارسی" },
-  ar: { short: "ع", name: "العربية" },
+  fa: { short: "FA", name: "فارسی" },
+  ar: { short: "AR", name: "العربية" },
 };
 
 export default function LanguageSwitcher() {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations();
   const current = pathname.split("/")[1] || "en";
 
   const switchTo = (locale: string) => {
@@ -25,9 +27,9 @@ export default function LanguageSwitcher() {
   return (
     <div
       role="group"
-      aria-label="Language"
+      aria-label={t("langSwitch")}
       dir="ltr"
-      className="inline-flex overflow-hidden rounded-lg border border-[hsl(var(--border-strong))]"
+      className="inline-flex overflow-hidden rounded-full border border-[hsl(var(--border-subtle))] text-[13px]"
     >
       {locales.map((locale) => {
         const active = locale === current;
@@ -39,9 +41,9 @@ export default function LanguageSwitcher() {
             aria-pressed={active}
             aria-label={LABELS[locale].name}
             lang={locale}
-            className={`px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[hsl(var(--accent))] ${
+            className={`btn-press px-3 py-1 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[hsl(var(--focus-ring))] ${
               active
-                ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-ink))]"
+                ? "bg-[linear-gradient(90deg,var(--grad-from-hover),var(--grad-to-hover))] text-[hsl(var(--ink-light))]"
                 : "text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))]"
             }`}
           >

@@ -1,16 +1,22 @@
 // features/contact/components/FeedbackSection.tsx
 import { getTranslations } from "next-intl/server";
+import { Reveal } from "@/components/ui/Reveal";
+import { SectionHead } from "@/components/ui/SectionHead";
 import { ContactForm } from "./ContactForm";
 
 export async function FeedbackSection({ locale }: { locale: string }) {
   const t = await getTranslations({ locale });
   return (
-    <section id="feedback" className="mx-auto max-w-3xl scroll-mt-20 px-4 py-10 sm:px-6">
-      <h2 className="text-2xl font-bold">{t("fbTitle")}</h2>
-      <p className="mb-6 mt-1 text-[hsl(var(--text-secondary))]">{t("fbSub")}</p>
-      <div className="card relative p-5 sm:p-6">
-        <ContactForm />
+    <Reveal
+      as="section"
+      className="mx-auto max-w-[824px] scroll-mt-28 px-4 pt-20 sm:px-8"
+    >
+      <div id="feedback" className="scroll-mt-28">
+        <SectionHead center title={t("fbTitle")} sub={t("fbSub")} />
+        <div className="card relative p-6 hover:transform-none sm:p-9">
+          <ContactForm />
+        </div>
       </div>
-    </section>
+    </Reveal>
   );
 }

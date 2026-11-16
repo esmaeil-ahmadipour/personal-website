@@ -58,6 +58,11 @@
   "footerTagline": "Personal engineering publication: articles, a newsletter and side projects.",
   "footerRights": "© 2026 Tarvix. All rights reserved.",
   "navBack": "Back",
+  "themeToLight": "Switch to light theme",
+  "themeToDark": "Switch to dark theme",
+  "langSwitch": "Language",
+  "navMain": "Main navigation",
+  "navFooter": "Footer",
   "home": "Home",
   "layers": "Layers",
   "dev": "Developer",
@@ -78,5 +83,16 @@
     "description": "A personal technical publication: articles, a LinkedIn newsletter and free lessons for software engineers.",
     "keywords": "Software Engineering,Mobile Development,Cross-Platform,Fintech,Digital Assets,Technical Education,Newsletter",
     "companyName": "Tarvix"
-  }
+  },
+  "blPerPage": "{n} per page",
+  "blPrev": "Previous page",
+  "blNext": "Next page",
+  "blPagination": "Pagination",
+  "prVisit": "Visit project ↗",
+  "prSource": "Source ↗",
+  "prMore": "More projects",
+  "prOverview": "Overview",
+  "prStack": "Stack",
+  "prStatus": "Status",
+  "prPlaceholder": "[To be added]"
 }

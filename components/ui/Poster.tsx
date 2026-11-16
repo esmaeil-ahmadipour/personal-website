@@ -1,15 +1,19 @@
 import { cn } from "@/lib/utils";
+import { accentStyle, posterInk } from "@/lib/accent";
 
 interface PosterProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Picks one of three theme-aware palettes (index % 3). */
+  /** Picks one of the six accent pairs (index % 6). */
   index?: number;
   ratio?: "16/9" | "4/3" | "1/1";
+  /** Fixed height (px number or CSS length). Replaces the aspect ratio. */
+  height?: number | string;
 }
 
 /** Typographic cover placeholder. Pass the title as children. */
 export function Poster({
   index = 0,
   ratio = "16/9",
+  height,
   className,
   style,
   children,
@@ -17,13 +21,11 @@ export function Poster({
 }: PosterProps) {
   return (
     <div
-      className={cn(
-        `poster-${index % 3}`,
-        "flex w-full items-end rounded-lg p-4 text-xl font-bold leading-tight",
-        className,
-      )}
+      className={cn("poster", className)}
+      data-ink={posterInk(index)}
       style={{
-        aspectRatio: ratio,
+        ...accentStyle(index),
+        ...(height === undefined ? { aspectRatio: ratio } : { height }),
         fontFamily: "var(--font-heading)",
         ...style,
       }}

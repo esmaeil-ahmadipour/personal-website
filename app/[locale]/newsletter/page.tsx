@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Navbar from "@/features/shared/components/Navbar";
 import Footer from "@/features/shared/components/Footer";
+import { PageHero } from "@/components/ui/PageHero";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import { IssueRow } from "@/features/newsletter/components/IssueRow";
 import {
   LINKEDIN_NEWSLETTER_URL,
@@ -36,30 +38,30 @@ export default async function NewsletterPage({ params }: Props) {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-        <h1 className="text-4xl font-bold">{t("nlArchiveTitle")}</h1>
-        <p className="mt-3 text-[hsl(var(--text-secondary))]">{t("nlArchiveSub")}</p>
-        <a
-          href={LINKEDIN_NEWSLETTER_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6 inline-flex h-10 items-center rounded-lg bg-[hsl(var(--accent))] px-5 text-sm font-semibold text-[hsl(var(--accent-ink))] transition-colors hover:bg-[hsl(var(--accent-hover))]"
-        >
-          {t("nlSubscribe")}
-        </a>
+      <main>
+        <PageHero title={t("nlArchiveTitle")} sub={t("nlArchiveSub")}>
+          <ButtonLink href={LINKEDIN_NEWSLETTER_URL} external>
+            {t("nlSubscribe")}
+          </ButtonLink>
+        </PageHero>
 
-        {years.map(({ year, issues }) => (
-          <section key={year} className="mt-10">
-            <h2 className="mb-3 text-xl font-bold text-[hsl(var(--text-muted))]">
-              {year}
-            </h2>
-            <ul className="flex flex-col gap-3">
-              {issues.map((issue) => (
-                <IssueRow key={issue.number} issue={issue} locale={locale} />
-              ))}
-            </ul>
-          </section>
-        ))}
+        <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-8">
+          {years.map(({ year, issues }) => (
+            <section key={year} aria-labelledby={`year-${year}`}>
+              <h2
+                id={`year-${year}`}
+                className="mb-4 mt-9 text-[26px] text-[hsl(var(--accent-text))]"
+              >
+                {year}
+              </h2>
+              <ul className="flex flex-col gap-3.5">
+                {issues.map((issue, i) => (
+                  <IssueRow key={issue.number} issue={issue} locale={locale} index={i} />
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       </main>
       <Footer />
     </>

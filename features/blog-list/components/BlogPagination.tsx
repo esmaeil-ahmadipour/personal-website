@@ -2,19 +2,27 @@
 
 "use client";
 
+import { useTranslation } from "@/features/shared/hooks/useTranslation";
+
 interface BlogPaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  isRTL?: boolean;
 }
+
+const item =
+  "btn-press min-w-9 px-3 py-1.5 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[hsl(var(--focus-ring))] disabled:cursor-not-allowed disabled:opacity-40";
+const idle = "text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))]";
+const active =
+  "bg-[linear-gradient(90deg,var(--grad-from-hover),var(--grad-to-hover))] text-[hsl(var(--ink-light))]";
 
 export function BlogPagination({
   currentPage,
   totalPages,
   onPageChange,
-  isRTL = false,
 }: BlogPaginationProps) {
+  const { t } = useTranslation();
+
   if (totalPages <= 1) return null;
 
   const getPageNumbers = () => {
@@ -39,87 +47,62 @@ export function BlogPagination({
   const pageNumbers = getPageNumbers();
 
   return (
-    <nav
-      className="flex justify-center items-center gap-2 mt-10"
-      aria-label="Pagination"
-    >
-      {/* Previous */}
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={`
-          px-3.5 py-2 text-sm font-medium rounded-xl
-          bg-[var(--bg-surface)] text-[var(--text-secondary)]
-          border border-[var(--border-subtle)]
-          hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]
-          disabled:opacity-30 disabled:cursor-not-allowed
-          transition-all duration-200
-        `}
-        aria-label="Previous page"
+    <nav aria-label={t("blPagination")}>
+      <div
+        className="inline-flex items-center overflow-hidden rounded-full border border-[hsl(var(--border-subtle))] text-[13px]"
       >
-        {isRTL ? "→" : "←"}
-      </button>
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`${item} ${idle}`}
+          aria-label={t("blPrev")}
+        >
+          <span aria-hidden className="rtl-flip inline-block">
+            ‹
+          </span>
+        </button>
 
-      {/* Page numbers */}
-      {pageNumbers.map((page, index) => {
-        if (page === "...") {
+        {pageNumbers.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span
+                key={`ellipsis-${index}`}
+                aria-hidden
+                className="px-2 text-[hsl(var(--text-muted))]"
+              >
+                …
+              </span>
+            );
+          }
+
+          const isActive = currentPage === page;
+
           return (
-            <span
-              key={`ellipsis-${index}`}
-              className="px-3 py-2 text-sm text-[var(--text-muted)]"
+            <button
+              key={page}
+              type="button"
+              onClick={() => onPageChange(page as number)}
+              className={`${item} ${isActive ? active : idle}`}
+              aria-current={isActive ? "page" : undefined}
             >
-              …
-            </span>
+              {page}
+            </button>
           );
-        }
+        })}
 
-        const isActive = currentPage === page;
-
-        return (
-          <button
-            key={page}
-            onClick={() => onPageChange(page as number)}
-            className={`
-              px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200
-              ${
-                isActive
-                  ? `
-                    bg-gradient-to-r from-blue-500 to-purple-500
-                    text-white shadow-lg shadow-blue-500/25
-                    hover:shadow-blue-500/40 hover:-translate-y-0.5
-                    border border-blue-500/20
-                  `
-                  : `
-                    bg-[var(--bg-surface)] text-[var(--text-secondary)]
-                    border border-[var(--border-subtle)]
-                    hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]
-                    hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]
-                  `
-              }
-            `}
-            aria-current={isActive ? "page" : undefined}
-          >
-            {page}
-          </button>
-        );
-      })}
-
-      {/* Next */}
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className={`
-          px-3.5 py-2 text-sm font-medium rounded-xl
-          bg-[var(--bg-surface)] text-[var(--text-secondary)]
-          border border-[var(--border-subtle)]
-          hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]
-          disabled:opacity-30 disabled:cursor-not-allowed
-          transition-all duration-200
-        `}
-        aria-label="Next page"
-      >
-        {isRTL ? "←" : "→"}
-      </button>
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`${item} ${idle}`}
+          aria-label={t("blNext")}
+        >
+          <span aria-hidden className="rtl-flip inline-block">
+            ›
+          </span>
+        </button>
+      </div>
     </nav>
   );
 }

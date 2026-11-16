@@ -1,6 +1,7 @@
 // features/projects/components/ProjectsSection.tsx
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { ButtonLink } from "@/components/ui/ButtonLink";
+import { SectionHead } from "@/components/ui/SectionHead";
 import { ProjectsGrid } from "./ProjectsGrid";
 
 type Locale = "en" | "fa" | "ar";
@@ -8,19 +9,12 @@ type Locale = "en" | "fa" | "ar";
 export async function ProjectsSection({ locale }: { locale: Locale }) {
   const t = await getTranslations({ locale });
   return (
-    <section id="projects" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold">{t("prTitle")}</h2>
-          <p className="mt-1 text-[hsl(var(--text-secondary))]">{t("prSub")}</p>
-        </div>
-        <Link
-          href={`/${locale}/projects`}
-          className="text-sm font-semibold text-[hsl(var(--accent))] hover:underline"
-        >
+    <section id="projects" className="mx-auto max-w-7xl scroll-mt-28 px-4 pt-20 sm:px-8">
+      <SectionHead title={t("prTitle")} sub={t("prSub")}>
+        <ButtonLink href={`/${locale}/projects`} variant="ghost" size="sm">
           {t("prAll")} <span aria-hidden className="rtl-flip inline-block">→</span>
-        </Link>
-      </div>
+        </ButtonLink>
+      </SectionHead>
       <ProjectsGrid locale={locale} />
     </section>
   );

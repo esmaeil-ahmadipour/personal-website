@@ -4,16 +4,17 @@ import type { TocItem } from "../lib/prepare-content";
 export function ArticleToc({ items, title }: { items: TocItem[]; title: string }) {
   if (items.length < 2) return null;
   return (
-    <nav aria-label={title}>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[hsl(var(--text-muted))]">
-        {title}
-      </p>
-      <ul className="space-y-1.5 text-sm">
+    <nav
+      aria-label={title}
+      className="flex flex-col gap-2.5 border-s-2 border-[hsl(var(--border-subtle))] ps-4 text-sm"
+    >
+      <p className="font-semibold text-[hsl(var(--text-primary))]">{title}</p>
+      <ul className="flex flex-col gap-2.5">
         {items.map((item) => (
-          <li key={item.id} className={item.level === 3 ? "ps-4" : ""}>
+          <li key={item.id} className={item.level === 3 ? "ps-3" : ""}>
             <a
               href={`#${item.id}`}
-              className="text-[hsl(var(--text-secondary))] transition-colors hover:text-[hsl(var(--accent))]"
+              className="rounded-sm text-[hsl(var(--text-muted))] transition-colors hover:text-[hsl(var(--text-primary))]"
             >
               {item.text}
             </a>

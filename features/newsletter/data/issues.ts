@@ -39,7 +39,8 @@ export function groupIssuesByYear(): { year: string; issues: NewsletterIssue[] }
 
 export function formatIssueDate(date: string, locale: string): string {
   return new Intl.DateTimeFormat(`${locale}-u-ca-gregory`, {
-    month: "long",
+    day: "numeric",
+    month: "short",
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(date));

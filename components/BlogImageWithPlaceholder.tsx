@@ -33,11 +33,11 @@ export function BlogImageWithPlaceholder({
   if (!src) {
     return (
       <div
-        className={`relative overflow-hidden bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-secondary)] ${className}`}
+        className={`relative overflow-hidden bg-[linear-gradient(135deg,hsl(var(--bg-elevated)),hsl(var(--bg-secondary)))] ${className}`}
       >
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
-            className="w-12 h-12 text-[var(--text-muted)]/30"
+            className="w-12 h-12 text-[hsl(var(--text-muted)/0.3)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -56,13 +56,13 @@ export function BlogImageWithPlaceholder({
 
   return (
     <div
-      className={`relative overflow-hidden bg-[var(--bg-elevated)] ${className}`}
+      className={`relative overflow-hidden bg-[hsl(var(--bg-elevated))] ${className}`}
     >
       {/* حالت لودینگ */}
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-secondary)] animate-pulse">
+        <div className="absolute inset-0 flex items-center justify-center animate-shimmer">
           <svg
-            className="w-8 h-8 text-[var(--text-muted)]/20"
+            className="w-8 h-8 text-[hsl(var(--text-muted)/0.3)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -79,9 +79,9 @@ export function BlogImageWithPlaceholder({
 
       {/* حالت خطا */}
       {hasError ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-secondary)]">
+        <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(135deg,hsl(var(--bg-elevated)),hsl(var(--bg-secondary)))]">
           <svg
-            className="w-12 h-12 text-[var(--text-muted)]/30"
+            className="w-12 h-12 text-[hsl(var(--text-muted)/0.3)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

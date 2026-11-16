@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const control =
-  "w-full rounded-lg border border-[hsl(var(--border-strong))] bg-[hsl(var(--bg-surface))] px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] placeholder:text-[hsl(var(--text-muted))] transition-colors focus:border-[hsl(var(--accent))] focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent)/0.35)] aria-[invalid=true]:border-[hsl(var(--accent-rose))]";
+  "w-full rounded-[var(--radius-input)] border border-[hsl(var(--border-subtle))] bg-[hsl(var(--bg-secondary))] px-3.5 py-3 text-base text-[hsl(var(--text-primary))] placeholder:text-[hsl(var(--text-muted))] transition-[border-color,box-shadow] focus:border-[hsl(var(--accent-text))] focus:outline-none focus:ring-[3px] focus:ring-[hsl(var(--accent-blue)/0.18)] aria-[invalid=true]:border-[hsl(var(--accent-rose))]";
 
 interface FieldProps {
   label: string;
@@ -20,7 +20,7 @@ export function Field({ label, htmlFor, error, className, children }: FieldProps
     <div className={cn("flex flex-col gap-1.5", className)}>
       <label
         htmlFor={htmlFor}
-        className="text-sm font-medium text-[hsl(var(--text-secondary))]"
+        className="text-sm text-[hsl(var(--text-secondary))]"
       >
         {label}
       </label>

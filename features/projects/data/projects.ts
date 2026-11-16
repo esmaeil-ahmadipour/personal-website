@@ -1,6 +1,8 @@
 // features/projects/data/projects.ts
-// TODO: add real links (`url`) and finish CodeBridge's description.
-// A project without `url` renders as a plain card with no link.
+// TODO: add real links (`url`, `sourceUrl`), CodeBridge's description and the
+// category / overview / stack / status texts. Every project has its own page
+// (/[locale]/projects/[slug]); a missing text shows the [To be added] placeholder
+// and a missing link simply hides its button.
 
 type Locale = "en" | "fa" | "ar";
 
@@ -8,7 +10,14 @@ export interface Project {
   slug: string;
   name: string;
   description: Record<Locale, string>;
+  /** Live project (button on the project page). */
   url?: string;
+  /** Source repository (button on the project page). */
+  sourceUrl?: string;
+  category?: Record<Locale, string>;
+  overview?: Record<Locale, string>;
+  stack?: Record<Locale, string>;
+  status?: Record<Locale, string>;
 }
 
 export const PROJECTS: Project[] = [

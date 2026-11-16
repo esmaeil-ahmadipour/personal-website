@@ -46,47 +46,59 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     // ============================================
-    // Variant Styles - مطابق با استایل‌های پروژه
+    // Variants. Primary and gradient-* use the gradient pill (.btn);
+    // secondary, outline and glass use the ghost pill (.btn-ghost).
     // ============================================
-    // Single accent: every legacy gradient-* variant now maps to the primary look.
-    const primary = "bg-[hsl(var(--accent))] text-[hsl(var(--accent-ink))] hover:bg-[hsl(var(--accent-hover))] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-[hsl(var(--bg-primary))]";
-    const variantStyles = {
-      primary,
-      "gradient-blue": primary,
-      "gradient-purple": primary,
-      "gradient-emerald": primary,
-      "gradient-pink": primary,
+    const pill: Partial<Record<NonNullable<ButtonProps["variant"]>, string>> = {
+      primary: "btn",
+      "gradient-blue": "btn",
+      "gradient-purple": "btn",
+      "gradient-emerald": "btn",
+      "gradient-pink": "btn",
+      secondary: "btn-ghost",
+      outline: "btn-ghost",
+      glass: "btn-ghost",
+    };
 
-      secondary:
-        "bg-[hsl(var(--bg-elevated))] text-[hsl(var(--text-primary))] border border-[hsl(var(--border-subtle))] hover:border-[hsl(var(--accent))]",
-
-      outline:
-        "border border-[hsl(var(--border-strong))] bg-transparent text-[hsl(var(--text-primary))] hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))]",
-
+    const plainStyles = {
       ghost:
         "bg-transparent text-[hsl(var(--text-secondary))] hover:bg-[hsl(var(--bg-elevated))] hover:text-[hsl(var(--text-primary))]",
-
-      glass:
-        "bg-[hsl(var(--bg-surface)/0.6)] backdrop-blur-sm border border-[hsl(var(--border-subtle))] text-[hsl(var(--text-primary))] hover:border-[hsl(var(--accent))]",
-
       destructive:
-        "bg-[hsl(var(--accent-rose))] text-white hover:opacity-90",
-
-      link: "text-[hsl(var(--accent))] underline-offset-4 hover:underline",
+        "bg-[hsl(var(--accent-rose))] text-[hsl(var(--ink-light))] hover:opacity-90 dark:text-[hsl(var(--ink-dark))]",
+      link: "text-[hsl(var(--accent-text))] underline-offset-4 hover:underline",
     };
 
     // ============================================
-    // Size Styles
+    // Sizes
     // ============================================
-    const sizeStyles = {
-      sm: "h-8 px-4 py-1.5 text-xs rounded-lg",
-      default: "h-10 px-6 py-2 rounded-lg",
-      lg: "h-12 px-8 py-3 text-base rounded-lg",
-      xl: "h-14 px-10 py-4 text-lg rounded-lg",
-      icon: "h-10 w-10 rounded-lg",
-      "icon-sm": "h-8 w-8 rounded-lg",
-      "icon-lg": "h-12 w-12 rounded-lg",
+    const iconSizes = {
+      icon: "h-10 w-10 p-0",
+      "icon-sm": "h-8 w-8 p-0",
+      "icon-lg": "h-12 w-12 p-0",
     };
+
+    const plainSizes = {
+      sm: "h-8 px-4 py-1.5 text-xs rounded-full",
+      default: "h-10 px-6 py-2 rounded-full",
+      lg: "h-12 px-8 py-3 text-base rounded-full",
+      xl: "h-14 px-10 py-4 text-lg rounded-full",
+      icon: "h-10 w-10 rounded-full",
+      "icon-sm": "h-8 w-8 rounded-full",
+      "icon-lg": "h-12 w-12 rounded-full",
+    };
+
+    const pillClass = pill[variant];
+    const variantClasses = pillClass
+      ? cn(
+          pillClass,
+          size === "sm" && "btn-sm",
+          (size === "icon" || size === "icon-sm" || size === "icon-lg") && iconSizes[size],
+        )
+      : cn(
+          "font-semibold transition-colors btn-press",
+          plainStyles[variant as keyof typeof plainStyles],
+          plainSizes[size],
+        );
 
     // ============================================
     // Loading Spinner
@@ -117,11 +129,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          // Base styles - مطابق با استایل دکمه‌های پروژه
-          "group relative inline-flex items-center justify-center gap-2 font-semibold transition-all btn-press overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-60",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-          variantStyles[variant],
-          sizeStyles[size],
+          "group relative inline-flex cursor-pointer items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60",
+          variantClasses,
           fullWidth && "w-full",
           className,
         )}

@@ -1,7 +1,10 @@
 // features/get-blog-post/components/BlogPostPage.tsx
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { Badge } from "@/components/ui/Badge";
+import { Notice } from "@/components/ui/Notice";
 import { Poster } from "@/components/ui/Poster";
+import { SectionHead } from "@/components/ui/SectionHead";
 import { PostCard } from "@/features/home/components/PostCard";
 import type { BlogPost } from "../types/get-blog-post.types";
 import type { RelatedPost } from "../data/related";
@@ -68,6 +71,8 @@ export async function BlogPostPage({ post, locale, related = [] }: BlogPostPageP
     mainEntityOfPage: url,
   };
 
+  const hasToc = toc.length >= 2;
+
   const meta = [
     date,
     post.readingTimeMin ? t("hmMin", { n: post.readingTimeMin }) : null,
@@ -81,58 +86,72 @@ export async function BlogPostPage({ post, locale, related = [] }: BlogPostPageP
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <article className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14">
-        <header className="max-w-3xl">
-          <Link
-            href={`/${locale}/blog`}
-            className="inline-block rounded-full bg-[hsl(var(--accent-soft))] px-3 py-1 text-xs font-semibold text-[hsl(var(--accent))]"
-          >
-            {category}
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        <Link
+          href={`/${locale}/blog`}
+          className="mb-2 mt-9 inline-block rounded-md text-sm text-[hsl(var(--text-muted))] transition-colors hover:text-[hsl(var(--text-primary))]"
+        >
+          <span aria-hidden className="rtl-flip inline-block">←</span> {t("navBack")}
+        </Link>
+      </div>
+
+      <article className="mx-auto max-w-[1000px] px-4 sm:px-8">
+        <header>
+          <Link href={`/${locale}/blog`} className="inline-block rounded-full">
+            <Badge accent={0}>{category}</Badge>
           </Link>
           <h1
-            className="mt-4 text-3xl font-bold leading-tight sm:text-5xl"
+            className="animate-fade-up my-[18px] text-3xl sm:text-5xl lg:text-[52px]"
             lang={bodyLocale}
             dir={bodyDir}
           >
             {title}
           </h1>
-          <p className="mt-4 text-sm text-[hsl(var(--text-muted))]">
-            {meta.join(" · ")}
-          </p>
+          <p className="text-sm text-[hsl(var(--text-muted))]">{meta.join(" · ")}</p>
 
-          {!translated && (
-            <p
-              role="note"
-              className="mt-5 rounded-lg border border-[hsl(var(--accent)/0.5)] bg-[hsl(var(--accent-soft))] px-4 py-3 text-sm text-[hsl(var(--text-primary))]"
-            >
-              {t("apOnlyEn")}
-            </p>
-          )}
+          {!translated && <Notice className="my-3.5">{t("apOnlyEn")}</Notice>}
         </header>
 
-        <div className="mt-8 max-w-3xl">
+        <div className="mt-4">
           {post.coverImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={post.coverImageUrl}
               alt={title}
-              className="aspect-video w-full rounded-lg border border-[hsl(var(--border-subtle))] object-cover"
+              className="aspect-video w-full rounded-[20px] border border-[hsl(var(--border-subtle))] object-cover"
             />
           ) : (
-            <Poster index={title.length} className="text-3xl">
+            <Poster
+              aria-hidden
+              index={title.length}
+              height={280}
+              className="rounded-[20px] text-3xl sm:text-4xl"
+            >
               {title}
             </Poster>
           )}
         </div>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_16rem]">
-          <div className="min-w-0 max-w-3xl">
+        <div
+          className={`mt-10 grid gap-14 ${hasToc ? "lg:grid-cols-[220px_minmax(0,1fr)]" : ""}`}
+        >
+          {hasToc && (
+            <aside className="hidden lg:block">
+              <div className="sticky top-28">
+                <ArticleToc items={toc} title={t("apToc")} />
+              </div>
+            </aside>
+          )}
+
+          <div className={`min-w-0 ${hasToc ? "" : "mx-auto w-full max-w-[724px]"}`}>
+            {hasToc && (
             <details className="card mb-8 p-4 lg:hidden">
               <summary className="cursor-pointer text-sm font-semibold">{t("apToc")}</summary>
               <div className="mt-3">
                 <ArticleToc items={toc} title={t("apToc")} />
               </div>
             </details>
+            )}
 
             <ArticleBody
               html={html}
@@ -142,25 +161,19 @@ export async function BlogPostPage({ post, locale, related = [] }: BlogPostPageP
               copiedLabel={t("apCopied")}
             />
           </div>
-
-          <aside className="hidden lg:block">
-            <div className="sticky top-20">
-              <ArticleToc items={toc} title={t("apToc")} />
-            </div>
-          </aside>
         </div>
-
-        {related.length > 0 && (
-          <section className="mt-16 border-t border-[hsl(var(--border-subtle))] pt-10">
-            <h2 className="mb-6 text-2xl font-bold">{t("apRelated")}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {related.map((p, i) => (
-                <PostCard key={p.id} post={p} locale={locale} index={i + 1} />
-              ))}
-            </div>
-          </section>
-        )}
       </article>
+
+      {related.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pt-20 sm:px-8">
+          <SectionHead title={t("apRelated")} />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((p, i) => (
+              <PostCard key={p.id} post={p} locale={locale} index={i + 1} />
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }

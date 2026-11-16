@@ -49,7 +49,7 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
     return (
       <p
         role="status"
-        className="rounded-lg border border-[hsl(var(--accent))] bg-[hsl(var(--accent-soft))] p-4 text-[hsl(var(--text-primary))]"
+        className="rounded-[var(--radius-input)] border border-[hsl(var(--accent-emerald)/0.5)] bg-[hsl(var(--accent-emerald)/0.1)] p-4 text-[hsl(var(--text-primary))]"
       >
         {t("fbSuccess")}
       </p>
@@ -60,7 +60,7 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
     <form
       onSubmit={handleSubmit((data) => mutate(data))}
       noValidate
-      className="grid gap-4 sm:grid-cols-2"
+      className="grid gap-[18px] sm:grid-cols-2"
     >
       <Field label={t("fbName")} htmlFor="fb-name" error={err(errors.fullName?.message)}>
         <Input

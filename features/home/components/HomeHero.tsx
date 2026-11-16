@@ -1,47 +1,50 @@
 // features/home/components/HomeHero.tsx
-import Link from "next/link";
+import type { CSSProperties } from "react";
 import { getTranslations } from "next-intl/server";
+import { ButtonLink } from "@/components/ui/ButtonLink";
+import { Pill } from "@/components/ui/Pill";
+
+const delay = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
 
 export async function HomeHero({ locale }: { locale: string }) {
   const t = await getTranslations({ locale });
   const chips = [t("hmChip1"), t("hmChip2"), t("hmChip3"), t("hmChip4")];
 
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-12 pt-16 sm:px-6 md:pt-24">
-      <p className="text-sm font-semibold text-[hsl(var(--accent))]">
-        {t("hmKicker")}
-      </p>
-      <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl">
+    <section className="relative isolate mx-auto max-w-7xl px-4 pb-10 pt-16 sm:px-8 md:pt-24">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="orb animate-float start-[5%] top-4 h-[420px] w-[420px] bg-[hsl(var(--accent-blue)/0.1)]" />
+        <div className="orb animate-float-slow end-[5%] top-56 h-[420px] w-[420px] bg-[hsl(var(--accent-purple)/0.1)]" />
+        <div className="orb animate-float-slow start-[30%] top-0 h-[600px] w-[600px] bg-[hsl(var(--accent-cyan)/0.05)]" />
+      </div>
+
+      <Pill className="animate-fade-up">{t("hmKicker")}</Pill>
+      <h1
+        className="animate-fade-up my-5 max-w-[880px] text-4xl sm:text-5xl lg:text-6xl"
+        style={delay(0.05)}
+      >
         {t("hmTitle")}
       </h1>
-      <p className="mt-4 max-w-2xl text-lg text-[hsl(var(--text-secondary))]">
+      <p
+        className="animate-fade-up mb-7 max-w-[680px] text-[19px] text-[hsl(var(--text-secondary))]"
+        style={delay(0.1)}
+      >
         {t("hmSub")}
       </p>
 
-      <ul className="mt-6 flex flex-wrap gap-2" aria-label="Topics">
+      <ul className="animate-fade-up mb-8 flex flex-wrap gap-2.5" style={delay(0.15)}>
         {chips.map((chip) => (
-          <li
-            key={chip}
-            className="rounded-full border border-[hsl(var(--border-strong))] px-3 py-1 text-sm text-[hsl(var(--text-secondary))]"
-          >
-            {chip}
+          <li key={chip}>
+            <Pill>{chip}</Pill>
           </li>
         ))}
       </ul>
 
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Link
-          href={`/${locale}/blog`}
-          className="inline-flex h-11 items-center rounded-lg bg-[hsl(var(--accent))] px-6 text-sm font-semibold text-[hsl(var(--accent-ink))] transition-colors hover:bg-[hsl(var(--accent-hover))]"
-        >
-          {t("hmCtaRead")}
-        </Link>
-        <Link
-          href={`/${locale}/newsletter`}
-          className="inline-flex h-11 items-center rounded-lg border border-[hsl(var(--border-strong))] px-6 text-sm font-semibold text-[hsl(var(--text-primary))] transition-colors hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))]"
-        >
+      <div className="animate-fade-up flex flex-wrap gap-3.5" style={delay(0.2)}>
+        <ButtonLink href={`/${locale}/blog`}>{t("hmCtaRead")}</ButtonLink>
+        <ButtonLink href={`/${locale}/newsletter`} variant="ghost">
           {t("hmCtaNews")}
-        </Link>
+        </ButtonLink>
       </div>
     </section>
   );

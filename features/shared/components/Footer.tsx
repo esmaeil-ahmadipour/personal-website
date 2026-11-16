@@ -9,43 +9,36 @@ export default function Footer() {
   const { t, locale } = useTranslation();
 
   return (
-    <footer className="mt-16 border-t border-[hsl(var(--border-subtle))] bg-[hsl(var(--bg-surface))]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 md:flex-row md:items-start md:justify-between">
-        <div className="max-w-sm">
+    <footer className="mx-auto mt-24 max-w-7xl border-t border-[hsl(var(--border-subtle))] px-4 py-9 text-sm text-[hsl(var(--text-muted))] sm:px-8">
+      <div className="flex flex-col gap-8 md:flex-row md:justify-between">
+        <div>
           <Link
             href={`/${locale}`}
-            className="flex items-center gap-2.5 font-bold text-[hsl(var(--text-primary))]"
-            style={{ fontFamily: "var(--font-heading)" }}
+            dir="ltr"
+            className="inline-block rounded-md bg-[linear-gradient(90deg,var(--grad-from),var(--grad-to))] bg-clip-text text-[22px] font-bold leading-none text-transparent"
           >
-            <span
-              aria-hidden
-              className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--accent))] text-sm text-[hsl(var(--accent-ink))]"
-            >
-              T
-            </span>
             Tarvix
           </Link>
-          <p className="mt-3 text-sm leading-relaxed text-[hsl(var(--text-muted))]">
-            {t("footerTagline")}
-          </p>
+          <p className="mt-2 max-w-[340px]">{t("footerTagline")}</p>
         </div>
 
-        <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
-          {DEFAULT_NAV_ITEMS.map((item) => (
-            <Link
-              key={item.id}
-              href={`/${locale}${item.href}`}
-              className="text-sm text-[hsl(var(--text-secondary))] transition-colors hover:text-[hsl(var(--accent))]"
-            >
-              {t(item.label)}
-            </Link>
-          ))}
-        </nav>
-      </div>
-      <div className="border-t border-[hsl(var(--border-subtle))]">
-        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-[hsl(var(--text-muted))] sm:px-6">
-          {t("footerRights")}
-        </p>
+        <div className="flex flex-col gap-3 md:items-end md:text-end">
+          <nav
+            aria-label={t("navFooter")}
+            className="flex flex-wrap gap-x-5 gap-y-2 md:justify-end"
+          >
+            {DEFAULT_NAV_ITEMS.map((item) => (
+              <Link
+                key={item.id}
+                href={`/${locale}${item.href}`}
+                className="rounded-md transition-colors hover:text-[hsl(var(--text-primary))]"
+              >
+                {t(item.label)}
+              </Link>
+            ))}
+          </nav>
+          <p>{t("footerRights")}</p>
+        </div>
       </div>
     </footer>
   );
