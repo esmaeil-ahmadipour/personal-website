@@ -1,0 +1,35 @@
+slug: introducing-tarvix-engineering-system
+author: esmaeil-ahmadipour
+category: engineering
+tags: [flutter, architecture, clean-architecture]
+language: en
+status: published
+publishedAt: "2025-01-15"
+isFeatured: true
+isTrending: true
+isPinned: false
+priority: 1
+readingTimeMin: 5
+coverImageUrl: /images/blog/engineering-system.jpg
+locales:
+  en:
+    title: "Introducing the Tarvix Engineering System"
+    excerpt: "A codified engineering system for Flutter, Web, and Web3. Built to resolve active constraints across high-stakes domains."
+    seoTitle: "Tarvix Engineering System - Production-Ready Patterns"
+    seoDescription: "Discover the Tarvix Engineering System: codified architectural decisions, quality standards, and automation patterns for Flutter, Web, and Web3."
+    keywords: "engineering system, architecture, flutter, web3, quality automation"
+    ogImage: "/images/og/tarvix-engineering-system.jpg"
+  fa:
+    title: "معرفی سیستم مهندسی Tarvix"
+    excerpt: "یک سیستم مهندسی مدون برای فلاتر، وب و وب۳. ساخته شده برای حل چالش‌های پیش رو در حوزه‌های پرریسک."
+    seoTitle: "سیستم مهندسی Tarvix - الگوهای آماده تولید"
+    seoDescription: "سیستم مهندسی Tarvix را کشف کنید: تصمیمات معماری مدون، استانداردهای کیفیت و الگوهای اتوماسیون برای فلاتر، وب و وب۳."
+    keywords: "سیستم مهندسی، معماری، فلاتر، وب۳، اتوماسیون کیفیت"
+    ogImage: "/images/og/tarvix-engineering-system-fa.jpg"
+  ar:
+    title: "تقديم نظام Tarvix الهندسي"
+    excerpt: "نظام هندسي مدون لـ Flutter و Web و Web3. تم بناؤه لحل القيود النشطة عبر المجالات عالية المخاطر."
+    seoTitle: "نظام Tarvix الهندسي - أنماط جاهزة للإنتاج"
+    seoDescription: "اكتشف نظام Tarvix الهندسي: القرارات المعمارية المدونة ومعايير الجودة وأنماط الأتمتة لـ Flutter و Web و Web3."
+    keywords: "نظام هندسي، معمارية، فلاتر، ويب 3، أتمتة الجودة"
+    ogImage: "/images/og/tarvix-engineering-system-ar.jpg"

@@ -17,6 +17,7 @@
     "db:seed": "prisma db seed",
     "test:db": "tsx --test prisma/__tests__/*.test.ts",
     "test:db:unit": "tsx --test prisma/__tests__/*.unit.test.ts",
+    "content:validate": "tsx prisma/content/cli.ts",
     "db:studio": "prisma studio",
     "docker:up": "docker-compose -f docker-compose.yml up -d",
     "docker:down": "docker-compose -f docker-compose.yml down",
@@ -52,15 +53,20 @@
     "@types/pg": "^8.15.5",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@types/sanitize-html": "^2.13.0",
     "dotenv": "^17.4.2",
+    "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.9",
+    "marked": "^18.0.10",
     "pg": "^8.16.0",
     "postcss": "^8.5.15",
     "prisma": "^5.22.0",
+    "sanitize-html": "^2.14.0",
     "tailwindcss": "^4.3.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.22.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "yaml": "^2.9.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
