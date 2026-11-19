@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { locales } from "@/i18n/request";
+import { locales, type Locale } from "@/i18n/request";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 
@@ -48,7 +48,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // ✅ اعتبارسنجی locale
-  if (!locale || !locales.includes(locale as any)) {
+  if (!locale || !locales.includes(locale as Locale)) {
     notFound();
   }
 

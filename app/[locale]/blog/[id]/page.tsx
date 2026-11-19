@@ -29,6 +29,7 @@ function getLocalizedField<T>(en: T, fa: T, ar: T, locale: "en" | "fa" | "ar"): 
 // app/[locale]/blog/[id]/page.tsx
 
 // ============================================
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma result with relations; typing it is a separate refactor
 function formatPostForLocale(rawPost: any, locale: "en" | "fa" | "ar"): BlogPost {
   return {
     id: rawPost.id,

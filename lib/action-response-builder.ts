@@ -49,7 +49,7 @@ export class ActionResponseBuilder {
     errors?: unknown,
     customMessage?: string,
   ): NextResponse<ActionResponse> {
-    const response: any = {
+    const response: ActionResponse & { errors?: unknown } = {
       success: false,
       code: "INSUFFICIENT_STOCK",
       message: customMessage || "برخی محصولات موجودی کافی ندارند",
@@ -60,7 +60,7 @@ export class ActionResponseBuilder {
       response.errors = errors;  // استفاده از فیلد errors به جای details
     }
     
-    return NextResponse.json(response, { status: 409 });
+    return NextResponse.json<ActionResponse>(response, { status: 409 });
   }
 
   /**

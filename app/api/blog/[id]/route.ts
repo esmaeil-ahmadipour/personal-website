@@ -23,6 +23,7 @@ function getLocaleFromUrl(request: NextRequest): "en" | "fa" | "ar" {
 // ============================================
 // تابع کمکی برای انتخاب فیلد بر اساس زبان
 // ============================================
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma result with relations; typing it is a separate refactor
 function getLocalizedPost(post: any, locale: "en" | "fa" | "ar" = "en") {
   const isFa = locale === "fa";
   const isAr = locale === "ar";
@@ -140,7 +141,7 @@ function getLocalizedPost(post: any, locale: "en" | "fa" | "ar" = "en") {
     },
     
     // ===== برچسب‌ها =====
-    tags: post.tags.map((pt: any) => ({
+    tags: post.tags.map((pt: { tag: { id: string; slug: string; nameEn: string; nameFa: string; nameAr: string } }) => ({
       id: pt.tag.id,
       slug: pt.tag.slug,
       
