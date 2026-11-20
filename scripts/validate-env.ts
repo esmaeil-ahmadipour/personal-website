@@ -16,12 +16,6 @@ interface EnvValidationRule {
 
 const validationRules: EnvValidationRule[] = [
   {
-    key: "JWT_SECRET",
-    required: true,
-    validator: (value) => value.length >= 32,
-    message: "JWT_SECRET must be at least 32 characters long",
-  },
-  {
     key: "DATABASE_URL",
     required: true,
     validator: (value) => value.startsWith("postgresql://"),
@@ -46,6 +40,13 @@ const validationRules: EnvValidationRule[] = [
     },
     message: "NEXT_PUBLIC_APP_URL must be a valid URL",
   },
+  {
+    key: "ADMIN_API_TOKEN",
+    required: true,
+    productionOnly: true,
+    validator: (value) => value.length >= 32,
+    message: "ADMIN_API_TOKEN must be at least 32 characters long",
+  },
 ];
 
 function validateEnvironment(): void {
@@ -53,12 +54,20 @@ function validateEnvironment(): void {
 
   const errors: string[] = [];
   const warnings: string[] = [];
+  const isProduction =
+    process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
 
   for (const rule of validationRules) {
     const value = process.env[rule.key];
 
     // Skip production-only rules in development
-    if (rule.productionOnly && process.env.NODE_ENV !== "production") {
+    if (rule.productionOnly && !isProduction) {
+      continue;
+    }
+
+    // Required production-only variables must be present
+    if (!value && rule.required && rule.productionOnly) {
+      errors.push(`❌ Missing ${rule.key}: ${rule.message}`);
       continue;
     }
 
@@ -83,7 +92,7 @@ function validateEnvironment(): void {
   if (errors.length > 0) {
     console.log("❌ Errors:");
     errors.forEach((e) => console.log(`  ${e}`));
-    console.log("\n💡 Generate a secure JWT_SECRET with:");
+    console.log("\n💡 Generate a secure ADMIN_API_TOKEN with:");
     console.log("   pnpm generate:secret");
     console.log("   or");
     console.log(
