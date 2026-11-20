@@ -89,7 +89,7 @@ export function isLocalDatabaseUrl(url: string): boolean {
 }
 
 /** `--all` imports posts that are not in the manifest: development databases only. */
-export function assertAllAllowed(env: NodeJS.ProcessEnv, databaseUrl: string): void {
+export function assertAllAllowed(env: Record<string, string | undefined>, databaseUrl: string): void {
   if (env.VERCEL_ENV === "production") {
     throw new ImportError("--all is refused when VERCEL_ENV is production.");
   }

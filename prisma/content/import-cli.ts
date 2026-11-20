@@ -23,7 +23,7 @@ function scrubbing(base: Logger, secrets: readonly string[]): Logger {
   };
 }
 
-async function main(argv: readonly string[], env: NodeJS.ProcessEnv): Promise<number> {
+async function main(argv: readonly string[], env: Record<string, string | undefined>): Promise<number> {
   const secrets: string[] = [];
   const log = scrubbing(createLogger("content-import"), secrets);
   const token = env.CONTENT_FORCE_TOKEN;
