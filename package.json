@@ -21,6 +21,7 @@
     "test:db": "tsx --test prisma/__tests__/*.test.ts",
     "test:db:unit": "tsx --test prisma/__tests__/*.unit.test.ts",
     "content:validate": "tsx prisma/content/cli.ts",
+    "content:approve": "tsx prisma/content/approve-cli.ts",
     "release": "tsx scripts/release.ts",
     "release:dry": "tsx scripts/release.ts --dry-run",
     "db:studio": "prisma studio",

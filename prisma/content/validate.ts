@@ -6,6 +6,7 @@
 
 import { buildPost } from "./build";
 import { DEFAULT_CONTENT_ROOT, loadPostSources, readManifestText } from "./load";
+import { toEntries, type ManifestEntry } from "./manifest";
 import { parseManifest } from "./parse";
 import { ContentError, type ParsedPost, type RawPostSource } from "./types";
 
@@ -14,6 +15,7 @@ export interface ContentValidation {
   errors: string[];
   posts: ParsedPost[];
   manifestSlugs: string[];
+  manifestEntries: ManifestEntry[];
 }
 
 function issuesOf(error: unknown): string[] {
@@ -25,9 +27,11 @@ export function validateContent(root: string = DEFAULT_CONTENT_ROOT): ContentVal
   const errors: string[] = [];
 
   let manifestSlugs: string[] = [];
+  let manifestEntries: ManifestEntry[] = [];
   let manifestValid = false;
   try {
-    manifestSlugs = parseManifest(readManifestText(root)).posts;
+    manifestEntries = toEntries(parseManifest(readManifestText(root)).posts);
+    manifestSlugs = manifestEntries.map((entry) => entry.slug);
     manifestValid = true;
   } catch (error) {
     errors.push(...issuesOf(error));
@@ -59,5 +63,5 @@ export function validateContent(root: string = DEFAULT_CONTENT_ROOT): ContentVal
     }
   }
 
-  return { ok: errors.length === 0, errors, posts, manifestSlugs };
+  return { ok: errors.length === 0, errors, posts, manifestSlugs, manifestEntries };
 }

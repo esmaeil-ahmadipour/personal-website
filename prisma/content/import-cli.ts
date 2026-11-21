@@ -12,6 +12,7 @@ import { acquireReleaseLock } from "../lib/lock";
 import { createLogger, errorMessage, type Logger } from "../lib/log";
 import { ForceTokenError, generateForceToken, parseForceToken, redactSecrets } from "./force";
 import { ImportError, assertAllAllowed, parseCommand, runImport } from "./import";
+import { verifyPins } from "./manifest";
 import { validateContent } from "./validate";
 
 function scrubbing(base: Logger, secrets: readonly string[]): Logger {
@@ -54,6 +55,17 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
           "  unset CONTENT_FORCE_TOKEN",
       );
       return 0;
+    }
+
+    // A release imports only what was approved: every manifest entry must be pinned and
+    // still match its files. Checked before any database access.
+    if (!command.all) {
+      const pinProblems = verifyPins(validation.manifestEntries, validation.posts);
+      if (pinProblems.length > 0) {
+        for (const problem of pinProblems) log.error(problem);
+        log.error("The manifest does not match the content; nothing was imported.");
+        return 1;
+      }
     }
 
     if (command.force && !token) {

@@ -5,7 +5,8 @@ The database import (Phase 4) is a separate step; nothing in this directory touc
 
 ```
 content/
-  manifest.json            { "posts": [ "<slug>", ... ] }  slugs released to production
+  manifest.json            { "posts": [ { "slug": "<slug>", "sourceHash": "<sha256>" }, ... ] }
+                           the approved posts released to production, pinned to reviewed content
   posts/<slug>/
     post.yml               metadata (see below)
     en.md  fa.md           required Markdown bodies
@@ -13,6 +14,20 @@ content/
 ```
 
 Posts that are not listed in `manifest.json` are validated but stay development-only.
+
+## Approving a release
+
+`manifest.json` lists every post that is live, each pinned to the `sourceHash` you reviewed.
+
+1. Edit the post, run `pnpm content:validate`, and review it (for example with
+   `pnpm content:import --all` on your development database).
+2. `pnpm content:approve <slug>` pins the manifest to the files as they are now
+   (`--refresh` re-pins every listed post, e.g. after a pipeline version change).
+3. Commit. The release is the `git diff content/manifest.json`.
+
+A release imports only pinned posts whose files still match their pin. If a listed post
+was changed after approval, or is listed without a pin, `content:validate` and the import
+fail before anything is written, until it is approved again.
 
 ## post.yml
 

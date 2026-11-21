@@ -66,7 +66,22 @@ const postMeta = z
 
 export type PostMeta = z.infer<typeof postMeta>;
 
-const manifest = z.object({ posts: z.array(slug) }).strict();
+// A bare slug is accepted but "not approved": a release refuses it. The object form carries
+// the sourceHash that was reviewed (see `pnpm content:approve`).
+const manifestEntry = z.union(
+  [
+    slug,
+    z
+      .object({
+        slug,
+        sourceHash: z.string().regex(/^[0-9a-f]{64}$/, "must be a 64-character lowercase hex sha256"),
+      })
+      .strict(),
+  ],
+  { message: 'must be a slug or { "slug": "...", "sourceHash": "..." }' },
+);
+
+const manifest = z.object({ posts: z.array(manifestEntry) }).strict();
 
 function describe(source: string, error: z.ZodError): string[] {
   return error.issues.map((issue) => {
