@@ -21,18 +21,33 @@ export class ReleaseError extends Error {
 
 export interface ReleaseOptions {
   dryRun: boolean;
+  /** Fingerprint from a reviewed `pnpm release:dry`; the release refuses to run on any other plan. */
+  expectPlan?: string;
 }
 
+const EXPECT_PLAN = "--expect-plan=";
+const FINGERPRINT = /^[0-9a-f]{64}$/;
+
 export function parseReleaseArgs(argv: readonly string[]): ReleaseOptions {
-  const unknown = argv.filter((arg) => arg !== "--dry-run");
+  const planArgs = argv.filter((arg) => arg.startsWith(EXPECT_PLAN));
+  const unknown = argv.filter((arg) => arg !== "--dry-run" && !arg.startsWith(EXPECT_PLAN));
   if (unknown.length > 0) {
     // Never echo a value: someone may have pasted a token as an argument.
     const shown = unknown.map((arg) => (/^--[a-z-]+$/.test(arg) ? arg : "[value hidden]"));
     throw new ReleaseError(
-      `Unknown argument(s): ${shown.join(" ")}. Supported: --dry-run (release never accepts --all or --force).`,
+      `Unknown argument(s): ${shown.join(" ")}. Supported: --dry-run, --expect-plan=<fingerprint> (release never accepts --all or --force).`,
     );
   }
-  return { dryRun: argv.includes("--dry-run") };
+  if (planArgs.length > 1) throw new ReleaseError("--expect-plan may be given only once.");
+  const dryRun = argv.includes("--dry-run");
+  if (planArgs.length === 0) return { dryRun };
+  const expectPlan = planArgs[0].slice(EXPECT_PLAN.length);
+  if (!FINGERPRINT.test(expectPlan)) {
+    throw new ReleaseError(
+      "--expect-plan must be the 64-character lowercase hex PLAN_FINGERPRINT printed by `pnpm release:dry`.",
+    );
+  }
+  return { dryRun, expectPlan };
 }
 
 export function isProductionEnv(env: Env): boolean {
@@ -71,6 +86,15 @@ export function assertReleaseAllowed(env: Env): void {
   const token = env.ADMIN_API_TOKEN;
   if (!token || token.length < 32) {
     throw new ReleaseError("A production release requires ADMIN_API_TOKEN (at least 32 characters).");
+  }
+}
+
+/** A production release must name the reviewed plan it is allowed to execute. */
+export function assertPlanExpected(env: Env, options: ReleaseOptions): void {
+  if (isProductionEnv(env) && !options.dryRun && options.expectPlan === undefined) {
+    throw new ReleaseError(
+      "A production release requires --expect-plan=<fingerprint> from a reviewed `pnpm release:dry`.",
+    );
   }
 }
 

@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   RELEASE_ORCHESTRATOR_LOCK_KEY,
   ReleaseError,
+  assertPlanExpected,
   assertReleaseAllowed,
   buildSteps,
   isPooledUrl,
@@ -12,11 +13,24 @@ import {
 
 const TOKEN = "k".repeat(40);
 const DIRECT = "postgresql://u:p@db.example.com:5432/app";
+const FP = "c".repeat(64);
 
 describe("release args", () => {
   it("accepts no arguments and --dry-run only", () => {
     assert.deepEqual(parseReleaseArgs([]), { dryRun: false });
     assert.deepEqual(parseReleaseArgs(["--dry-run"]), { dryRun: true });
+  });
+
+  it("accepts --expect-plan with a fingerprint, alone or with --dry-run", () => {
+    assert.deepEqual(parseReleaseArgs([`--expect-plan=${FP}`]), { dryRun: false, expectPlan: FP });
+    assert.deepEqual(parseReleaseArgs(["--dry-run", `--expect-plan=${FP}`]), { dryRun: true, expectPlan: FP });
+  });
+
+  it("rejects a malformed or repeated --expect-plan", () => {
+    assert.throws(() => parseReleaseArgs(["--expect-plan=abc"]), /64-character/);
+    assert.throws(() => parseReleaseArgs([`--expect-plan=${FP.toUpperCase()}`]), /64-character/);
+    assert.throws(() => parseReleaseArgs(["--expect-plan="]), /64-character/);
+    assert.throws(() => parseReleaseArgs([`--expect-plan=${FP}`, `--expect-plan=${FP}`]), /only once/);
   });
 
   it("refuses --all, --force and values without echoing values", () => {
@@ -62,6 +76,16 @@ describe("production guard", () => {
     assert.equal(isPooledUrl("postgresql://u:p@h.example.com/db?pgbouncer=true"), true);
     assert.equal(isPooledUrl(DIRECT), false);
     assert.equal(isPooledUrl("not a url"), false);
+  });
+});
+
+describe("expected plan", () => {
+  it("is required for a real production release only", () => {
+    const production = { VERCEL_ENV: "production" };
+    assert.throws(() => assertPlanExpected(production, { dryRun: false }), /--expect-plan/);
+    assert.doesNotThrow(() => assertPlanExpected(production, { dryRun: false, expectPlan: FP }));
+    assert.doesNotThrow(() => assertPlanExpected(production, { dryRun: true }));
+    assert.doesNotThrow(() => assertPlanExpected({}, { dryRun: false }));
   });
 });
 
