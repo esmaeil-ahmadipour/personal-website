@@ -3,7 +3,7 @@
 # Production release, in four gated steps:
 #   verify  type check, unit tests, content validation (including the approved-content pins)
 #   plan    read-only `pnpm release:dry` against production; publishes the PLAN_FINGERPRINT
-#   release you approve the plan in GitHub (environment "production"); then the release runs
+#   release you approve the plan in GitHub (environment "production-release"); then the release runs
 #           with --expect-plan and the site is deployed, in the same job (one approval)
 #
 # Setup (GitHub environments, secrets and the read-only database role) is documented in the
@@ -86,7 +86,7 @@ jobs:
     # Required reviewers on this environment are the approval gate: read the plan in the
     # summary of the "plan" job, then approve. Secrets of this environment are only
     # available after that approval.
-    environment: production
+    environment: production-release
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
