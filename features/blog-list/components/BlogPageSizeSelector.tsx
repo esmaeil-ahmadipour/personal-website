@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { PageSizeOptions, type PageSize } from "../schemas/blog-list.schema";
 import { useTranslation } from "@/features/shared/hooks/useTranslation";
 
@@ -9,113 +8,30 @@ interface BlogPageSizeSelectorProps {
   onChange: (value: PageSize) => void;
 }
 
-export function BlogPageSizeSelector({
-  value,
-  onChange,
-}: BlogPageSizeSelectorProps) {
-  const { t, locale } = useTranslation();
-  const isRTL = locale === "fa";
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // بستن منو وقتی کلیک بیرون از آن انجام می‌شود
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+/** "10 per page" as a native select: keyboard, screen reader and RTL work out of the box. */
+export function BlogPageSizeSelector({ value, onChange }: BlogPageSizeSelectorProps) {
+  const { t } = useTranslation();
 
   return (
-    <div
-      className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : "flex-row"}`}
-      ref={dropdownRef}
-    >
-      <label className="text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">
-        {isRTL ? "نمایش" : "Show"}
-      </label>
-
-      {/* کانتینر اصلی دراپ‌داون */}
-      <div className="relative">
-        {/* دکمه‌ای که جایگزین سلکت می‌شود */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`
-            px-3 py-1.5 text-sm rounded-lg
-            bg-white dark:bg-[var(--bg-elevated)]
-            border border-gray-500 dark:border-[var(--border-strong)]
-            text-gray-700 dark:text-gray-500
-            hover:border-[var(--accent-blue)]/50
-            focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)]
-            outline-none transition-all
-            cursor-pointer min-w-[70px]
-            ${isRTL ? "pl-8 text-right" : "pr-8 text-left"}
-          `}
-        >
-          {value}
-        </button>
-
-        {/* آیکون فلش پایین */}
-        <div
-          className={`
-            absolute inset-y-0 flex items-center pointer-events-none
-            ${isRTL ? "left-3" : "right-3"}
-          `}
-        >
-          <svg
-            className={`w-4 h-4 text-gray-400 dark:text-[var(--text-muted)] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
-
-        {/* لیست بازشونده (گزینه‌ها) */}
-        {isOpen && (
-          <div
-            className={`
-              absolute top-full mt-2 w-full min-w-[70px] rounded-lg shadow-lg z-50
-              bg-white dark:bg-[#1f2937]
-              border border-gray-600 dark:border-[var(--border-strong)]
-              overflow-hidden py-1
-              ${isRTL ? "left-0 text-right" : "left-0 text-left"}
-            `}
-          >
-            {PageSizeOptions.map((size) => (
-              <button
-                key={size}
-                onClick={() => {
-                  onChange(size);
-                  setIsOpen(false);
-                }}
-                className={`
-                  w-full px-3 py-1.5 text-sm text-left transition-colors
-                  ${
-                    value === size
-                      ? "bg-blue-300 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium"
-                      : "text-gray-900 dark:text-gray-400 hover:bg-gray-400 dark:hover:bg-gray-700/50"
-                  }
-                `}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+    <div className="relative inline-flex items-center">
+      <select
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value) as PageSize)}
+        aria-label={t("blPerPage", { n: value })}
+        className="cursor-pointer appearance-none rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--bg-surface)/0.5)] py-[7px] pe-9 ps-4 text-sm text-[hsl(var(--text-secondary))] backdrop-blur-sm transition-colors hover:border-[hsl(var(--accent-blue)/0.5)] hover:text-[hsl(var(--accent-text))]"
+      >
+        {PageSizeOptions.map((size) => (
+          <option key={size} value={size}>
+            {t("blPerPage", { n: size })}
+          </option>
+        ))}
+      </select>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute end-3.5 text-xs text-[hsl(var(--text-muted))]"
+      >
+        ▾
+      </span>
     </div>
   );
 }

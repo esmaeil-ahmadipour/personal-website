@@ -8,6 +8,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ---------------------------------------------------------------------------
+// Release tracking
+// System-owned tables written only by the seed and content-import tooling.
+// Application code must never read or write them at request time.
+// ---------------------------------------------------------------------------
+
+enum SeedStatus {
+  running
+  succeeded
+  failed
+}
+
+// One row per system seed version (prisma/seed/versions/*).
+// A version is considered applied only when status = succeeded.
+model SeedHistory {
+  id          String     @id @default(cuid())
+  version     String     @unique // e.g. "v1.0.0"
+  status      SeedStatus @default(running)
+  attempts    Int        @default(1)
+  startedAt   DateTime   @default(now())
+  finishedAt  DateTime?
+  error       String?
+  gitSha      String?
+  environment String?
+}
+
+// One row per file-managed content item (e.g. a post imported from Markdown).
+// Stores what the importer last wrote so later imports can tell file changes
+// apart from administrator edits.
+model ContentSync {
+  id                  String   @id @default(cuid())
+  kind                String   @default("post")
+  slug                String
+  sourceHash          String // hash of the source files + importer format version
+  fieldHashes         Json     @default("{}") // field name -> hash of the last imported value
+  consumedForceTokens String[] @default([]) // "force:<token>" / "recreate:<token>"
+  formatVersion       Int
+  importedAt          DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([kind, slug])
+}
+
 model RequestAccess {
   id              String   @id @default(cuid())
   createdAt       DateTime @default(now())

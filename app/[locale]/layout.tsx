@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { locales } from "@/i18n/request";
+import { locales, type Locale } from "@/i18n/request";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 
@@ -28,9 +28,9 @@ const vazir = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "Tarvix | Architecture-First Engineering Studio",
+  title: "Tarvix | Engineering notes by Esmaeil Ahmadipour",
   description:
-    "Engineering systems for fintech, Web3, and SaaS products. Clean architecture, scalable foundations.",
+    "A personal technical publication: articles, a LinkedIn newsletter and free lessons for software engineers.",
 };
 
 type Props = {
@@ -48,7 +48,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // ✅ اعتبارسنجی locale
-  if (!locale || !locales.includes(locale as any)) {
+  if (!locale || !locales.includes(locale as Locale)) {
     notFound();
   }
 
@@ -65,33 +65,8 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${vazir.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-      try {
-        const theme = localStorage.getItem('theme') || 'system';
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const isDark = theme === 'dark' || (theme === 'system' && systemDark) || (theme === null && systemDark);
-        document.documentElement.classList.toggle('dark', isDark);
-        // Prevent flash
-        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-      } catch (e) {}
-    `,
-          }}
-        />
-
-        {/* Font Awesome */}
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        />
-      </head>
       <body
-        className={`
-          antialiased
-          ${isRTL ? "font-vazir" : "font-inter"}
-        `}
+        className="antialiased"
       >
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>

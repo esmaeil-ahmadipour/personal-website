@@ -1,0 +1,115 @@
+# .github/workflows/release.yml
+#
+# Production release, in four gated steps:
+#   verify  type check, unit tests, content validation (including the approved-content pins)
+#   plan    read-only `pnpm release:dry` against production; publishes the PLAN_FINGERPRINT
+#   release you approve the plan in GitHub (environment "production-release"); then the release runs
+#           with --expect-plan and the site is deployed, in the same job (one approval)
+#
+# Setup (GitHub environments, secrets and the read-only database role) is documented in the
+# release runbook added in Phase 6.4.
+
+name: release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-release
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "22.23.1"
+  PNPM_VERSION: "11.17.0"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm test:db:unit
+      - run: pnpm content:validate
+
+  plan:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # No reviewers on this environment. Its only secret is a read-only database URL.
+    environment: production-plan
+    outputs:
+      fingerprint: ${{ steps.plan.outputs.fingerprint }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: plan
+        env:
+          DIRECT_DATABASE_URL: ${{ secrets.PLAN_DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          pnpm release:dry | tee plan.txt
+          fingerprint=$(grep -E '^PLAN_FINGERPRINT=[0-9a-f]{64}$' plan.txt | cut -d= -f2)
+          test -n "$fingerprint"
+          echo "fingerprint=$fingerprint" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Release plan for ${GITHUB_SHA::7}"
+            echo '```'
+            grep -E '^\[release\]|^PLAN_FINGERPRINT=' plan.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  release:
+    needs: [verify, plan]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Required reviewers on this environment are the approval gate: read the plan in the
+    # summary of the "plan" job, then approve. Secrets of this environment are only
+    # available after that approval.
+    environment: production-release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Release the reviewed plan
+        env:
+          VERCEL_ENV: production
+          VERCEL_GIT_COMMIT_SHA: ${{ github.sha }}
+          DIRECT_DATABASE_URL: ${{ secrets.DIRECT_DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DIRECT_DATABASE_URL }}
+          ADMIN_API_TOKEN: ${{ secrets.ADMIN_API_TOKEN }}
+          RELEASE_ALLOW_DESTRUCTIVE: ${{ vars.RELEASE_ALLOW_DESTRUCTIVE }}
+          EXPECTED_PLAN: ${{ needs.plan.outputs.fingerprint }}
+        run: pnpm release --expect-plan="$EXPECTED_PLAN"
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: pnpm exec vercel deploy --prod --yes --token="$VERCEL_TOKEN"

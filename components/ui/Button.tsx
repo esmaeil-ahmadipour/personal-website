@@ -46,46 +46,38 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     // ============================================
-    // Variant Styles - مطابق با استایل‌های پروژه
+    // Variants. Primary and gradient-* use the gradient pill (.btn);
+    // secondary, outline and glass use the ghost pill (.btn-ghost).
     // ============================================
-    const variantStyles = {
-      primary:
-        "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5",
+    const pill: Partial<Record<NonNullable<ButtonProps["variant"]>, string>> = {
+      primary: "btn",
+      "gradient-blue": "btn",
+      "gradient-purple": "btn",
+      "gradient-emerald": "btn",
+      "gradient-pink": "btn",
+      secondary: "btn-ghost",
+      outline: "btn-ghost",
+      glass: "btn-ghost",
+    };
 
-      "gradient-blue":
-        "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5",
-
-      "gradient-purple":
-        "bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/35 hover:-translate-y-0.5",
-
-      "gradient-emerald":
-        "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/35 hover:-translate-y-0.5",
-
-      "gradient-pink":
-        "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/35 hover:-translate-y-0.5",
-
-      secondary:
-        "bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] hover:-translate-y-0.5",
-
-      outline:
-        "border-2 border-[var(--border-subtle)] bg-transparent text-[var(--text-secondary)] hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] hover:-translate-y-0.5",
-
+    const plainStyles = {
       ghost:
-        "bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
-
-      glass:
-        "bg-[var(--bg-surface)]/50 backdrop-blur-sm border border-[var(--border-subtle)] text-[var(--text-primary)] hover:bg-[var(--bg-surface)]/70 hover:-translate-y-0.5",
-
+        "bg-transparent text-[hsl(var(--text-secondary))] hover:bg-[hsl(var(--bg-elevated))] hover:text-[hsl(var(--text-primary))]",
       destructive:
-        "bg-red-600 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/35 hover:-translate-y-0.5 hover:bg-red-700",
-
-      link: "text-[var(--text-primary)] underline-offset-4 hover:underline",
+        "bg-[hsl(var(--accent-rose))] text-[hsl(var(--ink-light))] hover:opacity-90 dark:text-[hsl(var(--ink-dark))]",
+      link: "text-[hsl(var(--accent-text))] underline-offset-4 hover:underline",
     };
 
     // ============================================
-    // Size Styles
+    // Sizes
     // ============================================
-    const sizeStyles = {
+    const iconSizes = {
+      icon: "h-10 w-10 p-0",
+      "icon-sm": "h-8 w-8 p-0",
+      "icon-lg": "h-12 w-12 p-0",
+    };
+
+    const plainSizes = {
       sm: "h-8 px-4 py-1.5 text-xs rounded-full",
       default: "h-10 px-6 py-2 rounded-full",
       lg: "h-12 px-8 py-3 text-base rounded-full",
@@ -94,6 +86,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "icon-sm": "h-8 w-8 rounded-full",
       "icon-lg": "h-12 w-12 rounded-full",
     };
+
+    const pillClass = pill[variant];
+    const variantClasses = pillClass
+      ? cn(
+          pillClass,
+          size === "sm" && "btn-sm",
+          (size === "icon" || size === "icon-sm" || size === "icon-lg") && iconSizes[size],
+        )
+      : cn(
+          "font-semibold transition-colors btn-press",
+          plainStyles[variant as keyof typeof plainStyles],
+          plainSizes[size],
+        );
 
     // ============================================
     // Loading Spinner
@@ -124,11 +129,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          // Base styles - مطابق با استایل دکمه‌های پروژه
-          "group relative inline-flex items-center justify-center gap-2 font-semibold transition-all btn-press overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-60",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-          variantStyles[variant],
-          sizeStyles[size],
+          "group relative inline-flex cursor-pointer items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60",
+          variantClasses,
           fullWidth && "w-full",
           className,
         )}

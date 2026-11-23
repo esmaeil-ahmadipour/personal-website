@@ -1,0 +1,35 @@
+slug: flutter-clean-architecture-patterns
+author: esmaeil-ahmadipour
+category: flutter
+tags: [flutter, clean-architecture, architecture]
+language: en
+status: published
+publishedAt: "2025-02-20"
+isFeatured: true
+isTrending: false
+isPinned: false
+priority: 2
+readingTimeMin: 8
+coverImageUrl: /images/blog/flutter-clean-architecture.jpg
+locales:
+  en:
+    title: "Flutter Clean Architecture: Patterns That Scale"
+    excerpt: "Learn how to structure Flutter applications with clean architecture for long-term maintainability."
+    seoTitle: "Flutter Clean Architecture - Scalable Patterns"
+    seoDescription: "Master Flutter clean architecture with practical patterns for building scalable, maintainable applications."
+    keywords: "flutter, clean architecture, patterns, scalable, maintainable"
+    ogImage: "/images/og/flutter-clean-architecture.jpg"
+  fa:
+    title: "معماری تمیز فلاتر: الگوهای مقیاس‌پذیر"
+    excerpt: "یاد بگیرید چگونه برنامه‌های فلاتر را با معماری تمیز برای نگهداری طولانی‌مدت ساختاردهی کنید."
+    seoTitle: "معماری تمیز فلاتر - الگوهای مقیاس‌پذیر"
+    seoDescription: "معماری تمیز فلاتر را با الگوهای عملی برای ساخت برنامه‌های مقیاس‌پذیر و قابل نگهداری بیاموزید."
+    keywords: "فلاتر، معماری تمیز، الگوها، مقیاس‌پذیر، قابل نگهداری"
+    ogImage: "/images/og/flutter-clean-architecture-fa.jpg"
+  ar:
+    title: "هندسة فلاتر النظيفة: أنماط قابلة للتوسع"
+    excerpt: "تعلم كيفية هيكلة تطبيقات فلاتر باستخدام الهندسة النظيفة للصيانة طويلة المدى."
+    seoTitle: "هندسة فلاتر النظيفة - أنماط قابلة للتوسع"
+    seoDescription: "أتقن هندسة فلاتر النظيفة مع أنماط عملية لبناء تطبيقات قابلة للتوسع وقابلة للصيانة."
+    keywords: "فلاتر، هندسة نظيفة، أنماط، قابلة للتوسع، قابلة للصيانة"
+    ogImage: "/images/og/flutter-clean-architecture-ar.jpg"

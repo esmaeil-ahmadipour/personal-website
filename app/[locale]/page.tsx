@@ -1,6 +1,12 @@
 import { Metadata, Viewport } from "next";
 import { getTranslations } from "next-intl/server";
-import ClientHomePage from "./ClientHomePage";
+import Navbar from "@/features/shared/components/Navbar";
+import Footer from "@/features/shared/components/Footer";
+import { HomeHero } from "@/features/home/components/HomeHero";
+import { HomePosts } from "@/features/home/components/HomePosts";
+import { ProjectsSection } from "@/features/projects/components/ProjectsSection";
+import { FeedbackSection } from "@/features/contact/components/FeedbackSection";
+import { NewsletterSection } from "@/features/newsletter/components/NewsletterSection";
 
 // ============================================
 // CONSTANTS
@@ -20,8 +26,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
+    { media: "(prefers-color-scheme: dark)", color: "#101218" },
   ],
 };
 
@@ -39,15 +45,15 @@ export async function generateMetadata({
 
   const currentUrl = locale === "en" ? `${SITE_URL}/` : `${SITE_URL}/${locale}`;
 
-  const title = t("title") || "Tarvix | Architecture-First Engineering Studio";
+  const title = t("title") || "Tarvix | Engineering notes by Esmaeil Ahmadipour";
   const description =
     t("description") ||
-    "Tarvix helps growing engineering teams build scalable Flutter, Web, and Web3 products through modular architecture, engineering standards, and production-ready delivery.";
+    "A personal technical publication: articles, a LinkedIn newsletter and free lessons for software engineers.";
   const keywords =
     t("keywords")
       .split(",")
       .map((k: string) => k.trim()) ||
-    "Flutter Development,Software Architecture,Engineering Consulting,Web3 Development,Product Engineering,Next.js Development,React Development,Engineering Studio";
+    "Software Engineering,Mobile Development,Cross-Platform,Fintech,Digital Assets,Technical Education,Newsletter";
 
   // نام شرکت برای JSON-LD
   const companyName = t("companyName") || "Tarvix";
@@ -57,7 +63,7 @@ export async function generateMetadata({
     description,
     keywords,
 
-    authors: [{ name: "Tarvix Team" }],
+    authors: [{ name: "Esmaeil Ahmadipour" }],
     creator: "Tarvix",
     publisher: "Tarvix",
 
@@ -111,10 +117,47 @@ export async function generateMetadata({
 
     // سایر
     category: "Technology",
-    classification: "Software Development, Engineering Platform",
+    classification: "Software Engineering, Technical Publication",
   };
 }
 
-export default function HomePage() {
-  return <ClientHomePage />;
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
+  const locale = (["en", "fa", "ar"].includes(raw) ? raw : "en") as
+    | "en"
+    | "fa"
+    | "ar";
+  const t = await getTranslations({ locale });
+  const url = locale === "en" ? `${SITE_URL}/` : `${SITE_URL}/${locale}`;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Tarvix",
+    url,
+    description: t("hmSub"),
+    inLanguage: locale,
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Navbar />
+      <main>
+        <HomeHero locale={locale} />
+        <HomePosts locale={locale} />
+        <NewsletterSection locale={locale} />
+        <ProjectsSection locale={locale} />
+        <FeedbackSection locale={locale} />
+      </main>
+      <Footer />
+    </>
+  );
 }
