@@ -2,56 +2,41 @@
 
 "use client";
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useBlogListQuery } from "./useBlogListQuery";
-import type { PageSize } from "../schemas/blog-list.schema";
+import {
+  DEFAULT_PAGE_SIZE,
+  parseBlogUrlState,
+  type BlogUrlState,
+  type SupportedLocale,
+} from "../schemas/blog-list.schema";
 
-interface UseBlogListOptions {
-  initialPage?: number;
-  initialLimit?: PageSize;
-  locale: "en" | "ar" | "fa";
-}
+const DEFAULTS: BlogUrlState = {
+  page: 1,
+  limit: DEFAULT_PAGE_SIZE,
+  q: "",
+  category: "",
+  sort: "oldest",
+};
 
-export function useBlogList({
-  initialPage = 1,
-  initialLimit = 10,
-  locale,
-}: UseBlogListOptions) {
-  const router = useRouter();
+/** The URL is the single source of truth, so refresh, sharing and Back all work. */
+export function useBlogList(locale: SupportedLocale) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const state = parseBlogUrlState(searchParams);
+  const query = useBlogListQuery({ ...state, locale });
 
-  const [page, setPage] = useState(initialPage);
-  const [limit, setLimit] = useState<PageSize>(initialLimit);
-
-  const { data, isLoading, error } = useBlogListQuery({ page, limit, locale });
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
+  /** Any change other than the page itself goes back to page 1. */
+  const update = (changes: Partial<BlogUrlState>) => {
+    const next = { ...state, page: 1, ...changes };
     const params = new URLSearchParams();
-    params.set("page", String(newPage));
-    params.set("limit", String(limit));
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    for (const key of Object.keys(DEFAULTS) as (keyof BlogUrlState)[]) {
+      if (next[key] !== DEFAULTS[key]) params.set(key, String(next[key]));
+    }
+    const search = params.toString();
+    // Next.js keeps useSearchParams in sync with the History API; no server round trip.
+    window.history.replaceState(null, "", search ? `${pathname}?${search}` : pathname);
   };
 
-  const handleLimitChange = (newLimit: PageSize) => {
-    setLimit(newLimit);
-    setPage(1);
-    const params = new URLSearchParams();
-    params.set("page", "1");
-    params.set("limit", String(newLimit));
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  };
-
-  return {
-    data,
-    isLoading,
-    error,
-    page,
-    limit,
-    setPage,
-    setLimit,
-    handlePageChange,
-    handleLimitChange,
-  };
+  return { ...query, state, update };
 }

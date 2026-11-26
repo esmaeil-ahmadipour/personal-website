@@ -18,6 +18,8 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
+    "db:seed:dev": "tsx prisma/seed-dev.ts",
+    "db:init:demo": "pnpm db:init:dev && pnpm db:seed:dev",
     "test:db": "tsx --test prisma/__tests__/*.test.ts",
     "test:db:unit": "tsx --test prisma/__tests__/*.unit.test.ts",
     "content:validate": "tsx prisma/content/cli.ts",

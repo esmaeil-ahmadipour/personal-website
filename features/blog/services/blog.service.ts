@@ -3,9 +3,22 @@
 import { prisma } from "@/lib/prisma";
 import type { Post, PostsResponse, GetPostsParams } from "../types/blog.types";
 
+/** Case-insensitive match on the title or excerpt, in all three languages. */
+function searchFilter(q: string) {
+  const match = { contains: q, mode: "insensitive" as const };
+  return [
+    { titleEn: match },
+    { titleFa: match },
+    { titleAr: match },
+    { excerptEn: match },
+    { excerptFa: match },
+    { excerptAr: match },
+  ];
+}
+
 export class BlogService {
   async getPublishedPosts(params: GetPostsParams): Promise<PostsResponse> {
-    const { page = 1, limit = 3, locale = "en" } = params;
+    const { page = 1, limit = 3, locale = "en", q, category, sort = "newest" } = params;
     const skip = (page - 1) * limit;
     
     // تشخیص زبان
@@ -17,16 +30,17 @@ export class BlogService {
       publishedAt: {
         not: null,
       },
+      ...(category ? { category: { slug: category } } : {}),
+      ...(q ? { OR: searchFilter(q) } : {}),
     };
+    const direction = sort === "oldest" ? ("asc" as const) : ("desc" as const);
 
     const [items, total] = await Promise.all([
       prisma.post.findMany({
         where,
         skip,
         take: limit,
-        orderBy: {
-          publishedAt: "desc",
-        },
+        orderBy: [{ publishedAt: direction }, { id: direction }],
         select: {
           id: true,
           slug: true,

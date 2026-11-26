@@ -17,9 +17,9 @@ export interface NavItem {
 }
 
 export const DEFAULT_NAV_ITEMS: NavItem[] = [
+  { id: "projects", label: "navProjects", href: "/projects" },
   { id: "blog", label: "navBlog", href: "/blog" },
   { id: "newsletter", label: "navNewsletter", href: "/newsletter" },
-  { id: "projects", label: "navProjects", href: "/projects" },
   { id: "feedback", label: "navFeedback", href: "/#feedback" },
 ];
 
@@ -57,14 +57,14 @@ export default function Navbar({
 
   return (
     <header
-      className={`header-glass sticky top-3 z-50 mx-3 mt-3 sm:mx-8 ${className}`}
+      className={`relative z-50 border-b border-[hsl(var(--border-subtle))] ${className}`}
     >
-      <div className="flex items-center justify-between gap-4 px-4 py-2.5 sm:px-5">
+      <div className="site-w flex h-[72px] items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
           <Link
             href={`/${locale}`}
             dir="ltr"
-            className="rounded-md bg-[linear-gradient(90deg,var(--grad-from),var(--grad-to))] bg-clip-text text-[22px] font-bold leading-none text-transparent"
+            className="rounded-md text-xl font-extrabold leading-none text-[hsl(var(--text-primary))] transition-colors hover:text-[hsl(var(--accent-blue))]"
           >
             Tarvix
           </Link>
@@ -84,7 +84,7 @@ export default function Navbar({
 
         <nav
           aria-label={t("navMain")}
-          className="hidden items-center gap-7 md:flex"
+          className="hidden items-center gap-8 md:flex"
         >
           {navItems.map((item) => (
             <Link
@@ -120,7 +120,7 @@ export default function Navbar({
         <nav
           id="mobile-menu"
           aria-label={t("navMenu")}
-          className="flex flex-col gap-1 border-t border-[hsl(var(--border-subtle))] px-5 py-3 md:hidden"
+          className="site-w flex flex-col gap-1 border-t border-[hsl(var(--border-subtle))] py-3 md:hidden"
         >
           {navItems.map((item) => (
             <Link

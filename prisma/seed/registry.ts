@@ -7,8 +7,9 @@
 
 import type { SeedVersion } from "./types";
 import { v1_0_0 } from "./versions/v1.0.0";
+import { v1_1_0 } from "./versions/v1.1.0";
 
-export const seedVersions: readonly SeedVersion[] = [v1_0_0];
+export const seedVersions: readonly SeedVersion[] = [v1_0_0, v1_1_0];
 
 const VERSION_PATTERN = /^v(\d+)\.(\d+)\.(\d+)$/;
 

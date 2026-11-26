@@ -1,7 +1,7 @@
 /* ============================================
    TARVIX DESIGN SYSTEM: tokens, base, motion
-   Source: design/Design-system-Foundations (HSL triplets).
-   Dark is the default theme (class "dark" on <html>, set by
+   Source: design "Tarvix — Desktop Pages (Graphite & Signal Blue)".
+   HSL triplets. Dark is the default theme (class "dark" on <html>, set by
    next-themes); :root holds the light override.
    Use colors as hsl(var(--token)). Never hard-code a color.
    ============================================ */
@@ -14,18 +14,19 @@
   /* Shared by both themes */
   :root {
     /* Accents (same in both themes) */
-    --accent-blue: 217 90% 65%;
+    --accent-blue: 218 100% 65%; /* Signal Blue #4C8DFF */
     --accent-purple: 263 85% 70%;
     --accent-pink: 340 80% 70%;
     --accent-cyan: 189 80% 55%;
     --accent-emerald: 160 80% 50%;
     --accent-amber: 38 85% 55%;
 
-    /* Brand gradient and its hover (Foundations: hex) */
-    --grad-from: #3b82f6;
-    --grad-to: #a855f7;
-    --grad-from-hover: #2563eb;
-    --grad-to-hover: #9333ea;
+    /* Flat brand blue. The old gradient tokens stay (some components still
+       reference them) but both stops are the same color now. */
+    --grad-from: #4c8dff;
+    --grad-to: #4c8dff;
+    --grad-from-hover: #3b7beb;
+    --grad-to-hover: #3b7beb;
 
     /* Ink for text placed on accent fills */
     --ink-light: 0 0% 100%;
@@ -33,14 +34,15 @@
 
     /* Radius */
     --radius-input: 12px;
-    --radius-poster: 14px;
+    --radius-poster: 12px;
     --radius-header: 18px;
-    --radius-card: 20px;
+    --radius-card: 14px;
     --radius-pill: 999px;
 
-    /* Card/badge/poster accent pair; set per element via lib/accent.ts */
+    /* Legacy per-element accent pair. The new design has one accent, so
+       lib/accent.ts now returns this same pair. */
     --c: var(--accent-blue);
-    --c2: var(--accent-purple);
+    --c2: var(--accent-blue);
 
     /* Fonts: Inter; Vazirmatn for fa and ar (set below by :lang) */
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -79,39 +81,49 @@
     --glass: rgba(255, 255, 255, 0.65);
     --glass-border: rgba(255, 255, 255, 0.5);
     --card-glass: rgba(255, 255, 255, 0.7);
-    --shadow-header: 0 4px 24px rgba(200, 180, 255, 0.06);
-    --shadow-card: 0 8px 32px rgba(200, 180, 255, 0.12);
-    --shadow-card-hover: 0 16px 48px rgba(180, 150, 255, 0.18);
+    --shadow-header: 0 4px 24px rgba(15, 23, 42, 0.06);
+    --shadow-card: 0 8px 32px rgba(15, 23, 42, 0.08);
+    --shadow-card-hover: 0 14px 32px rgba(15, 23, 42, 0.14);
+
+    /* Cover slot gradient (CoverMedia) */
+    --cover-from: 217 60% 95%;
+    --cover-to: 220 30% 91%;
   }
 
   /* Dark (default) */
   .dark {
     color-scheme: dark;
 
-    --bg-primary: 228 20% 8%;
-    --bg-secondary: 228 18% 12%;
-    --bg-surface: 228 15% 14%;
-    --bg-elevated: 228 14% 20%;
+    /* Graphite: #0B0C0E base, #15171B surface, #23262C lines.
+       bg-secondary and bg-elevated are derived (not in the design file). */
+    --bg-primary: 220 12% 5%;
+    --bg-secondary: 220 12% 9%;
+    --bg-surface: 220 12% 9%;
+    --bg-elevated: 220 14% 13%;
 
-    --text-primary: 240 20% 96%;
-    --text-secondary: 240 14% 80%;
-    --text-muted: 240 12% 60%;
-    --text-inverse: 228 20% 8%;
+    --text-primary: 220 30% 96%; /* #F2F4F8 */
+    --text-secondary: 219 14% 80%; /* #C5CAD3 */
+    --text-muted: 220 9% 60%; /* #9096A2 */
+    --text-inverse: 220 12% 5%;
 
-    --border-subtle: 228 14% 22%;
-    --border-strong: 228 12% 30%;
+    --border-subtle: 220 11% 15%; /* #23262C */
+    --border-strong: 219 11% 25%; /* #3A3F48 */
 
-    --accent-text: 217 90% 65%;
-    --focus-ring: 217 90% 65%;
+    --accent-text: 217 100% 75%; /* #7FB0FF */
+    --focus-ring: 218 100% 65%;
     --badge-mix: 70%;
     --notice-mix: 60%;
 
     --glass: rgba(10, 10, 20, 0.65);
     --glass-border: rgba(255, 255, 255, 0.06);
     --card-glass: rgba(30, 30, 50, 0.55);
-    --shadow-header: 0 4px 24px rgba(200, 180, 255, 0.06);
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
-    --shadow-card-hover: 0 12px 48px rgba(180, 150, 255, 0.08);
+    --shadow-header: none;
+    --shadow-card: none;
+    --shadow-card-hover: 0 14px 32px rgba(0, 0, 0, 0.5);
+
+    /* Cover slot gradient (design: #1B2438 to #15171B) */
+    --cover-from: 221 35% 16%;
+    --cover-to: 220 12% 9%;
 
     --accent-rose: 347 85% 65%;
   }
@@ -312,76 +324,69 @@
    ============================================ */
 
 @layer components {
-  /* Header: floating glass bar (position and margins live in Navbar) */
-  .header-glass {
-    background: var(--glass);
-    backdrop-filter: blur(28px) saturate(2);
-    -webkit-backdrop-filter: blur(28px) saturate(2);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-header);
-    box-shadow: var(--shadow-header);
+  /* Site container: 1120px, as in the design. Used by Navbar and Footer. */
+  .site-w {
+    width: 100%;
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) {
+    .site-w {
+      padding-inline: 2.5rem;
+    }
   }
 
-  /* Decorative blurred orb. Pair with animate-float / animate-float-slow. */
+  /* Decorative orbs belong to the old look. Hidden until the pages that
+     render them are redesigned; then the markup and this rule go. */
   .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(64px);
-    pointer-events: none;
+    display: none;
   }
 
-  /* Glass card. Set --c / --c2 with accentStyle(i). */
+  /* Flat surface card. Hover: blue border and lift. */
   .card {
     position: relative;
     overflow: hidden;
     display: block;
     border-radius: var(--radius-card);
     padding: 1.375rem;
-    background: var(--card-glass);
-    backdrop-filter: blur(24px) saturate(1.8);
-    -webkit-backdrop-filter: blur(24px) saturate(1.8);
-    border: 1px solid var(--glass-border);
+    background: hsl(var(--bg-surface));
+    border: 1px solid hsl(var(--border-subtle));
     box-shadow: var(--shadow-card);
     transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease,
+      transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+      box-shadow 0.45s ease,
       border-color 0.3s ease;
   }
-  /* Color-reveal gradient on hover */
-  .card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      hsl(var(--c) / 0.2),
-      hsl(var(--c) / 0.08) 40%,
-      transparent
-    );
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-  }
   .card:hover {
-    transform: translateY(-3px) scale(1.01);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--c) / 0.4);
-  }
-  .card:hover::before {
-    opacity: 1;
-  }
-  .card > * {
-    position: relative;
+    border-color: hsl(var(--accent-blue));
   }
   .card h3 {
     transition: color 0.2s ease;
   }
-  /* Title takes the card color; mixed with text-primary for AA */
   .card:hover h3 {
-    color: color-mix(in srgb, hsl(var(--c)) var(--badge-mix), hsl(var(--text-primary)));
+    color: hsl(var(--accent-text));
   }
 
-  /* Typographic cover placeholder (Poster component) */
+  /* Cover slot (CoverMedia): raster images fill it (cover); SVG files are
+     centered and fitted by height. Set size and radius with utilities. */
+  .cover-slot {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, hsl(var(--cover-from)), hsl(var(--cover-to)));
+  }
+  .cover-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  /* Typographic cover placeholder (legacy Poster component) */
   .poster {
     display: flex;
     align-items: flex-end;
@@ -391,35 +396,22 @@
     font-weight: 700;
     font-size: 1.25rem;
     line-height: 1.2;
-    color: hsl(var(--ink-dark));
-    background: linear-gradient(135deg, hsl(var(--c) / 0.85), hsl(var(--c2) / 0.7));
-  }
-  /* White ink only where it reaches 3:1 for large text (dark theme,
-     blue/purple pairs). Light theme always uses dark ink. */
-  .dark .poster[data-ink="light"] {
-    color: hsl(var(--ink-light));
+    color: hsl(var(--text-primary));
+    background: linear-gradient(160deg, hsl(var(--cover-from)), hsl(var(--cover-to)));
   }
 
-  /* Badge: 10px mono uppercase, tinted with the card color */
+  /* Badge: small outlined chip in the accent color */
   .badge {
     display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 600;
-    line-height: 1.4;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: var(--radius-pill);
-    background: hsl(var(--c) / 0.15);
-    color: color-mix(in srgb, hsl(var(--c)) var(--badge-mix), hsl(var(--text-primary)));
-    border: 1px solid hsl(var(--c) / 0.25);
-  }
-  [dir="rtl"] .badge {
     font-family: var(--font-body);
     font-size: 12px;
-    letter-spacing: 0;
-    text-transform: none;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: hsl(var(--accent-blue) / 0.12);
+    color: hsl(var(--accent-text));
+    border: 1px solid hsl(var(--accent-blue) / 0.35);
   }
 
   /* Pill: static, or a link that lights up on hover */
@@ -428,11 +420,9 @@
     align-items: center;
     gap: 0.5rem;
     border: 1px solid hsl(var(--border-subtle));
-    background: hsl(var(--bg-surface) / 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: none;
     border-radius: var(--radius-pill);
-    padding: 7px 16px;
+    padding: 8px 16px;
     font-size: 14px;
     color: hsl(var(--text-secondary));
     transition: all 0.2s ease;
@@ -447,45 +437,28 @@
     color: hsl(var(--accent-text));
   }
 
-  /* Buttons. Primary text is large (700, >=18.66px) so white on the
-     gradient meets 3:1. Small buttons start on the hover gradient,
-     which reaches 5:1 at 14px. */
+  /* Buttons: primary is an outlined blue pill; ghost is a neutral outline. */
   .btn {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: 0;
+    border: 1px solid hsl(var(--accent-blue));
     border-radius: var(--radius-pill);
-    padding: 14px 28px;
-    font-size: 1.1667rem;
-    font-weight: 700;
+    padding: 12px 22px;
+    font-size: 1rem;
+    font-weight: 600;
     line-height: 1.2;
-    color: hsl(var(--ink-light));
-    background: linear-gradient(90deg, var(--grad-from), var(--grad-to));
+    color: hsl(var(--accent-text));
+    background: transparent;
     cursor: pointer;
     text-decoration: none;
     transition:
-      box-shadow 0.3s ease,
+      background-color 0.2s ease,
       transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(90deg, var(--grad-from-hover), var(--grad-to-hover));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  .btn:hover::before {
-    opacity: 1;
-  }
   .btn:hover {
-    box-shadow: 0 12px 28px -8px hsl(var(--accent-blue) / 0.4);
+    background: hsl(var(--accent-blue) / 0.12);
   }
   .btn:active {
     transform: scale(0.96);
@@ -495,12 +468,8 @@
     opacity: 0.6;
   }
   .btn-sm {
-    padding: 8px 18px;
+    padding: 8px 16px;
     font-size: 14px;
-    font-weight: 600;
-  }
-  .btn.btn-sm {
-    background: linear-gradient(90deg, var(--grad-from-hover), var(--grad-to-hover));
   }
 
   .btn-ghost {
@@ -510,7 +479,7 @@
     gap: 0.5rem;
     border: 1px solid hsl(var(--border-subtle));
     border-radius: var(--radius-pill);
-    padding: 13px 28px;
+    padding: 12px 22px;
     font-weight: 500;
     color: hsl(var(--text-secondary));
     background: none;
@@ -533,7 +502,8 @@
     opacity: 0.6;
   }
   .btn-ghost.btn-sm {
-    padding: 8px 18px;
+    padding: 8px 16px;
+    font-size: 14px;
   }
 
   /* Notice (e.g. "only available in English") */
@@ -615,10 +585,10 @@
 /* ============================================
    ARTICLE BODY (author-written HTML)
    ============================================ */
-.article-body { font-size: 1.0625rem; line-height: 1.85; color: hsl(var(--text-secondary)); }
+.article-body { font-size: 1.125rem; line-height: 1.85; color: hsl(var(--text-secondary)); }
 .article-body > * + * { margin-top: 1.25rem; }
 .article-body h2, .article-body h3 { color: hsl(var(--text-primary)); scroll-margin-top: 7rem; line-height: 1.3; }
-.article-body h2 { font-size: 1.875rem; margin-top: 2.5rem; }
+.article-body h2 { font-size: 1.625rem; margin-top: 2.5rem; }
 .article-body h3 { font-size: 1.3rem; margin-top: 2rem; }
 .article-body strong { color: hsl(var(--text-primary)); }
 .article-body a { color: hsl(var(--accent-text)); text-decoration: underline; text-underline-offset: 3px; }
@@ -636,6 +606,73 @@
 .article-body pre code { background: none; padding: 0; }
 .article-body .copy-btn { position: absolute; top: 0.625rem; inset-inline-end: 0.75rem; border: 0; border-radius: 6px; background: transparent; color: hsl(var(--text-muted)); padding: 0.1rem 0.4rem; font-family: var(--font-body); font-size: 0.75rem; cursor: pointer; }
 .article-body .copy-btn:hover { color: hsl(var(--text-primary)); }
+
+/* ============================================
+   PAGE HEADER ART (components/ui/HeaderArt.tsx)
+   ============================================ */
+.hx { display: none; overflow: visible; }
+@media (min-width: 768px) {
+  .hx-header { position: relative; padding-inline-end: 200px; }
+  .hx { display: block; position: absolute; inset-inline-end: 0; top: 50%; margin-top: -75px; }
+}
+.hx .g { color: #34d399; stroke: currentColor; }
+.hx .b { color: hsl(var(--accent-blue)); stroke: currentColor; }
+.hx .y { color: #e0b04c; stroke: currentColor; }
+.hx .n { stroke: hsl(var(--border-strong)); }
+.hx .o { transform-box: fill-box; transform-origin: center; }
+.hx .lt { transform-box: fill-box; transform-origin: 0 50%; }
+.hx .vc { transform-origin: 75px 75px; }
+.hx .fl { animation: hx-float 3s ease-in-out infinite; }
+.hx .pu { animation: hx-pulse 2s ease-in-out infinite; }
+.hx .sw { animation: hx-spin 4s linear infinite; }
+.hx .lu { animation: hx-letter 3s ease-in-out infinite; }
+.hx .rg { stroke-dasharray: 277; animation: hx-ring 4s ease-in-out infinite; }
+.hx .dr { stroke-dasharray: 200; animation: hx-draw 3.2s ease-in-out infinite; }
+.hx .sx { animation: hx-stretch 2.4s ease-in-out infinite; }
+.hx .c1 { animation: hx-card-left 4s ease-in-out infinite; }
+.hx .c3 { animation: hx-card-right 4s ease-in-out infinite; }
+.hx .hl { animation: hx-highlight 4s ease-in-out infinite; }
+.hx .dt { animation: hx-dot 4s ease-in-out infinite; }
+.hx .lu { animation: hx-letter 3s ease-in-out infinite; }
+.hx .rg { stroke-dasharray: 277; animation: hx-ring 4s ease-in-out infinite; }
+@keyframes hx-float { 50% { transform: translateY(-6px); } }
+@keyframes hx-letter { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes hx-ring { 0% { stroke-dashoffset: 277; } 70%, 100% { stroke-dashoffset: 0; } }
+@keyframes hx-pulse { 0%, 100% { opacity: 0.45; transform: scale(1); } 50% { opacity: 1; transform: scale(1.25); } }
+@keyframes hx-spin { to { transform: rotate(360deg); } }
+@keyframes hx-draw { 0% { stroke-dashoffset: 200; } 60%, 100% { stroke-dashoffset: 0; } }
+@keyframes hx-stretch { 0%, 100% { transform: scaleX(0.4); } 50% { transform: scaleX(1); } }
+@keyframes hx-card-left { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(-7deg); } }
+@keyframes hx-card-right { 0%, 100% { transform: rotate(14deg); } 50% { transform: rotate(7deg); } }
+@keyframes hx-highlight { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(36px); } }
+@keyframes hx-dot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(72px); } }
+.hx .cg { transform-box: fill-box; transform-origin: 50% 100%; animation: hx-candle 8s ease-out infinite both; }
+.hx .ua { animation: hx-up 2.4s ease-in-out infinite; }
+.hx .vb { transform-box: fill-box; transform-origin: 50% 100%; animation: hx-volume 2.4s ease-in-out infinite; }
+@keyframes hx-candle { 0% { opacity: 0; transform: scaleY(0.15); } 10% { opacity: 1; transform: scaleY(1); } 85% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(1); } }
+@keyframes hx-up { 0% { transform: translateY(10px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
+@keyframes hx-volume { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+@keyframes hx-letter { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes hx-ring { 0% { stroke-dashoffset: 277; } 70%, 100% { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .hx * { animation: none !important; }
+}
+
+/* ============================================
+   CARD TRACK (home sliders; controls: components/ui/SliderControls.tsx)
+   ============================================ */
+.card-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 6px 0 10px;
+}
+.card-track::-webkit-scrollbar { display: none; }
+.card-track > * { flex: 0 0 176px; scroll-snap-align: start; }
+.band-art .pl { transform-box: fill-box; transform-origin: center; animation: hx-pulse 2s ease-in-out infinite; }
 
 /* ============================================
    REDUCED MOTION

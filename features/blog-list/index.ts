@@ -4,7 +4,6 @@
 // 📦 COMPONENTS
 // ============================================
 export { BlogList } from "./components/BlogList";
-export { BlogCard } from "./components/BlogCard";
 export { BlogPagination } from "./components/BlogPagination";
 export { BlogPageSizeSelector } from "./components/BlogPageSizeSelector";
 export { BlogListSkeleton } from "./components/BlogListSkeleton";
@@ -19,23 +18,18 @@ export {
 export { useBlogList } from "./hooks/useBlogList";
 
 // ============================================
-// ⚙️ SERVICES
-// ============================================
-export { BlogListService } from "./services/blog-list.service";
-
-// ============================================
 // 📋 SCHEMAS
 // ============================================
 export {
-  BlogListParamsSchema,
+  parseBlogUrlState,
   PageSizeOptions,
 } from "./schemas/blog-list.schema";
-export type { BlogListParams, PageSize } from "./schemas/blog-list.schema";
+export type { BlogListParams, BlogUrlState, PageSize } from "./schemas/blog-list.schema";
 
 // ============================================
 // 📝 TYPES
 // ============================================
-export type { BlogListResponse, BlogListState } from "./types/blog-list.types";
+export type { BlogListResponse, BlogListState, NumberedPost } from "./types/blog-list.types";
 
 // ============================================
 // 🌐 API

@@ -1,50 +1,61 @@
 // features/newsletter/components/IssueRow.tsx
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Pill } from "@/components/ui/Pill";
 import { Reveal } from "@/components/ui/Reveal";
-import { accentStyle } from "@/lib/accent";
-import { formatIssueDate, type NewsletterIssue } from "../data/issues";
+import { formatIssueMonth, formatIssueNumber } from "../lib/format";
+import type { IssueSummary } from "../services/newsletter.service";
 
+/** One archive line: number, title, summary, date and a "Read" pill. Links to the issue page. */
 export async function IssueRow({
   issue,
   locale,
   index = 0,
 }: {
-  issue: NewsletterIssue;
+  issue: IssueSummary;
   locale: string;
-  /** Position in the list; rotates the accent color. */
+  /** Position in the list; staggers the reveal animation. */
   index?: number;
 }) {
   const t = await getTranslations({ locale });
+  const meta = [
+    formatIssueMonth(issue.publishedAt, locale),
+    issue.readingTimeMin ? t("hmMin", { n: issue.readingTimeMin }) : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
     <Reveal as="li" delay={Math.min(index, 6) * 0.05}>
-      <a
-        href={issue.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="card grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 px-6 py-[18px] sm:grid-cols-[64px_1fr_auto]"
-        style={accentStyle(index * 2 + 1)}
+      <Link
+        href={`/${locale}/newsletter/${issue.number}`}
+        className="group grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 border-b border-[hsl(var(--border-subtle))] py-5 sm:grid-cols-[64px_1fr_auto_auto] sm:items-center sm:gap-x-6"
       >
         <span
           aria-hidden
           dir="ltr"
-          className="font-mono text-[22px] font-bold text-[color-mix(in_srgb,hsl(var(--c))_var(--badge-mix),hsl(var(--text-primary)))]"
+          className="text-start font-extrabold text-[hsl(var(--accent-blue))]"
         >
-          #{issue.number}
+          #{formatIssueNumber(issue.number)}
         </span>
-        <span className="sr-only">
-          {t("nlIssue")} {issue.number}
-        </span>
-        <div>
-          <h3 className="mb-0.5 mt-0 text-lg">{issue.title}</h3>
-          <span className="text-[13px] text-[hsl(var(--text-muted))]">
-            {formatIssueDate(issue.date, locale)}
+        <span className="flex min-w-0 flex-col gap-1">
+          <span className="sr-only">
+            {t("nlIssue")} {issue.number}
           </span>
-        </div>
-        <Pill className="col-span-2 justify-self-start sm:col-span-1 sm:justify-self-auto">
-          {t("nlOpen")}
+          <span className="text-lg font-semibold text-[hsl(var(--text-primary))] transition-colors group-hover:text-[hsl(var(--accent-blue))] sm:text-[22px]">
+            {issue.title}
+          </span>
+          {issue.summary && (
+            <span className="text-[hsl(var(--text-secondary))]">{issue.summary}</span>
+          )}
+        </span>
+        <span className="col-start-2 text-sm text-[hsl(var(--text-muted))] sm:col-start-auto">
+          {meta}
+        </span>
+        <Pill className="col-start-2 justify-self-start sm:col-start-auto sm:justify-self-auto">
+          {t("nlRead")} <span aria-hidden className="rtl-flip inline-block">→</span>
         </Pill>
-      </a>
+      </Link>
     </Reveal>
   );
 }

@@ -11,7 +11,7 @@ export const BLOG_LIST_QUERY_KEY = "blog-list";
 export function useBlogListQuery(params: BlogListParams) {
   return useQuery({
     queryKey: [BLOG_LIST_QUERY_KEY, params],
-    queryFn: () => fetchBlogPosts(params as Parameters<typeof fetchBlogPosts>[0]),
+    queryFn: () => fetchBlogPosts(params),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     placeholderData: (previousData) => previousData,

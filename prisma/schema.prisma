@@ -106,18 +106,22 @@ model Author {
   firstNameEn String
   lastNameEn  String
   bioEn       String?
+  roleEn      String?   // job title, e.g. "Software Engineer"
   
   // فارسی
   firstNameFa String
   lastNameFa  String
   bioFa       String?
+  roleFa      String?
   
   // عربی 🇸🇦
   firstNameAr String @default("")
   lastNameAr  String @default("")
   bioAr       String @default("")
+  roleAr      String @default("")
   
   posts     Post[]
+  newsletterIssues NewsletterIssue[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -148,6 +152,7 @@ model Category {
   descriptionAr String @default("")
   
   posts       Post[]
+  newsletterIssues NewsletterIssue[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -176,6 +181,7 @@ model Tag {
   nameAr    String @default("")
   
   posts     PostTag[]
+  newsletterIssues NewsletterIssueTag[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -238,6 +244,7 @@ model Post {
   author         Author      @relation(fields: [authorId], references: [id], onDelete: Restrict)
   category       Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   tags           PostTag[]
+  projects       ProjectPost[]
 
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
@@ -266,4 +273,136 @@ model PostTag {
   @@id([postId, tagId])
   @@index([tagId])
   @@index([assignedAt])
+}
+
+// ---------------------------------------------------------------------------
+// Projects (showcase). Replaces the static list in features/projects/data.
+// ---------------------------------------------------------------------------
+
+enum ProjectKind {
+  research // Product Research
+  tool     // Tools & Engineering
+}
+
+enum ProjectStage {
+  prototype
+  preProduction
+  live
+  openSource
+  archived
+}
+
+// Extra labels shown in the project meta line. Names are translated in translations/*.json.
+enum ProjectBadge {
+  personal
+  blockchain
+  desktop
+}
+
+model Project {
+  id            String       @id @default(cuid())
+  slug          String       @unique
+  name          String       // brand name, not translated
+
+  // English is required; a missing Fa/Ar text falls back to English in the UI
+  descriptionEn String
+  descriptionFa String       @default("")
+  descriptionAr String       @default("")
+  overviewEn    String?
+  overviewFa    String?
+  overviewAr    String       @default("")
+
+  isFeatured    Boolean      @default(false)
+  order         Int          @default(0)
+  coverImageUrl String?
+
+  kind          ProjectKind
+  stage         ProjectStage @default(prototype)
+  year          Int?
+  badges        ProjectBadge[] @default([]) // shown in array order
+  stack         String[]     @default([])
+
+  url           String?      // live project
+  sourceUrl     String?      // source repository
+
+  status        PostStatus   @default(draft)
+  publishedAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  posts         ProjectPost[]
+
+  @@index([status, order])
+  @@index([isFeatured])
+  @@index([kind])
+  @@index([stage])
+}
+
+// Optional link between a project and blog posts (a project may have none).
+model ProjectPost {
+  projectId  String
+  postId     String
+  assignedAt DateTime @default(now())
+
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, postId])
+  @@index([postId])
+}
+
+// ---------------------------------------------------------------------------
+// Newsletter issues. Published on LinkedIn; the full text is also readable on
+// the site in en/fa/ar. Uses the same Category and Tag tables as blog posts.
+// ---------------------------------------------------------------------------
+
+model NewsletterIssue {
+  id             String      @id @default(cuid())
+  number         Int         @unique
+  linkedinUrl    String      // original publication
+
+  // English
+  titleEn        String
+  excerptEn      String?
+  contentEn      String
+
+  // Persian
+  titleFa        String
+  excerptFa      String?
+  contentFa      String
+
+  // Arabic
+  titleAr        String      @default("")
+  excerptAr      String      @default("")
+  contentAr      String      @default("")
+
+  coverImageUrl  String?
+  readingTimeMin Int?
+  status         PostStatus  @default(draft)
+  publishedAt    DateTime?
+
+  authorId       String
+  categoryId     String
+  author         Author      @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  category       Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  tags           NewsletterIssueTag[]
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([authorId])
+  @@index([categoryId])
+}
+
+model NewsletterIssueTag {
+  issueId    String
+  tagId      String
+  assignedAt DateTime @default(now())
+
+  issue      NewsletterIssue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  tag        Tag             @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([issueId, tagId])
+  @@index([tagId])
 }

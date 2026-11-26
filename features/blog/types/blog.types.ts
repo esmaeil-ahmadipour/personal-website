@@ -54,4 +54,9 @@ export interface GetPostsParams {
   page?: number;
   limit?: number;
   locale?: "en" | "fa" | "ar";
+  /** Matches title or excerpt in any of the three languages. */
+  q?: string;
+  /** Category slug. */
+  category?: string;
+  sort?: "oldest" | "newest";
 }

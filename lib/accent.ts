@@ -1,24 +1,19 @@
 import type { CSSProperties } from "react";
 
-/** The six accent pairs from the design system, rotated by index. */
-const PAIRS = [
-  ["blue", "purple"],
-  ["purple", "pink"],
-  ["cyan", "blue"],
-  ["pink", "amber"],
-  ["emerald", "cyan"],
-  ["amber", "pink"],
-] as const;
-
 type AccentStyle = CSSProperties & { "--c": string; "--c2": string };
 
-/** Sets --c and --c2 for .card, .badge and .poster from design tokens. */
+/**
+ * Deprecated. The new design has a single accent (Signal Blue), so every index
+ * maps to the same pair. Kept so existing callers compile; removed together with
+ * the last legacy page.
+ */
 export function accentStyle(index: number): AccentStyle {
-  const [a, b] = PAIRS[Math.abs(index) % PAIRS.length];
-  return { "--c": `var(--accent-${a})`, "--c2": `var(--accent-${b})` };
+  void index;
+  return { "--c": "var(--accent-blue)", "--c2": "var(--accent-blue)" };
 }
 
-/** Pairs where white poster ink is allowed (dark theme only). */
+/** Deprecated: the poster ink is always the theme text color now. */
 export function posterInk(index: number): "light" | "dark" {
-  return Math.abs(index) % PAIRS.length < 2 ? "light" : "dark";
+  void index;
+  return "dark";
 }

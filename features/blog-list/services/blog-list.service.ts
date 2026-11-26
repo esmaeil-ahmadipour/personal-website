@@ -1,121 +1,36 @@
 // features/blog-list/services/blog-list.service.ts
-
+import "server-only";
 import { prisma } from "@/lib/prisma";
-import type { BlogListParams, BlogListResponse } from "../types/blog-list.types";
+import { BlogService } from "@/features/blog/services/blog.service";
+import { getPostNumbers } from "@/features/blog/services/post-numbers";
 import type { Post } from "@/features/blog/types/blog.types";
+import type { GetPostsInput } from "@/features/blog/schemas/blog.schema";
+import type { BlogListResponse, NumberedPost } from "../types/blog-list.types";
 
-export class BlogListService {
-  async getPosts(params: BlogListParams): Promise<BlogListResponse> {
-    const { page = 1, limit = 10, locale = "en" } = params;
-    const skip = (page - 1) * limit;
-    const isEn = locale === "en";
+const blogService = new BlogService();
 
-    const where = {
-      status: "published" as const,
-      publishedAt: { not: null },
-    };
+/** Everything the blog page shows: the filtered page, the latest post and the categories. */
+export async function getBlogList(params: GetPostsInput): Promise<BlogListResponse> {
+  const { locale } = params;
+  const [list, latest, numbers, categories] = await Promise.all([
+    blogService.getPublishedPosts(params),
+    blogService.getPublishedPosts({ locale, page: 1, limit: 1, sort: "newest" }),
+    getPostNumbers(),
+    prisma.category.findMany({
+      where: { posts: { some: { status: "published", publishedAt: { not: null } } } },
+      orderBy: [{ order: "asc" }, { slug: "asc" }],
+      select: { slug: true, nameEn: true, nameFa: true, nameAr: true },
+    }),
+  ]);
+  const numbered = (post: Post): NumberedPost => ({ ...post, number: numbers.get(post.id) ?? 0 });
 
-    const [items, total] = await Promise.all([
-      prisma.post.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { publishedAt: "desc" },
-        select: {
-          id: true,
-          slug: true,
-          coverImageUrl: true,
-          readingTimeMin: true,
-          status: true,
-          publishedAt: true,
-          createdAt: true,
-          updatedAt: true,
-          titleEn: true,
-          titleFa: true,
-          excerptEn: true,
-          excerptFa: true,
-          contentEn: true,
-          contentFa: true,
-          author: {
-            select: {
-              id: true,
-              slug: true,
-              avatarUrl: true,
-              firstNameEn: true,
-              firstNameFa: true,
-              lastNameEn: true,
-              lastNameFa: true,
-              bioEn: true,
-              bioFa: true,
-            },
-          },
-          category: {
-            select: {
-              id: true,
-              slug: true,
-              nameEn: true,
-              nameFa: true,
-            },
-          },
-          tags: {
-            select: {
-              tag: {
-                select: {
-                  id: true,
-                  slug: true,
-                  nameEn: true,
-                  nameFa: true,
-                },
-              },
-            },
-          },
-        },
-      }),
-      prisma.post.count({ where }),
-    ]);
-
-    const formattedItems: Post[] = items.map((post) => ({
-      id: post.id,
-      slug: post.slug,
-      title: isEn ? post.titleEn : post.titleFa,
-      excerpt: isEn ? post.excerptEn : post.excerptFa,
-      content: isEn ? post.contentEn : post.contentFa,
-      coverImageUrl: post.coverImageUrl,
-      readingTimeMin: post.readingTimeMin,
-      status: post.status,
-      publishedAt: post.publishedAt,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      author: {
-        id: post.author.id,
-        slug: post.author.slug,
-        firstName: isEn ? post.author.firstNameEn : post.author.firstNameFa,
-        lastName: isEn ? post.author.lastNameEn : post.author.lastNameFa,
-        bio: isEn ? post.author.bioEn : post.author.bioFa,
-        avatarUrl: post.author.avatarUrl,
-        email: null,
-      },
-      category: {
-        id: post.category.id,
-        slug: post.category.slug,
-        name: isEn ? post.category.nameEn : post.category.nameFa,
-        description: null,
-      },
-      tags: post.tags.map((t) => ({
-        id: t.tag.id,
-        slug: t.tag.slug,
-        name: isEn ? t.tag.nameEn : t.tag.nameFa,
-      })),
-    }));
-
-    return {
-      items: formattedItems,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
+  return {
+    items: list.items.map(numbered),
+    pagination: list.pagination,
+    latest: latest.items[0] ? numbered(latest.items[0]) : null,
+    categories: categories.map((c) => ({
+      slug: c.slug,
+      name: (locale === "fa" ? c.nameFa : locale === "ar" ? c.nameAr : c.nameEn) || c.nameEn,
+    })),
+  };
 }

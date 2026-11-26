@@ -9,37 +9,19 @@ export default function Footer() {
   const { t, locale } = useTranslation();
 
   return (
-    <footer className="mx-auto mt-24 max-w-7xl border-t border-[hsl(var(--border-subtle))] px-4 py-9 text-sm text-[hsl(var(--text-muted))] sm:px-8">
-      <div className="flex flex-col gap-8 md:flex-row md:justify-between">
-        <div>
+    <footer className="site-w mt-24 flex flex-col gap-4 border-t border-[hsl(var(--border-subtle))] py-10 text-sm text-[hsl(var(--text-muted))] md:flex-row md:items-center md:justify-between">
+      <p>{t("footerRights")}</p>
+      <nav aria-label={t("navFooter")} className="flex flex-wrap gap-x-5 gap-y-2">
+        {DEFAULT_NAV_ITEMS.map((item) => (
           <Link
-            href={`/${locale}`}
-            dir="ltr"
-            className="inline-block rounded-md bg-[linear-gradient(90deg,var(--grad-from),var(--grad-to))] bg-clip-text text-[22px] font-bold leading-none text-transparent"
+            key={item.id}
+            href={`/${locale}${item.href}`}
+            className="rounded-md transition-colors hover:text-[hsl(var(--text-primary))]"
           >
-            Tarvix
+            {t(item.label)}
           </Link>
-          <p className="mt-2 max-w-[340px]">{t("footerTagline")}</p>
-        </div>
-
-        <div className="flex flex-col gap-3 md:items-end md:text-end">
-          <nav
-            aria-label={t("navFooter")}
-            className="flex flex-wrap gap-x-5 gap-y-2 md:justify-end"
-          >
-            {DEFAULT_NAV_ITEMS.map((item) => (
-              <Link
-                key={item.id}
-                href={`/${locale}${item.href}`}
-                className="rounded-md transition-colors hover:text-[hsl(var(--text-primary))]"
-              >
-                {t(item.label)}
-              </Link>
-            ))}
-          </nav>
-          <p>{t("footerRights")}</p>
-        </div>
-      </div>
+        ))}
+      </nav>
     </footer>
   );
 }
