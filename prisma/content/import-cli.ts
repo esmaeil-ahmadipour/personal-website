@@ -1,7 +1,7 @@
 // prisma/content/import-cli.ts
 //
 //   pnpm content:import [--dry-run] [--all] [--force]
-//   pnpm content:force-token <slug>
+//   pnpm content:force-token <slug> | newsletter:<number> | project:<slug>
 //
 // See docs/content-import.md.
 
@@ -14,6 +14,7 @@ import { ForceTokenError, generateForceToken, parseForceToken, redactSecrets } f
 import { ImportError, assertAllAllowed, parseCommand, parseTarget, runImport } from "./import";
 import { verifyPins } from "./manifest";
 import { validateNewsletter } from "./newsletter";
+import { validateProject } from "./project";
 import { selectListedItems, validateTaxonomy } from "./taxonomy";
 import { runTaxonomyImport } from "./taxonomy-import";
 import { validateContent } from "./validate";
@@ -58,6 +59,13 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       return 1;
     }
 
+    const project = validateProject();
+    if (!project.ok) {
+      for (const error of project.errors) log.error(error);
+      log.error("Content is invalid; nothing was imported. Run `pnpm content:validate`.");
+      return 1;
+    }
+
     if (command.command === "token") {
       const target = parseTarget(command.slug);
       if (target.kind === "post" && !validation.posts.some((post) => post.slug === target.slug)) {
@@ -65,6 +73,9 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       }
       if (target.kind === "newsletter" && !newsletter.issues.some((issue) => issue.slug === target.slug)) {
         throw new ImportError(`No newsletter issue "${target.slug}" in content/newsletter.`);
+      }
+      if (target.kind === "project" && !project.projects.some((item) => item.slug === target.slug)) {
+        throw new ImportError(`No project "${target.slug}" in content/projects.`);
       }
       // The one place the raw token is printed. It is not stored anywhere.
       console.log(
@@ -84,9 +95,10 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       const pinProblems = [
         ...verifyPins(validation.manifestEntries, validation.posts),
         ...taxonomy.pinProblems,
-        // Pinning newsletter issues comes with the release phase; until then a listed issue
-        // needs a sourceHash written into manifest.json by hand.
+        // Pinning newsletter issues and projects comes with the release phase; until then a listed
+        // entry needs a sourceHash written into manifest.json by hand.
         ...verifyPins(newsletter.entries, newsletter.issues).map((problem) => `newsletter: ${problem}`),
+        ...verifyPins(project.entries, project.projects).map((problem) => `project: ${problem}`),
       ];
       if (pinProblems.length > 0) {
         for (const problem of pinProblems) log.error(problem);
@@ -102,8 +114,8 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       log.warn("CONTENT_FORCE_TOKEN is set but --force was not passed; the token is ignored. Run: unset CONTENT_FORCE_TOKEN");
     }
     const force = command.force && token ? parseForceToken(token) : undefined;
-    if (force?.kind !== undefined && force.kind !== "newsletter") {
-      throw new ForceTokenError("content:import accepts force tokens for posts and newsletter issues only.");
+    if (force?.kind !== undefined && force.kind !== "newsletter" && force.kind !== "project") {
+      throw new ForceTokenError("content:import accepts force tokens for posts, newsletter issues and projects only.");
     }
 
     const databaseUrl = resolveDatabaseUrl(env);
@@ -118,7 +130,16 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
     const selectedIssues = command.all
       ? newsletter.issues
       : newsletter.issues.filter((issue) => newsletter.entries.some((entry) => entry.slug === issue.slug));
-    if (selected.length === 0 && selectedTaxonomy.length === 0 && selectedIssues.length === 0 && force === undefined) {
+    const selectedProjects = command.all
+      ? project.projects
+      : project.projects.filter((item) => project.entries.some((entry) => entry.slug === item.slug));
+    if (
+      selected.length === 0 &&
+      selectedTaxonomy.length === 0 &&
+      selectedIssues.length === 0 &&
+      selectedProjects.length === 0 &&
+      force === undefined
+    ) {
       log.info("No content selected (the manifest is empty). Use --all on a development database.");
       return 0;
     }
@@ -135,16 +156,29 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       await runTaxonomyImport(prisma, selectedTaxonomy, { dryRun: command.dryRun, log, lock });
       const posts = await runImport(prisma, selected, { dryRun: command.dryRun, log, lock, force });
       if (posts.blocked) return 1;
-      // Skipped when nothing is selected, so databases without the newsletter tables stay untouched.
-      if (selectedIssues.length === 0 && force?.kind !== "newsletter") return 0;
-      const issues = await runImport(prisma, selectedIssues, {
-        dryRun: command.dryRun,
-        log,
-        lock,
-        force,
-        kind: "newsletter",
-      });
-      return issues.blocked ? 1 : 0;
+      // Newsletter issues and projects are skipped when nothing is selected for them, so databases
+      // without their tables stay untouched. A token of that kind still runs it, to be validated.
+      if (selectedIssues.length > 0 || force?.kind === "newsletter") {
+        const issues = await runImport(prisma, selectedIssues, {
+          dryRun: command.dryRun,
+          log,
+          lock,
+          force,
+          kind: "newsletter",
+        });
+        if (issues.blocked) return 1;
+      }
+      if (selectedProjects.length > 0 || force?.kind === "project") {
+        const projects = await runImport(prisma, selectedProjects, {
+          dryRun: command.dryRun,
+          log,
+          lock,
+          force,
+          kind: "project",
+        });
+        if (projects.blocked) return 1;
+      }
+      return 0;
     } finally {
       await lock?.release().catch(() => undefined);
       await prisma.$disconnect();

@@ -5,7 +5,7 @@
 
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
-import { ContentError, LOCALES, POST_STATUSES } from "./types";
+import { ContentError, LOCALES, POST_STATUSES, PROJECT_BADGES, PROJECT_KINDS, PROJECT_STAGES } from "./types";
 
 const slug = z
   .string()
@@ -182,5 +182,71 @@ export function parseIssueMeta(yamlText: string): IssueMeta {
   }
   const result = issueMeta.safeParse(data);
   if (!result.success) throw new ContentError(describe("issue.yml", result.error));
+  return result.data;
+}
+
+const httpsUrl = z
+  .string()
+  .url()
+  .refine((value) => value.startsWith("https://"), "must be an https:// URL");
+
+const projectLocaleMeta = z
+  .object({
+    description: text,
+    // Plain text; a blank line separates paragraphs on the project page.
+    overview: text.optional(),
+  })
+  .strict();
+
+const projectMeta = z
+  .object({
+    slug,
+    name: text,
+    kind: z.enum(PROJECT_KINDS),
+    stage: z.enum(PROJECT_STAGES),
+    year: z.number().int().positive().optional(),
+    // Shown in array order, so the order is part of the content.
+    badges: z.array(z.enum(PROJECT_BADGES)).default([]),
+    stack: z.array(text).default([]),
+    isFeatured: z.boolean().default(false),
+    order: z.number().int().default(0),
+    status: z.enum(POST_STATUSES),
+    // Not read by the project pages, so it is not required for published projects.
+    publishedAt: z
+      .string()
+      .regex(PUBLISHED_AT, 'must be "YYYY-MM-DD" or an ISO UTC timestamp (quote it)')
+      .optional(),
+    coverImageUrl: text.optional(),
+    url: httpsUrl.optional(),
+    sourceUrl: httpsUrl.optional(),
+    posts: z.array(slug).default([]),
+    locales: z
+      .object({ en: projectLocaleMeta, fa: projectLocaleMeta, ar: projectLocaleMeta.optional() })
+      .strict(),
+  })
+  .strict()
+  .superRefine((meta, ctx) => {
+    for (const key of ["badges", "stack", "posts"] as const) {
+      if (new Set(meta[key]).size !== meta[key].length) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: [key], message: "contains duplicates" });
+      }
+    }
+    if (meta.publishedAt !== undefined && Number.isNaN(Date.parse(meta.publishedAt))) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["publishedAt"], message: "is not a valid date" });
+    }
+  });
+
+export type ProjectMeta = z.infer<typeof projectMeta>;
+
+export function parseProjectMeta(yamlText: string): ProjectMeta {
+  let data: unknown;
+  try {
+    data = parseYaml(yamlText.replace(/^\uFEFF/, ""));
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new ContentError(`project.yml: not valid YAML: ${reason}`);
+  }
+  const result = projectMeta.safeParse(data);
+  if (!result.success) throw new ContentError(describe("project.yml", result.error));
   return result.data;
 }

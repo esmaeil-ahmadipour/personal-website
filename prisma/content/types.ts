@@ -2,6 +2,8 @@
 //
 // Shared types and constants of the Markdown content pipeline.
 
+import type { ProjectBadge, ProjectKind, ProjectStage } from "@prisma/client";
+
 /**
  * Bump when the importer produces different output for the same source files
  * (rendering rules, hashing, field mapping). It is part of every source hash.
@@ -29,6 +31,29 @@ export const ISSUE_FILES: readonly string[] = [
   ...LOCALES.map((locale) => `${locale}.md`),
 ];
 
+/** The only file a project directory may contain (dotfiles are ignored). */
+export const PROJECT_FILES: readonly string[] = ["project.yml"];
+
+// Mirrors of the Prisma enums, so that content validation never needs a database client.
+export const PROJECT_KINDS = ["research", "tool"] as const satisfies readonly ProjectKind[];
+export const PROJECT_STAGES = [
+  "prototype",
+  "preProduction",
+  "live",
+  "openSource",
+  "archived",
+] as const satisfies readonly ProjectStage[];
+export const PROJECT_BADGES = ["personal", "blockchain", "desktop"] as const satisfies readonly ProjectBadge[];
+
+/** Compile-time guard: stops compiling when a Prisma enum gains a value the lists above lack. */
+export const PROJECT_ENUMS_COVERED: [
+  Exclude<ProjectKind, (typeof PROJECT_KINDS)[number]>,
+  Exclude<ProjectStage, (typeof PROJECT_STAGES)[number]>,
+  Exclude<ProjectBadge, (typeof PROJECT_BADGES)[number]>,
+] extends [never, never, never]
+  ? true
+  : never = true;
+
 export interface ContentManifest {
   /** Slugs that are released to production. Posts not listed stay dev-only. */
   posts: string[];
@@ -50,7 +75,7 @@ export interface RawIssueSource {
   unexpectedFiles: string[];
 }
 
-export type FieldValue = string | number | boolean | Date | null;
+export type FieldValue = string | number | boolean | Date | null | string[];
 
 export interface ParsedPost {
   slug: string;
@@ -70,6 +95,22 @@ export interface ParsedPost {
 /** A newsletter issue; `slug` is the issue number as text, so it can key ContentSync. */
 export interface ParsedIssue extends ParsedPost {
   number: number;
+}
+
+/** Raw, unparsed contents of one `content/projects/<slug>/` directory. */
+export interface RawProjectSource {
+  dirName: string;
+  projectYml: string | undefined;
+  unexpectedFiles: string[];
+}
+
+/** A project; its `relations` are the posts it links to (ProjectPost), not taxonomy. */
+export interface ParsedProject
+  extends Pick<ParsedPost, "slug" | "formatVersion" | "sourceHash" | "fields" | "fieldHashes"> {
+  /** Sorted and unique. */
+  relations: { postSlugs: string[] };
+  /** Locales that have a description. */
+  locales: Locale[];
 }
 
 /** Invalid content. `issues` holds one human-readable line per problem. */

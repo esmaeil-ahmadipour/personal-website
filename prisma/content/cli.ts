@@ -5,6 +5,7 @@
 import { createLogger } from "../lib/log";
 import { verifyPins } from "./manifest";
 import { validateNewsletter } from "./newsletter";
+import { validateProject } from "./project";
 import { pinStatus, validateTaxonomy } from "./taxonomy";
 import { validateContent } from "./validate";
 
@@ -43,5 +44,20 @@ for (const issue of newsletter.issues) {
 for (const error of newsletter.errors) log.error(error);
 log.info(`${newsletter.issues.length} newsletter issue(s), ${newsletter.errors.length} error(s).`);
 
+const project = validateProject();
+for (const item of project.projects) {
+  const release = pinStatus(project.entries, item);
+  log.info(`project:${item.slug}: ok (locales=${item.locales.join(",")}, ${release}, hash=${item.sourceHash.slice(0, 12)})`);
+}
+for (const error of project.errors) log.error(error);
+log.info(`${project.projects.length} project(s), ${project.errors.length} error(s).`);
+
 process.exitCode =
-  result.ok && pinProblems.length === 0 && taxonomy.ok && taxonomy.pinProblems.length === 0 && newsletter.errors.length === 0 ? 0 : 1;
+  result.ok &&
+  pinProblems.length === 0 &&
+  taxonomy.ok &&
+  taxonomy.pinProblems.length === 0 &&
+  newsletter.errors.length === 0 &&
+  project.errors.length === 0
+    ? 0
+    : 1;

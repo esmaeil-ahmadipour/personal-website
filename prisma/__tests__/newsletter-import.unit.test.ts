@@ -50,7 +50,7 @@ describe("parseTarget", () => {
   });
 
   it("rejects other kinds without echoing more than the kind", () => {
-    assert.throws(() => parseTarget("project:x"), ImportError);
+    assert.throws(() => parseTarget("category:x"), ImportError);
   });
 });
 
