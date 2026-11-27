@@ -81,7 +81,14 @@ const manifestEntry = z.union(
   { message: 'must be a slug or { "slug": "...", "sourceHash": "..." }' },
 );
 
-const manifest = z.object({ posts: z.array(manifestEntry) }).strict();
+const manifest = z
+  .object({
+    posts: z.array(manifestEntry),
+    // Optional so a manifest that lists only posts stays valid.
+    categories: z.array(manifestEntry).optional(),
+    tags: z.array(manifestEntry).optional(),
+  })
+  .strict();
 
 function describe(source: string, error: z.ZodError): string[] {
   return error.issues.map((issue) => {

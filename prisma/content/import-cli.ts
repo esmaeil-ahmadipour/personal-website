@@ -13,6 +13,8 @@ import { createLogger, errorMessage, type Logger } from "../lib/log";
 import { ForceTokenError, generateForceToken, parseForceToken, redactSecrets } from "./force";
 import { ImportError, assertAllAllowed, parseCommand, runImport } from "./import";
 import { verifyPins } from "./manifest";
+import { selectListedItems, validateTaxonomy } from "./taxonomy";
+import { runTaxonomyImport } from "./taxonomy-import";
 import { validateContent } from "./validate";
 
 function scrubbing(base: Logger, secrets: readonly string[]): Logger {
@@ -41,6 +43,13 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       return 1;
     }
 
+    const taxonomy = validateTaxonomy();
+    if (!taxonomy.ok) {
+      for (const error of taxonomy.errors) log.error(error);
+      log.error("Content is invalid; nothing was imported. Run `pnpm content:validate`.");
+      return 1;
+    }
+
     if (command.command === "token") {
       if (!validation.posts.some((post) => post.slug === command.slug)) {
         throw new ImportError(`No post "${command.slug}" in content/posts.`);
@@ -60,7 +69,10 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
     // A release imports only what was approved: every manifest entry must be pinned and
     // still match its files. Checked before any database access.
     if (!command.all) {
-      const pinProblems = verifyPins(validation.manifestEntries, validation.posts);
+      const pinProblems = [
+        ...verifyPins(validation.manifestEntries, validation.posts),
+        ...taxonomy.pinProblems,
+      ];
       if (pinProblems.length > 0) {
         for (const problem of pinProblems) log.error(problem);
         log.error("The manifest does not match the content; nothing was imported.");
@@ -82,8 +94,11 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
     const selected = command.all
       ? validation.posts
       : validation.posts.filter((post) => validation.manifestSlugs.includes(post.slug));
-    if (selected.length === 0 && force === undefined) {
-      log.info("No posts selected (the manifest is empty). Use --all on a development database.");
+    const selectedTaxonomy = command.all
+      ? taxonomy.items
+      : selectListedItems(taxonomy.items, taxonomy.entries);
+    if (selected.length === 0 && selectedTaxonomy.length === 0 && force === undefined) {
+      log.info("No content selected (the manifest is empty). Use --all on a development database.");
       return 0;
     }
 
@@ -96,6 +111,7 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
           log,
         });
     try {
+      await runTaxonomyImport(prisma, selectedTaxonomy, { dryRun: command.dryRun, log, lock });
       const summary = await runImport(prisma, selected, { dryRun: command.dryRun, log, lock, force });
       return summary.blocked ? 1 : 0;
     } finally {

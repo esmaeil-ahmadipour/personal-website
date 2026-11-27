@@ -11,8 +11,9 @@ import { after, describe, it } from "node:test";
 import { buildPost, canonicalJson } from "../content/build";
 import { renderMarkdown } from "../content/render";
 import { ContentError, type RawPostSource } from "../content/types";
+import { buildTaxonomy, readTaxonomyText } from "../content/taxonomy";
 import { validateContent } from "../content/validate";
-import { author, categories, tags } from "../seed/versions/v1.0.0";
+import { author } from "../seed/versions/v1.0.0";
 
 const compact = (html: string): string => html.replace(/>\s+</g, "><");
 
@@ -243,9 +244,12 @@ describe("repository content", () => {
     });
   });
 
-  it("references only author, category and tag slugs defined by seed v1.0.0", () => {
-    const categorySlugs = new Set(categories.map((category) => category.slug));
-    const tagSlugs = new Set(tags.map((tag) => tag.slug));
+  it("references only the seed author and the category and tag slugs of taxonomy.yml", () => {
+    const taxonomy = buildTaxonomy(readTaxonomyText());
+    const slugsOf = (kind: string) =>
+      new Set(taxonomy.filter((item) => item.kind === kind).map((item) => item.slug));
+    const categorySlugs = slugsOf("category");
+    const tagSlugs = slugsOf("tag");
     for (const { relations, slug } of result.posts) {
       assert.equal(relations.authorSlug, author.slug, slug);
       assert.ok(categorySlugs.has(relations.categorySlug), `${slug}: category ${relations.categorySlug}`);

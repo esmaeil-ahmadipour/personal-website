@@ -15,6 +15,9 @@
 // never interleave. The steps run as child processes; seed and import take their own
 // (separate) lock. A dry run takes no lock and writes nothing.
 //
+// The URL is resolved once (DIRECT_DATABASE_URL, else DATABASE_URL) and every step gets it
+// in both variables, because `prisma migrate deploy` reads only DATABASE_URL.
+//
 // Pending migrations are scanned first; in production a destructive one is refused unless
 // RELEASE_ALLOW_DESTRUCTIVE names it exactly (comma-separated migration directory names).
 
@@ -92,17 +95,19 @@ async function buildPlan(
 ): Promise<ReleasePlan> {
   const quiet: Logger = { info: () => undefined, warn: (m) => log.warn(m), error: (m) => log.error(m) };
   const needsMigration = pending.length > 0;
-  const readable = async <T>(read: () => Promise<T>): Promise<T | null> => {
-    try {
-      return await read();
-    } catch (error) {
-      if (needsMigration) return null;
-      throw error;
-    }
-  };
 
-  const seeds = await readable(() => runPendingSeeds(prisma, { dryRun: true, log: quiet }));
-  const imported = await readable(() => runImport(prisma, selected, { dryRun: true, log: quiet }));
+  // Do not query application tables against a schema that has pending migrations.
+  // The migration SQL hashes are part of the fingerprint; seed and content
+  // execution are explicitly deferred until after migrations.
+  //
+  // When the schema is already current, every planning error must propagate.
+  const seeds = needsMigration
+    ? null
+    : await runPendingSeeds(prisma, { dryRun: true, log: quiet });
+
+  const imported = needsMigration
+    ? null
+    : await runImport(prisma, selected, { dryRun: true, log: quiet });
 
   return {
     migrations: pending.map((m) => ({ name: m.name, sqlHash: sha256(m.sql) })),
@@ -133,8 +138,9 @@ async function main(argv: readonly string[]): Promise<number> {
     const url = resolveDatabaseUrl(process.env);
     const sha = process.env.VERCEL_GIT_COMMIT_SHA ?? null;
 
+    // Every step must target the database the plan was computed on.
     // A force token must never reach a release run.
-    const childEnv: NodeJS.ProcessEnv = { ...process.env };
+    const childEnv: NodeJS.ProcessEnv = { ...process.env, DATABASE_URL: url, DIRECT_DATABASE_URL: url };
     delete childEnv.CONTENT_FORCE_TOKEN;
 
     if (!dryRun) {
