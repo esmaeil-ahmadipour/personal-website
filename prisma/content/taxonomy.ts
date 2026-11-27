@@ -11,7 +11,7 @@ import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 import { hashValue } from "./build";
 import { DEFAULT_CONTENT_ROOT, readManifestText } from "./load";
-import { toEntries, type ManifestEntry } from "./manifest";
+import { EXTRA_MANIFEST_KEYS, toEntries, type ExtraEntries, type ManifestEntry } from "./manifest";
 import { parseManifest } from "./parse";
 import { ContentError, FORMAT_VERSION, type FieldValue } from "./types";
 
@@ -328,6 +328,7 @@ export function approveTaxonomy(
 export function serializeFullManifest(
   posts: readonly ManifestEntry[],
   taxonomy: TaxonomyEntries,
+  extra?: ExtraEntries,
 ): string {
   const raw = (entries: readonly ManifestEntry[]) =>
     [...entries]
@@ -338,5 +339,8 @@ export function serializeFullManifest(
   const manifest: Record<string, unknown> = { posts: raw(posts) };
   if (taxonomy.category.length > 0) manifest.categories = raw(taxonomy.category);
   if (taxonomy.tag.length > 0) manifest.tags = raw(taxonomy.tag);
+  for (const key of EXTRA_MANIFEST_KEYS) {
+    if (extra !== undefined && extra[key].length > 0) manifest[key] = raw(extra[key]);
+  }
   return `${JSON.stringify(manifest, null, 2)}\n`;
 }

@@ -22,6 +22,15 @@ export function toEntries(posts: readonly RawEntry[]): ManifestEntry[] {
   );
 }
 
+/** Manifest keys of newsletter issues and projects; they are listed and pinned like posts. */
+export const EXTRA_MANIFEST_KEYS = ["newsletter", "projects"] as const;
+export type ExtraManifestKey = (typeof EXTRA_MANIFEST_KEYS)[number];
+export type ExtraEntries = Record<ExtraManifestKey, ManifestEntry[]>;
+
+export function extraEntriesOf(manifest: Partial<Record<ExtraManifestKey, readonly RawEntry[]>>): ExtraEntries {
+  return { newsletter: toEntries(manifest.newsletter ?? []), projects: toEntries(manifest.projects ?? []) };
+}
+
 /** Problems that make a release unsafe: unpinned entries and pins the files no longer match. */
 export function verifyPins(entries: readonly ManifestEntry[], posts: readonly HashedPost[]): string[] {
   const current = new Map(posts.map((post) => [post.slug, post.sourceHash]));

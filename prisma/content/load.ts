@@ -4,7 +4,7 @@
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { ContentError, LOCALES, POST_FILES, type RawPostSource } from "./types";
+import { ContentError, ISSUE_FILES, LOCALES, POST_FILES, type RawIssueSource, type RawPostSource } from "./types";
 
 /** `content/` relative to the working directory (the scripts run from the project root). */
 export const DEFAULT_CONTENT_ROOT = path.resolve(process.cwd(), "content");
@@ -41,6 +41,37 @@ export function loadPostSources(root: string = DEFAULT_CONTENT_ROOT): RawPostSou
       postYml: read("post.yml"),
       bodies,
       unexpectedFiles: names.filter((name) => !POST_FILES.includes(name) && !name.startsWith(".")),
+    };
+  });
+}
+
+/** Issues live in content/newsletter/<number>/; a tree without that directory has none. */
+export function loadIssueSources(root: string = DEFAULT_CONTENT_ROOT): RawIssueSource[] {
+  const issuesDir = path.join(root, "newsletter");
+  if (!existsSync(issuesDir)) return [];
+
+  const dirNames = readdirSync(issuesDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
+    .map((entry) => entry.name)
+    .sort();
+
+  return dirNames.map((dirName) => {
+    const dir = path.join(issuesDir, dirName);
+    const names = readdirSync(dir);
+    const read = (name: string): string | undefined =>
+      names.includes(name) ? readFileSync(path.join(dir, name), "utf8") : undefined;
+
+    const bodies: RawIssueSource["bodies"] = {};
+    for (const locale of LOCALES) {
+      const body = read(`${locale}.md`);
+      if (body !== undefined) bodies[locale] = body;
+    }
+
+    return {
+      dirName,
+      issueYml: read("issue.yml"),
+      bodies,
+      unexpectedFiles: names.filter((name) => !ISSUE_FILES.includes(name) && !name.startsWith(".")),
     };
   });
 }

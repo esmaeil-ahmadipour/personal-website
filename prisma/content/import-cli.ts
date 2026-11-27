@@ -11,8 +11,9 @@ import { resolveDatabaseUrl, stripPrismaParams } from "../lib/connection";
 import { acquireReleaseLock } from "../lib/lock";
 import { createLogger, errorMessage, type Logger } from "../lib/log";
 import { ForceTokenError, generateForceToken, parseForceToken, redactSecrets } from "./force";
-import { ImportError, assertAllAllowed, parseCommand, runImport } from "./import";
+import { ImportError, assertAllAllowed, parseCommand, parseTarget, runImport } from "./import";
 import { verifyPins } from "./manifest";
+import { validateNewsletter } from "./newsletter";
 import { selectListedItems, validateTaxonomy } from "./taxonomy";
 import { runTaxonomyImport } from "./taxonomy-import";
 import { validateContent } from "./validate";
@@ -50,14 +51,25 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       return 1;
     }
 
+    const newsletter = validateNewsletter();
+    if (!newsletter.ok) {
+      for (const error of newsletter.errors) log.error(error);
+      log.error("Content is invalid; nothing was imported. Run `pnpm content:validate`.");
+      return 1;
+    }
+
     if (command.command === "token") {
-      if (!validation.posts.some((post) => post.slug === command.slug)) {
+      const target = parseTarget(command.slug);
+      if (target.kind === "post" && !validation.posts.some((post) => post.slug === target.slug)) {
         throw new ImportError(`No post "${command.slug}" in content/posts.`);
+      }
+      if (target.kind === "newsletter" && !newsletter.issues.some((issue) => issue.slug === target.slug)) {
+        throw new ImportError(`No newsletter issue "${target.slug}" in content/newsletter.`);
       }
       // The one place the raw token is printed. It is not stored anywhere.
       console.log(
         `Force token for "${command.slug}" (single use; shown only now, never stored):\n\n` +
-          `${generateForceToken(command.slug)}\n\n` +
+          `${generateForceToken(target.slug, target.kind)}\n\n` +
           "Use it once, without leaving it in the shell history or environment:\n" +
           "  read -rs CONTENT_FORCE_TOKEN && export CONTENT_FORCE_TOKEN   # paste the token, press Enter\n" +
           "  pnpm content:import --force\n" +
@@ -72,6 +84,9 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       const pinProblems = [
         ...verifyPins(validation.manifestEntries, validation.posts),
         ...taxonomy.pinProblems,
+        // Pinning newsletter issues comes with the release phase; until then a listed issue
+        // needs a sourceHash written into manifest.json by hand.
+        ...verifyPins(newsletter.entries, newsletter.issues).map((problem) => `newsletter: ${problem}`),
       ];
       if (pinProblems.length > 0) {
         for (const problem of pinProblems) log.error(problem);
@@ -87,6 +102,9 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
       log.warn("CONTENT_FORCE_TOKEN is set but --force was not passed; the token is ignored. Run: unset CONTENT_FORCE_TOKEN");
     }
     const force = command.force && token ? parseForceToken(token) : undefined;
+    if (force?.kind !== undefined && force.kind !== "newsletter") {
+      throw new ForceTokenError("content:import accepts force tokens for posts and newsletter issues only.");
+    }
 
     const databaseUrl = resolveDatabaseUrl(env);
     if (command.all) assertAllAllowed(env, databaseUrl);
@@ -97,7 +115,10 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
     const selectedTaxonomy = command.all
       ? taxonomy.items
       : selectListedItems(taxonomy.items, taxonomy.entries);
-    if (selected.length === 0 && selectedTaxonomy.length === 0 && force === undefined) {
+    const selectedIssues = command.all
+      ? newsletter.issues
+      : newsletter.issues.filter((issue) => newsletter.entries.some((entry) => entry.slug === issue.slug));
+    if (selected.length === 0 && selectedTaxonomy.length === 0 && selectedIssues.length === 0 && force === undefined) {
       log.info("No content selected (the manifest is empty). Use --all on a development database.");
       return 0;
     }
@@ -112,8 +133,18 @@ async function main(argv: readonly string[], env: Record<string, string | undefi
         });
     try {
       await runTaxonomyImport(prisma, selectedTaxonomy, { dryRun: command.dryRun, log, lock });
-      const summary = await runImport(prisma, selected, { dryRun: command.dryRun, log, lock, force });
-      return summary.blocked ? 1 : 0;
+      const posts = await runImport(prisma, selected, { dryRun: command.dryRun, log, lock, force });
+      if (posts.blocked) return 1;
+      // Skipped when nothing is selected, so databases without the newsletter tables stay untouched.
+      if (selectedIssues.length === 0 && force?.kind !== "newsletter") return 0;
+      const issues = await runImport(prisma, selectedIssues, {
+        dryRun: command.dryRun,
+        log,
+        lock,
+        force,
+        kind: "newsletter",
+      });
+      return issues.blocked ? 1 : 0;
     } finally {
       await lock?.release().catch(() => undefined);
       await prisma.$disconnect();

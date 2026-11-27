@@ -12,8 +12,9 @@
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { createLogger, errorMessage } from "../lib/log";
-import { DEFAULT_CONTENT_ROOT } from "./load";
-import { approveEntries } from "./manifest";
+import { DEFAULT_CONTENT_ROOT, readManifestText } from "./load";
+import { approveEntries, extraEntriesOf } from "./manifest";
+import { parseManifest } from "./parse";
 import { approveTaxonomy, parseTaxonomyTargets, serializeFullManifest, validateTaxonomy } from "./taxonomy";
 import { ContentError } from "./types";
 import { validateContent } from "./validate";
@@ -77,7 +78,8 @@ function main(argv: readonly string[]): number {
 
     if (changed || taxonomyResult.changed) {
       const manifestPath = path.join(DEFAULT_CONTENT_ROOT, "manifest.json");
-      writeFileSync(manifestPath, serializeFullManifest(next, taxonomyResult.entries), "utf8");
+      const extra = extraEntriesOf(parseManifest(readManifestText()));
+      writeFileSync(manifestPath, serializeFullManifest(next, taxonomyResult.entries, extra), "utf8");
       log.info("content/manifest.json updated. Review it with: git diff content/manifest.json");
     } else {
       log.info("content/manifest.json is already up to date.");

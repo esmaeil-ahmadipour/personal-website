@@ -15,7 +15,7 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import type { Logger } from "../lib/log";
 import type { LockProof } from "../seed/runner";
-import { ForceTokenError, type ForceRequest } from "./force";
+import { ForceTokenError, forceKind, type ForceRequest } from "./force";
 import { planPost, hasWork, type DbPostState, type PostPlan, type SyncState } from "./plan";
 import type { FieldValue, ParsedPost } from "./types";
 
@@ -28,12 +28,17 @@ export class ImportError extends Error {
 
 type Db = Prisma.TransactionClient;
 
+/** Kinds of content this importer writes; each has its own table and ContentSync kind. */
+export type ImportKind = "post" | "newsletter";
+
 export interface ImportOptions {
   dryRun: boolean;
   log: Logger;
   /** Required for real runs; every transaction re-asserts it. */
   lock?: LockProof;
   force?: ForceRequest;
+  /** What the items are. Defaults to "post"; a newsletter issue's slug is its number as text. */
+  kind?: ImportKind;
 }
 
 export interface ImportSummary {
@@ -98,6 +103,21 @@ export function assertAllAllowed(env: Record<string, string | undefined>, databa
   }
 }
 
+export interface ImportTarget {
+  kind: ImportKind;
+  slug: string;
+}
+
+/** `my-post` or `newsletter:5`: the item a force token is for. Never echoes more than a kind word. */
+export function parseTarget(arg: string): ImportTarget {
+  const match = /^([a-z]+):(.+)$/.exec(arg);
+  if (match === null) return { kind: "post", slug: arg };
+  if (match[1] !== "newsletter") {
+    throw new ImportError(`Force tokens are supported for posts and newsletter issues only, not "${match[1]}".`);
+  }
+  return { kind: "newsletter", slug: match[2] };
+}
+
 // ---------------------------------------------------------------------------
 // Database access
 // ---------------------------------------------------------------------------
@@ -107,6 +127,79 @@ interface Refs {
   categories: Map<string, string>;
   tags: Map<string, string>;
 }
+
+const ref = (kind: ImportKind, slug: string): string => (kind === "post" ? slug : `${kind}:${slug}`);
+
+const RELATIONS = {
+  author: { select: { slug: true } },
+  category: { select: { slug: true } },
+  tags: { select: { tag: { select: { slug: true } } } },
+} as const;
+
+interface RowWithRelations {
+  id: string;
+  author: { slug: string };
+  category: { slug: string };
+  tags: { tag: { slug: string } }[];
+}
+
+function toDbState(row: RowWithRelations): DbPostState {
+  return {
+    id: row.id,
+    values: { ...row },
+    authorSlug: row.author.slug,
+    categorySlug: row.category.slug,
+    tagSlugs: row.tags.map((entry) => entry.tag.slug).sort(),
+  };
+}
+
+/** The table-specific part of an import. Planning, gating and conflict rules are shared. */
+interface ItemOps {
+  kind: ImportKind;
+  /** Existing rows keyed by slug. */
+  find(db: Db, slugs: string[]): Promise<Map<string, DbPostState>>;
+  create(db: Db, post: ParsedPost, ids: { author: string; category: string; tags: string[] }): Promise<void>;
+  update(db: Db, id: string, data: Record<string, FieldValue>): Promise<void>;
+}
+
+const POST_OPS: ItemOps = {
+  kind: "post",
+  async find(db, slugs) {
+    const rows = await db.post.findMany({ where: { slug: { in: slugs } }, include: RELATIONS });
+    return new Map<string, DbPostState>(rows.map((row) => [row.slug, toDbState(row)] as const));
+  },
+  async create(db, post, ids) {
+    await db.post.create({ data: createData(post, ids) });
+  },
+  async update(db, id, data) {
+    await db.post.update({ where: { id }, data: data as unknown as Prisma.PostUncheckedUpdateInput });
+  },
+};
+
+const ISSUE_OPS: ItemOps = {
+  kind: "newsletter",
+  async find(db, slugs) {
+    const numbers = slugs.map(Number).filter((value) => Number.isInteger(value));
+    const rows = await db.newsletterIssue.findMany({ where: { number: { in: numbers } }, include: RELATIONS });
+    return new Map<string, DbPostState>(rows.map((row) => [String(row.number), toDbState(row)] as const));
+  },
+  async create(db, post, ids) {
+    await db.newsletterIssue.create({
+      data: {
+        ...post.fields,
+        number: Number(post.slug),
+        authorId: ids.author,
+        categoryId: ids.category,
+        tags: { create: ids.tags.map((tagId) => ({ tagId })) },
+      } as unknown as Prisma.NewsletterIssueUncheckedCreateInput,
+    });
+  },
+  async update(db, id, data) {
+    await db.newsletterIssue.update({ where: { id }, data: data as unknown as Prisma.NewsletterIssueUncheckedUpdateInput });
+  },
+};
+
+const OPS: Record<ImportKind, ItemOps> = { post: POST_OPS, newsletter: ISSUE_OPS };
 
 interface State {
   posts: Map<string, DbPostState>;
@@ -127,20 +220,13 @@ function toHashRecord(value: unknown): Record<string, string> {
 const toMap = (rows: { id: string; slug: string }[]): Map<string, string> =>
   new Map(rows.map((row) => [row.slug, row.id]));
 
-async function loadState(db: Db, posts: readonly ParsedPost[]): Promise<State> {
+async function loadState(db: Db, posts: readonly ParsedPost[], ops: ItemOps): Promise<State> {
   const slugs = posts.map((post) => post.slug);
   const unique = (values: string[]): string[] => [...new Set(values)];
 
-  const [postRows, syncRows, authors, categories, tags] = await Promise.all([
-    db.post.findMany({
-      where: { slug: { in: slugs } },
-      include: {
-        author: { select: { slug: true } },
-        category: { select: { slug: true } },
-        tags: { select: { tag: { select: { slug: true } } } },
-      },
-    }),
-    db.contentSync.findMany({ where: { kind: "post", slug: { in: slugs } } }),
+  const [found, syncRows, authors, categories, tags] = await Promise.all([
+    ops.find(db, slugs),
+    db.contentSync.findMany({ where: { kind: ops.kind, slug: { in: slugs } } }),
     db.author.findMany({
       where: { slug: { in: unique(posts.map((p) => p.relations.authorSlug)) } },
       select: { id: true, slug: true },
@@ -156,18 +242,7 @@ async function loadState(db: Db, posts: readonly ParsedPost[]): Promise<State> {
   ]);
 
   return {
-    posts: new Map(
-      postRows.map((row) => [
-        row.slug,
-        {
-          id: row.id,
-          values: { ...row },
-          authorSlug: row.author.slug,
-          categorySlug: row.category.slug,
-          tagSlugs: row.tags.map((entry) => entry.tag.slug).sort(),
-        },
-      ]),
-    ),
+    posts: found,
     syncs: new Map(
       syncRows.map((row) => [
         row.slug,
@@ -193,9 +268,10 @@ export async function consumeForceToken(
   db: Pick<Db, "contentSync">,
   slug: string,
   marker: string,
+  kind: ImportKind = "post",
 ): Promise<boolean> {
   const result = await db.contentSync.updateMany({
-    where: { kind: "post", slug, NOT: { consumedForceTokens: { has: marker } } },
+    where: { kind, slug, NOT: { consumedForceTokens: { has: marker } } },
     data: { consumedForceTokens: { push: marker } },
   });
   return result.count === 1;
@@ -205,15 +281,16 @@ export async function consumeForceToken(
 // Planning and gating
 // ---------------------------------------------------------------------------
 
-function referenceErrors(plans: readonly PostPlan[], refs: Refs): string[] {
+function referenceErrors(plans: readonly PostPlan[], refs: Refs, kind: ImportKind): string[] {
   const errors: string[] = [];
   for (const plan of plans) {
     if (plan.kind !== "create") continue;
+    const name = ref(kind, plan.slug);
     const { authorSlug, categorySlug, tagSlugs } = plan.post.relations;
-    if (!refs.authors.has(authorSlug)) errors.push(`${plan.slug}: author "${authorSlug}" not found in the database`);
-    if (!refs.categories.has(categorySlug)) errors.push(`${plan.slug}: category "${categorySlug}" not found in the database`);
+    if (!refs.authors.has(authorSlug)) errors.push(`${name}: author "${authorSlug}" not found in the database`);
+    if (!refs.categories.has(categorySlug)) errors.push(`${name}: category "${categorySlug}" not found in the database`);
     for (const tag of tagSlugs) {
-      if (!refs.tags.has(tag)) errors.push(`${plan.slug}: tag "${tag}" not found in the database`);
+      if (!refs.tags.has(tag)) errors.push(`${name}: tag "${tag}" not found in the database`);
     }
   }
   return errors;
@@ -236,20 +313,21 @@ function validateForce(plans: readonly PostPlan[], state: State, force: ForceReq
   }
 }
 
-function report(plans: readonly PostPlan[], refErrors: readonly string[], log: Logger): void {
+function report(plans: readonly PostPlan[], refErrors: readonly string[], log: Logger, kind: ImportKind): void {
   for (const plan of plans) {
-    for (const warning of plan.warnings) log.warn(warning);
+    const name = ref(kind, plan.slug);
+    for (const warning of plan.warnings) log.warn(kind === "post" ? warning : `${kind}:${warning}`);
     if (plan.kind === "create") {
-      log.info(`${plan.slug}: create`);
+      log.info(`${name}: create`);
     } else if (plan.kind === "update") {
-      if (plan.writeFields.length > 0) log.info(`${plan.slug}: update ${plan.writeFields.join(", ")}`);
-      if (plan.forced.length > 0) log.warn(`${plan.slug}: force token overwrites conflicting field(s): ${plan.forced.join(", ")}`);
+      if (plan.writeFields.length > 0) log.info(`${name}: update ${plan.writeFields.join(", ")}`);
+      if (plan.forced.length > 0) log.warn(`${name}: force token overwrites conflicting field(s): ${plan.forced.join(", ")}`);
       const soft = plan.conflicts.filter((name) => !plan.blocking.includes(name));
-      if (soft.length > 0) log.warn(`${plan.slug}: conflict (database and file both changed), skipped: ${soft.join(", ")}`);
+      if (soft.length > 0) log.warn(`${name}: conflict (database and file both changed), skipped: ${soft.join(", ")}`);
       if (plan.blocking.length > 0) {
-        log.error(`${plan.slug}: BLOCKING conflict on ${plan.blocking.join(", ")}; resolve it or use a force token (docs/content-import.md)`);
+        log.error(`${name}: BLOCKING conflict on ${plan.blocking.join(", ")}; resolve it or use a force token (docs/content-import.md)`);
       }
-      if (!hasWork(plan) && plan.conflicts.length === 0) log.info(`${plan.slug}: unchanged`);
+      if (!hasWork(plan) && plan.conflicts.length === 0) log.info(`${name}: unchanged`);
     }
   }
   for (const error of refErrors) log.error(error);
@@ -270,10 +348,10 @@ function createData(post: ParsedPost, ids: { author: string; category: string; t
   } as unknown as Prisma.PostUncheckedCreateInput;
 }
 
-function pickFields(post: ParsedPost, names: readonly string[]): Prisma.PostUncheckedUpdateInput {
+function pickFields(post: ParsedPost, names: readonly string[]): Record<string, FieldValue> {
   const data: Record<string, FieldValue> = {};
   for (const name of names) data[name] = post.fields[name];
-  return data as unknown as Prisma.PostUncheckedUpdateInput;
+  return data;
 }
 
 function isSerializationFailure(error: unknown): boolean {
@@ -285,29 +363,28 @@ async function applyOne(
   post: ParsedPost,
   force: ForceRequest | undefined,
   lock: LockProof | undefined,
+  ops: ItemOps,
 ): Promise<void> {
   await lock?.assertHeld();
   try {
     await prisma.$transaction(
       async (tx) => {
         await lock?.assertHeld();
-        const state = await loadState(tx, [post]);
+        const state = await loadState(tx, [post], ops);
         const db = state.posts.get(post.slug) ?? null;
         const plan = planPost(post, db, state.syncs.get(post.slug) ?? null, force ?? null);
 
         if (plan.kind === "create") {
-          const errors = referenceErrors([plan], state.refs);
+          const errors = referenceErrors([plan], state.refs, ops.kind);
           if (errors.length > 0) throw new ImportError(errors.join("; "));
-          await tx.post.create({
-            data: createData(post, {
-              author: state.refs.authors.get(post.relations.authorSlug) as string,
-              category: state.refs.categories.get(post.relations.categorySlug) as string,
-              tags: post.relations.tagSlugs.map((tag) => state.refs.tags.get(tag) as string),
-            }),
+          await ops.create(tx, post, {
+            author: state.refs.authors.get(post.relations.authorSlug) as string,
+            category: state.refs.categories.get(post.relations.categorySlug) as string,
+            tags: post.relations.tagSlugs.map((tag) => state.refs.tags.get(tag) as string),
           });
           await tx.contentSync.create({
             data: {
-              kind: "post",
+              kind: ops.kind,
               slug: post.slug,
               sourceHash: post.sourceHash,
               formatVersion: post.formatVersion,
@@ -322,16 +399,16 @@ async function applyOne(
             if (plan.forced.length === 0) {
               throw new ForceTokenError(`The force token for "${post.slug}" is no longer applicable; nothing was written for it.`);
             }
-            if (!(await consumeForceToken(tx, post.slug, force.marker))) {
+            if (!(await consumeForceToken(tx, post.slug, force.marker, ops.kind))) {
               throw new ForceTokenError(`The force token for "${post.slug}" was already used; nothing was written for it.`);
             }
           }
           if (plan.writeFields.length > 0) {
-            await tx.post.update({ where: { id: db.id }, data: pickFields(post, plan.writeFields) });
+            await ops.update(tx, db.id, pickFields(post, plan.writeFields));
           }
           if (plan.syncChanged) {
             await tx.contentSync.update({
-              where: { kind_slug: { kind: "post", slug: post.slug } },
+              where: { kind_slug: { kind: ops.kind, slug: post.slug } },
               data: {
                 sourceHash: post.sourceHash,
                 formatVersion: post.formatVersion,
@@ -360,15 +437,19 @@ export async function runImport(
   posts: readonly ParsedPost[],
   options: ImportOptions,
 ): Promise<ImportSummary> {
-  const { log, force, lock, dryRun } = options;
-  const state = await loadState(prisma, posts);
+  const { log, lock, dryRun } = options;
+  const ops = OPS[options.kind ?? "post"];
+  // A token is scoped to one kind: a post and a newsletter issue can both have the slug "5".
+  const force =
+    options.force !== undefined && forceKind(options.force) === ops.kind ? options.force : undefined;
+  const state = await loadState(prisma, posts, ops);
   const plans = posts.map((post) =>
     planPost(post, state.posts.get(post.slug) ?? null, state.syncs.get(post.slug) ?? null, force ?? null),
   );
   if (force !== undefined) validateForce(plans, state, force);
 
-  const refErrors = referenceErrors(plans, state.refs);
-  report(plans, refErrors, log);
+  const refErrors = referenceErrors(plans, state.refs, ops.kind);
+  report(plans, refErrors, log, ops.kind);
 
   const summary: ImportSummary = {
     dryRun,
@@ -395,7 +476,7 @@ export async function runImport(
     for (const plan of plans) {
       if (plan.kind !== "create" && plan.kind !== "update") continue; // unmanaged / orphan: skipped on purpose
       if (!hasWork(plan)) continue;
-      await applyOne(prisma, plan.post, force, lock);
+      await applyOne(prisma, plan.post, force, lock, ops);
       summary.applied.push(plan.slug);
     }
   } catch (error) {

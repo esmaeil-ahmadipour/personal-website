@@ -1,0 +1,35 @@
+slug: sample-test-post
+author: esmaeil-ahmadipour
+category: engineering
+tags: [nextjs, react]
+language: en
+status: published
+publishedAt: "2026-11-27"
+isFeatured: false
+isTrending: false
+isPinned: false
+priority: 0
+readingTimeMin: 2
+coverImageUrl: /images/demo/cover-code.svg
+locales:
+  en:
+    title: "[Sample] Test post"
+    excerpt: "[Sample] A test post to verify the content import."
+    seoTitle: "[Sample] Test post"
+    seoDescription: "[Sample] A test post to verify the content import."
+    keywords: "sample, test"
+    ogImage: "/images/demo/cover-code.svg"
+  fa:
+    title: "[نمونه] پست آزمایشی"
+    excerpt: "[نمونه] پست آزمایشی برای بررسی ایمپورت محتوا."
+    seoTitle: "[نمونه] پست آزمایشی"
+    seoDescription: "[نمونه] پست آزمایشی برای بررسی ایمپورت محتوا."
+    keywords: "نمونه، آزمایشی"
+    ogImage: "/images/demo/cover-code.svg"
+  ar:
+    title: "[عينة] مقال تجريبي"
+    excerpt: "[عينة] مقال تجريبي للتحقق من استيراد المحتوى."
+    seoTitle: "[عينة] مقال تجريبي"
+    seoDescription: "[عينة] مقال تجريبي للتحقق من استيراد المحتوى."
+    keywords: "عينة، تجريبي"
+    ogImage: "/images/demo/cover-code.svg"

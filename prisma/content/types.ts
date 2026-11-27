@@ -23,6 +23,12 @@ export const POST_FILES: readonly string[] = [
   ...LOCALES.map((locale) => `${locale}.md`),
 ];
 
+/** The only files a newsletter issue directory may contain (dotfiles are ignored). */
+export const ISSUE_FILES: readonly string[] = [
+  "issue.yml",
+  ...LOCALES.map((locale) => `${locale}.md`),
+];
+
 export interface ContentManifest {
   /** Slugs that are released to production. Posts not listed stay dev-only. */
   posts: string[];
@@ -32,6 +38,14 @@ export interface ContentManifest {
 export interface RawPostSource {
   dirName: string;
   postYml: string | undefined;
+  bodies: Partial<Record<Locale, string>>;
+  unexpectedFiles: string[];
+}
+
+/** Raw, unparsed contents of one `content/newsletter/<number>/` directory. */
+export interface RawIssueSource {
+  dirName: string;
+  issueYml: string | undefined;
   bodies: Partial<Record<Locale, string>>;
   unexpectedFiles: string[];
 }
@@ -51,6 +65,11 @@ export interface ParsedPost {
   relations: { authorSlug: string; categorySlug: string; tagSlugs: string[] };
   /** Locales that have a body. */
   locales: Locale[];
+}
+
+/** A newsletter issue; `slug` is the issue number as text, so it can key ContentSync. */
+export interface ParsedIssue extends ParsedPost {
+  number: number;
 }
 
 /** Invalid content. `issues` holds one human-readable line per problem. */

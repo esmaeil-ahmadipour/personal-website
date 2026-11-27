@@ -32,6 +32,7 @@
     "docker:down": "docker-compose -f docker-compose.yml down",
     "docker:restart": "docker-compose -f docker-compose.yml restart",
     "db:wait": "until docker exec tarvix-postgres pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\"; do echo 'Waiting for database...'; sleep 1; done",
+    "db:status": "docker ps --filter name=tarvix-postgres --format '{{.Names}} {{.Status}}' && docker exec tarvix-postgres psql -U tarvix -d postgres -Atc \"select datname from pg_database order by 1\"",
     "db:start": "pnpm docker:up && pnpm db:wait && pnpm db:push",
     "db:reset": "pnpm docker:down && docker volume rm tarvix-nextjs_postgres-data 2>/dev/null || true && pnpm docker:up && sleep 5 && pnpm db:wait && pnpm db:push && pnpm db:seed",
     "postinstall": "prisma generate",

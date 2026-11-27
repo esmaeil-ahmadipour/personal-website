@@ -1,0 +1,19 @@
+number: 5
+author: esmaeil-ahmadipour
+category: engineering
+tags: [typescript]
+linkedinUrl: "https://www.linkedin.com/pulse/sample-test-issue-5/"
+status: published
+publishedAt: "2026-11-27"
+readingTimeMin: 2
+coverImageUrl: /images/demo/cover-code.svg
+locales:
+  en:
+    title: "[Sample] Test issue 5"
+    excerpt: "[Sample] A test issue to verify the newsletter content files."
+  fa:
+    title: "[نمونه] شماره‌ی آزمایشی ۵"
+    excerpt: "[نمونه] یک شماره‌ی آزمایشی برای بررسی فایل‌های محتوای خبرنامه."
+  ar:
+    title: "[عينة] عدد تجريبي ٥"
+    excerpt: "[عينة] عدد تجريبي للتحقق من ملفات محتوى النشرة."

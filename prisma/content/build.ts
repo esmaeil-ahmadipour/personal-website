@@ -40,7 +40,45 @@ export function hashValue(value: unknown): string {
   return sha256Hex(canonicalJson(value));
 }
 
-const capitalize = (locale: Locale): string => locale.charAt(0).toUpperCase() + locale.slice(1);
+export const capitalize = (locale: Locale): string => locale.charAt(0).toUpperCase() + locale.slice(1);
+
+/** Renders the Markdown body of every locale the metadata file declares; problems go to `issues`. */
+export function renderBodies(
+  declaredLocales: Partial<Record<Locale, unknown>>,
+  rawBodies: Partial<Record<Locale, string>>,
+  metaFile: string,
+  issues: string[],
+): { bodies: Partial<Record<Locale, string>>; html: Partial<Record<Locale, string>> } {
+  const bodies: Partial<Record<Locale, string>> = {};
+  const html: Partial<Record<Locale, string>> = {};
+  for (const locale of LOCALES) {
+    const declared = declaredLocales[locale] !== undefined;
+    const raw = rawBodies[locale];
+    const file = `${locale}.md`;
+    if (!declared && raw === undefined) continue;
+    if (!declared) {
+      issues.push(`${file} exists but ${metaFile} has no locales.${locale} entry`);
+      continue;
+    }
+    if (raw === undefined) {
+      issues.push(`${metaFile} declares locales.${locale} but ${file} is missing`);
+      continue;
+    }
+    const body = normalizeMarkdown(raw);
+    if (body === "") {
+      issues.push(`${file} is empty`);
+      continue;
+    }
+    try {
+      html[locale] = renderMarkdown(body);
+      bodies[locale] = body;
+    } catch (error) {
+      if (error instanceof ContentError) issues.push(...error.issues.map((issue) => `${file}: ${issue}`));
+      else throw error;
+    }
+  }
+  return { bodies, html };
+}
 
 export function buildPost(source: RawPostSource): ParsedPost {
   const issues = source.unexpectedFiles.map(
@@ -61,34 +99,7 @@ export function buildPost(source: RawPostSource): ParsedPost {
     issues.push(`slug "${meta.slug}" does not match its directory "${source.dirName}"`);
   }
 
-  const bodies: Partial<Record<Locale, string>> = {};
-  const html: Partial<Record<Locale, string>> = {};
-  for (const locale of LOCALES) {
-    const declared = meta.locales[locale] !== undefined;
-    const raw = source.bodies[locale];
-    const file = `${locale}.md`;
-    if (!declared && raw === undefined) continue;
-    if (!declared) {
-      issues.push(`${file} exists but post.yml has no locales.${locale} entry`);
-      continue;
-    }
-    if (raw === undefined) {
-      issues.push(`post.yml declares locales.${locale} but ${file} is missing`);
-      continue;
-    }
-    const body = normalizeMarkdown(raw);
-    if (body === "") {
-      issues.push(`${file} is empty`);
-      continue;
-    }
-    try {
-      html[locale] = renderMarkdown(body);
-      bodies[locale] = body;
-    } catch (error) {
-      if (error instanceof ContentError) issues.push(...error.issues.map((issue) => `${file}: ${issue}`));
-      else throw error;
-    }
-  }
+  const { bodies, html } = renderBodies(meta.locales, source.bodies, "post.yml", issues);
 
   if (issues.length > 0) throw new ContentError(issues);
 

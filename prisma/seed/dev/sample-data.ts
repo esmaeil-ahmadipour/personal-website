@@ -219,6 +219,24 @@ export const DEMO_PROJECTS: DemoProject[] = [
     url: null,
     sourceUrl: "https://github.com/esmaeil-ahmadipour/CodeBridge",
   },
+  {
+    slug: "sample-test-project",
+    name: "Sample Test Project",
+    coverImageUrl: COVER("code"),
+    descriptionEn: "[Sample] Test project to verify the dev seed",
+    descriptionFa: "[نمونه] پروژه‌ی آزمایشی برای بررسی داده‌ی توسعه",
+    descriptionAr: "[عينة] مشروع تجريبي للتحقق من بيانات التطوير",
+    ...OVERVIEW,
+    isFeatured: false,
+    order: 5,
+    kind: "tool",
+    stage: "live",
+    year: 2026,
+    badges: ["personal"],
+    stack: ["Next.js", "TypeScript"],
+    url: null,
+    sourceUrl: null,
+  },
 ];
 
 /** Optional project <-> post links. Projects without an entry simply have no articles. */
@@ -285,4 +303,5 @@ export const DEMO_ISSUES: DemoIssue[] = [
   issue(1, "https://www.linkedin.com/pulse/architecture-decisions-directories-esmaeil-ahmadipour-8rrme/", "2026-08-15", 4, "engineering", ["flutter"], "۱", "١", COVER("coin")),
   issue(2, "https://www.linkedin.com/pulse/why-delivery-slows-down-code-bases-grow-where-real-esmaeil-ahmadipour-vxufe/", "2026-09-15", 5, "architecture", ["architecture"], "۲", "٢", COVER("shield")),
   issue(3, "https://www.linkedin.com/pulse/riverpod-30-vs-bloc-wrong-debate-esmaeil-ahmadipour-ogo1e/", "2026-10-15", 6, "web3", ["web3", "blockchain"], "۳", "٣", COVER("diamond")),
+  issue(4, "https://www.linkedin.com/pulse/sample-test-issue-4/", "2026-11-27", 3, "engineering", ["typescript"], "۴", "٤", COVER("code")),
 ];
