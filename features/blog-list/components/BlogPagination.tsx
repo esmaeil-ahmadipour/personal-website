@@ -13,8 +13,7 @@ interface BlogPaginationProps {
 const item =
   "btn-press min-w-9 px-3 py-1.5 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[hsl(var(--focus-ring))] disabled:cursor-not-allowed disabled:opacity-40";
 const idle = "text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))]";
-const active =
-  "bg-[linear-gradient(90deg,var(--grad-from-hover),var(--grad-to-hover))] text-[hsl(var(--ink-light))]";
+const active = "bg-[hsl(var(--accent-blue)/0.12)] text-[hsl(var(--accent-text))]";
 
 export function BlogPagination({
   currentPage,

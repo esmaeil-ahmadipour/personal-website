@@ -24,9 +24,16 @@ export const BLOCKING_FIELDS: ReadonlySet<string> = new Set(["status", "publishe
 
 export type FieldAction = "in-sync" | "keep-db" | "update" | "conflict" | "forced";
 
-export interface DbPostState {
+/** What the planner reads from a parsed item: a post, a newsletter issue or a project. */
+export type PlanItem = Pick<ParsedPost, "slug" | "formatVersion" | "sourceHash" | "fields" | "fieldHashes">;
+
+/** What the planner reads from a database row. */
+export interface DbItemState {
   id: string;
   values: Record<string, unknown>;
+}
+
+export interface DbPostState extends DbItemState {
   authorSlug: string;
   categorySlug: string;
   /** Sorted. */
@@ -45,9 +52,9 @@ interface PlanBase {
   warnings: string[];
 }
 
-export interface CreatePlan extends PlanBase {
+export interface CreatePlan<T extends PlanItem = ParsedPost> extends PlanBase {
   kind: "create";
-  post: ParsedPost;
+  post: T;
 }
 
 /** Skipped on purpose: "unmanaged" has no ContentSync row, "orphan" has no Post row. */
@@ -55,9 +62,9 @@ export interface SkipPlan extends PlanBase {
   kind: "unmanaged" | "orphan";
 }
 
-export interface UpdatePlan extends PlanBase {
+export interface UpdatePlan<T extends PlanItem = ParsedPost> extends PlanBase {
   kind: "update";
-  post: ParsedPost;
+  post: T;
   actions: Record<string, FieldAction>;
   /** Fields written to the Post (updates plus forced overwrites). */
   writeFields: string[];
@@ -71,9 +78,33 @@ export interface UpdatePlan extends PlanBase {
   nextHashes: Record<string, string>;
   /** Whether the ContentSync row itself needs writing. */
   syncChanged: boolean;
+  /** Links the file lists and the database lacks (projects only). They are added, never removed. */
+  linkAdditions: string[];
 }
 
-export type PostPlan = CreatePlan | SkipPlan | UpdatePlan;
+export type PostPlan<T extends PlanItem = ParsedPost> = CreatePlan<T> | SkipPlan | UpdatePlan<T>;
+
+/** What an item's relations add to its plan: warnings, and links to add to the existing row. */
+export interface RelationCheck {
+  warnings: string[];
+  additions: string[];
+}
+
+/** Posts and newsletter issues: author, category and tags are create-only. */
+export function taxonomyRelations(post: ParsedPost, db: DbPostState): RelationCheck {
+  const slug = post.slug;
+  const warnings: string[] = [];
+  if (db.authorSlug !== post.relations.authorSlug) {
+    warnings.push(`${slug}: author differs from content; relations are create-only, not changed`);
+  }
+  if (db.categorySlug !== post.relations.categorySlug) {
+    warnings.push(`${slug}: category differs from content; relations are create-only, not changed`);
+  }
+  if (db.tagSlugs.join(",") !== post.relations.tagSlugs.join(",")) {
+    warnings.push(`${slug}: tags differ from content; relations are create-only, not changed`);
+  }
+  return { warnings, additions: [] };
+}
 
 export function planPost(
   post: ParsedPost,
@@ -81,6 +112,17 @@ export function planPost(
   sync: SyncState | null,
   force: ForceRequest | null,
 ): PostPlan {
+  return planItem(post, db, sync, force, (state) => taxonomyRelations(post, state));
+}
+
+/** The planner for any kind of item; `relations` supplies what the item's links add to the plan. */
+export function planItem<T extends PlanItem, D extends DbItemState>(
+  post: T,
+  db: D | null,
+  sync: SyncState | null,
+  force: ForceRequest | null,
+  relations: (db: D) => RelationCheck,
+): PostPlan<T> {
   const slug = post.slug;
   if (db === null && sync === null) return { kind: "create", slug, post, warnings: [] };
   if (db === null) {
@@ -131,16 +173,7 @@ export function planPost(
     nextHashes[name] = post.fieldHashes[name];
   }
 
-  const warnings: string[] = [];
-  if (db.authorSlug !== post.relations.authorSlug) {
-    warnings.push(`${slug}: author differs from content; relations are create-only, not changed`);
-  }
-  if (db.categorySlug !== post.relations.categorySlug) {
-    warnings.push(`${slug}: category differs from content; relations are create-only, not changed`);
-  }
-  if (db.tagSlugs.join(",") !== post.relations.tagSlugs.join(",")) {
-    warnings.push(`${slug}: tags differ from content; relations are create-only, not changed`);
-  }
+  const { warnings, additions } = relations(db);
 
   return {
     kind: "update",
@@ -156,12 +189,13 @@ export function planPost(
       post.sourceHash !== sync.sourceHash ||
       post.formatVersion !== sync.formatVersion ||
       canonicalJson(nextHashes) !== canonicalJson(sync.fieldHashes),
+    linkAdditions: additions,
     warnings,
   };
 }
 
-export function hasWork(plan: PostPlan): boolean {
+export function hasWork(plan: PostPlan<PlanItem>): boolean {
   if (plan.kind === "create") return true;
-  if (plan.kind === "update") return plan.writeFields.length > 0 || plan.syncChanged;
+  if (plan.kind === "update") return plan.writeFields.length > 0 || plan.syncChanged || plan.linkAdditions.length > 0;
   return false;
 }

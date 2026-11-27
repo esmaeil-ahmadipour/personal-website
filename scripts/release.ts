@@ -8,12 +8,15 @@
 // Before anything else (and before taking a lock) the approved content is verified offline:
 // every manifest entry must be pinned and still match its files. The plan covers the
 // pending migrations (with a hash of their SQL), the pending seed versions and what each
-// approved post will do. A real release recomputes the plan under its lock and refuses to
+// approved post, newsletter issue and project will do. A real release recomputes the plan under its lock and refuses to
 // start if it differs from --expect-plan; a production release cannot run without it.
 //
 // The whole run holds one advisory lock (RELEASE_ORCHESTRATOR_LOCK_KEY), so two releases
 // never interleave. The steps run as child processes; seed and import take their own
 // (separate) lock. A dry run takes no lock and writes nothing.
+//
+// The URL is resolved once (DIRECT_DATABASE_URL, else DATABASE_URL) and every step gets it
+// in both variables, because `prisma migrate deploy` reads only DATABASE_URL.
 //
 // Pending migrations are scanned first; in production a destructive one is refused unless
 // RELEASE_ALLOW_DESTRUCTIVE names it exactly (comma-separated migration directory names).
@@ -22,8 +25,10 @@ import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import type { PrismaClient } from "@prisma/client";
 import { config as loadDotenv } from "dotenv";
-import { runImport } from "../prisma/content/import";
+import { runImport, type ImportSummary } from "../prisma/content/import";
 import { verifyPins } from "../prisma/content/manifest";
+import { validateNewsletter, type NewsletterValidation } from "../prisma/content/newsletter";
+import { validateProject, type ProjectValidation } from "../prisma/content/project";
 import type { ParsedPost } from "../prisma/content/types";
 import { validateContent } from "../prisma/content/validate";
 import { createReleaseClient } from "../prisma/lib/client";
@@ -41,23 +46,50 @@ import {
   parseReleaseArgs,
 } from "../prisma/release/guard";
 import { listPendingMigrations } from "../prisma/release/pending";
-import { contentStatus, describePlan, planFingerprint, sha256, type ReleasePlan } from "../prisma/release/plan";
+import {
+  contentStatus,
+  describePlan,
+  planFingerprint,
+  sha256,
+  type PlannedItem,
+  type ReleasePlan,
+} from "../prisma/release/plan";
 import { runPendingSeeds } from "../prisma/seed/runner";
 
+/** The manifest-listed content of every kind. */
+interface ApprovedContent {
+  posts: ParsedPost[];
+  issues: NewsletterValidation["issues"];
+  projects: ProjectValidation["projects"];
+}
+
 /** Offline check, before any lock or database access: invalid or changed content stops the release. */
-function approvedPosts(log: Logger): ParsedPost[] {
+function approvedContent(log: Logger): ApprovedContent {
   const validation = validateContent();
-  if (!validation.ok) {
-    for (const error of validation.errors) log.error(error);
+  const newsletter = validateNewsletter();
+  const projects = validateProject();
+  const checked = [validation, newsletter, projects];
+  if (checked.some((result) => !result.ok)) {
+    for (const result of checked) for (const error of result.errors) log.error(error);
     throw new ReleaseError("Content is invalid; nothing was released. Run `pnpm content:validate`.");
   }
-  const problems = verifyPins(validation.manifestEntries, validation.posts);
+  const problems = [
+    ...verifyPins(validation.manifestEntries, validation.posts),
+    ...verifyPins(newsletter.entries, newsletter.issues, "newsletter"),
+    ...verifyPins(projects.entries, projects.projects, "project"),
+  ];
   if (problems.length > 0) {
     for (const problem of problems) log.error(problem);
     throw new ReleaseError("The manifest does not match the content; nothing was released.");
   }
-  const listed = new Set(validation.manifestSlugs);
-  return validation.posts.filter((post) => listed.has(post.slug));
+  const listedPosts = new Set(validation.manifestSlugs);
+  const listedIssues = new Set(newsletter.entries.map((entry) => entry.slug));
+  const listedProjects = new Set(projects.entries.map((entry) => entry.slug));
+  return {
+    posts: validation.posts.filter((post) => listedPosts.has(post.slug)),
+    issues: newsletter.issues.filter((issue) => listedIssues.has(issue.slug)),
+    projects: projects.projects.filter((project) => listedProjects.has(project.slug)),
+  };
 }
 
 /** Scans pending migrations. Production refuses unnamed destructive ones; elsewhere it only warns. */
@@ -87,32 +119,60 @@ function guardDestructive(pending: readonly PendingMigration[], log: Logger): vo
 async function buildPlan(
   prisma: PrismaClient,
   pending: readonly PendingMigration[],
-  selected: readonly ParsedPost[],
+  approved: ApprovedContent,
   log: Logger,
 ): Promise<ReleasePlan> {
   const quiet: Logger = { info: () => undefined, warn: (m) => log.warn(m), error: (m) => log.error(m) };
   const needsMigration = pending.length > 0;
-  const readable = async <T>(read: () => Promise<T>): Promise<T | null> => {
-    try {
-      return await read();
-    } catch (error) {
-      if (needsMigration) return null;
-      throw error;
-    }
-  };
 
-  const seeds = await readable(() => runPendingSeeds(prisma, { dryRun: true, log: quiet }));
-  const imported = await readable(() => runImport(prisma, selected, { dryRun: true, log: quiet }));
+  // Do not query application tables against a schema that has pending migrations.
+  // The migration SQL hashes are part of the fingerprint; seed and content
+  // execution are explicitly deferred until after migrations.
+  //
+  // When the schema is already current, every planning error must propagate.
+  const seeds = needsMigration
+    ? null
+    : await runPendingSeeds(prisma, { dryRun: true, log: quiet });
+
+  // Same order as the real import (posts, issues, projects). Issues and projects are skipped
+  // when nothing is listed for them, like `content:import`. A project may link to a post this
+  // release creates; the dry run cannot see that row yet, so it is told which posts will exist.
+  const posts = needsMigration ? null : await runImport(prisma, approved.posts, { dryRun: true, log: quiet });
+  const issues =
+    needsMigration || approved.issues.length === 0
+      ? null
+      : await runImport(prisma, approved.issues, { dryRun: true, log: quiet, kind: "newsletter" });
+  const projects =
+    needsMigration || approved.projects.length === 0
+      ? null
+      : await runImport(prisma, approved.projects, {
+          dryRun: true,
+          log: quiet,
+          kind: "project",
+          plannedPosts: new Set(posts?.created ?? []),
+        });
+
+  const rows = (
+    kind: PlannedItem["kind"],
+    items: readonly Pick<ParsedPost, "slug" | "sourceHash">[],
+    outcome: ImportSummary | null,
+  ): PlannedItem[] =>
+    items.map((item) => ({
+      kind,
+      slug: item.slug,
+      sourceHash: item.sourceHash,
+      status: outcome === null ? "after-migrations" : contentStatus(item.slug, outcome),
+    }));
 
   return {
     migrations: pending.map((m) => ({ name: m.name, sqlHash: sha256(m.sql) })),
     seeds: seeds === null ? null : seeds.pending,
-    content: selected.map((post) => ({
-      slug: post.slug,
-      sourceHash: post.sourceHash,
-      status: imported === null ? "after-migrations" : contentStatus(post.slug, imported),
-    })),
-    blocked: imported?.blocked ?? false,
+    content: [
+      ...rows("post", approved.posts, posts),
+      ...rows("newsletter", approved.issues, issues),
+      ...rows("project", approved.projects, projects),
+    ],
+    blocked: [posts, issues, projects].some((outcome) => outcome?.blocked ?? false),
   };
 }
 
@@ -128,13 +188,14 @@ async function main(argv: readonly string[]): Promise<number> {
     assertReleaseAllowed(process.env);
     assertPlanExpected(process.env, options);
 
-    const selected = approvedPosts(log);
+    const approved = approvedContent(log);
 
     const url = resolveDatabaseUrl(process.env);
     const sha = process.env.VERCEL_GIT_COMMIT_SHA ?? null;
 
+    // Every step must target the database the plan was computed on.
     // A force token must never reach a release run.
-    const childEnv: NodeJS.ProcessEnv = { ...process.env };
+    const childEnv: NodeJS.ProcessEnv = { ...process.env, DATABASE_URL: url, DIRECT_DATABASE_URL: url };
     delete childEnv.CONTENT_FORCE_TOKEN;
 
     if (!dryRun) {
@@ -151,7 +212,7 @@ async function main(argv: readonly string[]): Promise<number> {
     guardDestructive(pending, log);
 
     prisma = createReleaseClient(url);
-    const plan = await buildPlan(prisma, pending, selected, log);
+    const plan = await buildPlan(prisma, pending, approved, log);
     const fingerprint = planFingerprint(plan);
     for (const line of describePlan(plan)) log.info(line);
     console.log(`PLAN_FINGERPRINT=${fingerprint}`);

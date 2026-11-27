@@ -63,6 +63,7 @@ export default async function LocaleLayout({
       lang={locale}
       dir={isRTL ? "rtl" : "ltr"}
       className={`${inter.variable} ${vazir.variable}`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body

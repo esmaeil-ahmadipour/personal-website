@@ -1,10 +1,8 @@
 // app/api/blog/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import { BlogService } from "@/features/blog/services/blog.service";
+import { getBlogList } from "@/features/blog-list/services/blog-list.service";
 import { GetPostsSchema } from "@/features/blog/schemas/blog.schema";
-
-const blogService = new BlogService();
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,9 +12,12 @@ export async function GET(request: NextRequest) {
       page: searchParams.get("page"),
       limit: searchParams.get("limit"),
       locale: searchParams.get("locale") || "en",
+      q: searchParams.get("q") ?? undefined,
+      category: searchParams.get("category") ?? undefined,
+      sort: searchParams.get("sort") ?? undefined,
     });
 
-    const result = await blogService.getPublishedPosts(params);
+    const result = await getBlogList(params);
 
     return NextResponse.json({
       success: true,

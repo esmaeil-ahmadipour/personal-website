@@ -1,6 +1,7 @@
 // features/get-blog-post/data/related.ts
 import "server-only";
 import { prisma } from "@/lib/prisma";
+import { getPostNumbers } from "@/features/blog/services/post-numbers";
 
 type Locale = "en" | "fa" | "ar";
 
@@ -8,7 +9,7 @@ export interface RelatedPost {
   id: string;
   slug: string;
   title: string;
-  excerpt: string;
+  number: number;
   readingTimeMin: number | null;
   category: { name: string };
 }
@@ -23,9 +24,6 @@ const select = {
   titleEn: true,
   titleFa: true,
   titleAr: true,
-  excerptEn: true,
-  excerptFa: true,
-  excerptAr: true,
   category: { select: { nameEn: true, nameFa: true, nameAr: true } },
 } as const;
 
@@ -34,7 +32,7 @@ export async function getRelatedPosts(
   postId: string,
   categoryId: string,
   locale: Locale,
-  limit = 3,
+  limit = 2,
 ): Promise<RelatedPost[]> {
   try {
     const base = { status: "published" as const, publishedAt: { not: null } };
@@ -54,11 +52,13 @@ export async function getRelatedPosts(
           })
         : [];
 
+    const numbers = await getPostNumbers();
+
     return [...same, ...more].map((p) => ({
       id: p.id,
       slug: p.slug,
       title: pick(locale, p.titleEn, p.titleFa, p.titleAr),
-      excerpt: pick(locale, p.excerptEn ?? "", p.excerptFa ?? "", p.excerptAr ?? ""),
+      number: numbers.get(p.id) ?? 0,
       readingTimeMin: p.readingTimeMin,
       category: { name: pick(locale, p.category.nameEn, p.category.nameFa, p.category.nameAr) },
     }));

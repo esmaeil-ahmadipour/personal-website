@@ -1,0 +1,130 @@
+# content/taxonomy.yml
+#
+# Categories and tags of the site, in one file. This file is the source of truth: the
+# importer creates or updates rows in the database from it (see docs/content-import.md).
+#
+# categories[]  slug (required, unique), order (default 0), isActive (default true),
+#               locales.en / locales.fa (required), locales.ar (optional);
+#               each locale has name (required) and description (optional).
+# tags[]        slug (required, unique), color (hex, default #3b82f6), icon (optional),
+#               locales.en / locales.fa (required), locales.ar (optional); each has name.
+#
+# Posts refer to these by slug (post.yml: category, tags). Unknown keys are errors.
+
+categories:
+  - slug: engineering
+    order: 1
+    isActive: true
+    locales:
+      en:
+        name: "Engineering"
+        description: "Software engineering insights and best practices"
+      fa:
+        name: "مهندسی نرم‌افزار"
+        description: "نکات و تجربیات مهندسی نرم‌افزار و بهترین روش‌ها"
+      ar:
+        name: "الهندسة"
+        description: "رؤى هندسة البرمجيات وأفضل الممارسات"
+  - slug: architecture
+    order: 2
+    isActive: true
+    locales:
+      en:
+        name: "Architecture"
+        description: "System architecture and design patterns"
+      fa:
+        name: "معماری"
+        description: "معماری سیستم و الگوهای طراحی"
+      ar:
+        name: "الهندسة المعمارية"
+        description: "هندسة النظم وأنماط التصميم"
+  - slug: flutter
+    order: 3
+    isActive: true
+    locales:
+      en:
+        name: "Flutter"
+        description: "Flutter development tips and techniques"
+      fa:
+        name: "فلاتر"
+        description: "نکات و تکنیک‌های توسعه فلاتر"
+      ar:
+        name: "فلاتر"
+        description: "نصائح وتقنيات تطوير فلاتر"
+  - slug: web3
+    order: 4
+    isActive: true
+    locales:
+      en:
+        name: "Web3"
+        description: "Blockchain and Web3 development"
+      fa:
+        name: "وب۳"
+        description: "توسعه بلاکچین و وب۳"
+      ar:
+        name: "ويب 3"
+        description: "تطوير البلوكشين والويب 3"
+tags:
+  - slug: flutter
+    color: "#42a5f5"
+    icon: smartphone
+    locales:
+      en: { name: "Flutter" }
+      fa: { name: "فلاتر" }
+      ar: { name: "فلاتر" }
+  - slug: architecture
+    color: "#7c3aed"
+    icon: layers
+    locales:
+      en: { name: "Architecture" }
+      fa: { name: "معماری" }
+      ar: { name: "الهندسة المعمارية" }
+  - slug: nextjs
+    color: "#000000"
+    icon: code
+    locales:
+      en: { name: "Next.js" }
+      fa: { name: "نکست‌جی‌اس" }
+      ar: { name: "نيكست جي إس" }
+  - slug: react
+    color: "#61dafb"
+    icon: atom
+    locales:
+      en: { name: "React" }
+      fa: { name: "ری‌اکت" }
+      ar: { name: "رياكت" }
+  - slug: web3
+    color: "#3b82f6"
+    icon: globe
+    locales:
+      en: { name: "Web3" }
+      fa: { name: "وب۳" }
+      ar: { name: "ويب 3" }
+  - slug: blockchain
+    color: "#f59e0b"
+    icon: link
+    locales:
+      en: { name: "Blockchain" }
+      fa: { name: "بلاکچین" }
+      ar: { name: "بلوكشين" }
+  - slug: clean-architecture
+    color: "#10b981"
+    icon: archive
+    locales:
+      en: { name: "Clean Architecture" }
+      fa: { name: "معماری تمیز" }
+      ar: { name: "الهندسة النظيفة" }
+  - slug: typescript
+    color: "#3178c6"
+    icon: file-code
+    locales:
+      en: { name: "TypeScript" }
+      fa: { name: "تایپ‌اسکریپت" }
+      ar: { name: "تايب سكريبت" }
+  - slug: productivity
+    color: "#8b5cf6"
+    icon: zap
+    locales:
+      en: { name: "Productivity" }
+      fa: { name: "بهره‌وری" }
+      ar: { name: "الإنتاجية" }

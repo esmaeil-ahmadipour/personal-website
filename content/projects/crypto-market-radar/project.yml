@@ -1,0 +1,26 @@
+slug: crypto-market-radar
+name: "Crypto Market Radar"
+kind: research
+stage: preProduction
+year: 2026
+badges: [personal]
+stack: ["React", "Next.js", "TypeScript", "Tailwind", "Prisma", "PostgreSQL"]
+isFeatured: false
+order: 2
+status: published
+publishedAt: "2026-11-01"
+coverImageUrl: /images/demo/cover-coin.svg
+url: "https://radar.tarvix.org/?lang=en"
+locales:
+  en:
+    description: "Customer-feedback signals for digital-asset teams"
+    overview: |-
+      [Sample] Project overview text.
+  fa:
+    description: "سیگنال‌های بازخورد مشتری برای تیم‌های دارایی دیجیتال"
+    overview: |-
+      [نمونه] متن معرفی پروژه.
+  ar:
+    description: "إشارات ملاحظات العملاء لفرق الأصول الرقمية"
+    overview: |-
+      [عينة] نص تعريف المشروع.

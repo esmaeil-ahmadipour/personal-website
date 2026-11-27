@@ -2,15 +2,18 @@
 import { getTranslations } from "next-intl/server";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { SectionHead } from "@/components/ui/SectionHead";
+import { SliderControls } from "@/components/ui/SliderControls";
 import { getHomePosts } from "../data/home-posts";
-import { PostCard } from "./PostCard";
+import { PostSlideCard } from "./PostSlideCard";
 
 type Locale = "en" | "fa" | "ar";
+
+const TRACK_ID = "latest-posts-track";
 
 export async function HomePosts({ locale }: { locale: Locale }) {
   const [t, posts] = await Promise.all([
     getTranslations({ locale }),
-    getHomePosts(locale, 4),
+    getHomePosts(locale, 6),
   ]);
 
   if (posts.length === 0) {
@@ -21,27 +24,22 @@ export async function HomePosts({ locale }: { locale: Locale }) {
     );
   }
 
-  const [featured, ...latest] = posts;
-
   return (
     <section className="mx-auto max-w-7xl px-4 pt-20 sm:px-8">
       <SectionHead title={t("hmLatest")}>
         <ButtonLink href={`/${locale}/blog`} variant="ghost" size="sm">
           {t("hmAll")} <span aria-hidden className="rtl-flip inline-block">→</span>
         </ButtonLink>
+        <SliderControls targetId={TRACK_ID} prevLabel={t("slPrev")} nextLabel={t("slNext")} />
       </SectionHead>
 
-      <div className="mb-6">
-        <PostCard post={featured} locale={locale} index={0} variant="featured" />
-      </div>
-
-      {latest.length > 0 && (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {latest.map((post, i) => (
-            <PostCard key={post.id} post={post} locale={locale} index={i + 1} />
-          ))}
-        </div>
-      )}
+      <ul id={TRACK_ID} className="card-track">
+        {posts.map((post) => (
+          <li key={post.id}>
+            <PostSlideCard post={post} locale={locale} />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

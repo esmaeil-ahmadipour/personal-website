@@ -18,7 +18,7 @@ export function BlogPageSizeSelector({ value, onChange }: BlogPageSizeSelectorPr
         value={value}
         onChange={(e) => onChange(Number(e.target.value) as PageSize)}
         aria-label={t("blPerPage", { n: value })}
-        className="cursor-pointer appearance-none rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--bg-surface)/0.5)] py-[7px] pe-9 ps-4 text-sm text-[hsl(var(--text-secondary))] backdrop-blur-sm transition-colors hover:border-[hsl(var(--accent-blue)/0.5)] hover:text-[hsl(var(--accent-text))]"
+        className="cursor-pointer appearance-none rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--bg-surface))] py-[7px] pe-9 ps-4 text-sm text-[hsl(var(--text-secondary))] transition-colors hover:border-[hsl(var(--accent-blue)/0.5)] hover:text-[hsl(var(--accent-text))]"
       >
         {PageSizeOptions.map((size) => (
           <option key={size} value={size}>

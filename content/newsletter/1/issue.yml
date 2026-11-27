@@ -1,0 +1,19 @@
+number: 1
+author: esmaeil-ahmadipour
+category: engineering
+tags: [flutter]
+linkedinUrl: "https://www.linkedin.com/pulse/architecture-decisions-directories-esmaeil-ahmadipour-8rrme/"
+status: published
+publishedAt: "2026-08-15"
+readingTimeMin: 4
+coverImageUrl: /images/demo/cover-coin.svg
+locales:
+  en:
+    title: "[Sample] Issue 1"
+    excerpt: "[Sample] Short summary of the issue."
+  fa:
+    title: "[نمونه] شماره‌ی ۱"
+    excerpt: "[نمونه] خلاصه‌ی کوتاه شماره."
+  ar:
+    title: "[عينة] العدد ١"
+    excerpt: "[عينة] ملخص قصير للعدد."

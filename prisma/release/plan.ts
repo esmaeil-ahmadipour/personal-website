@@ -11,7 +11,11 @@ export interface PlannedMigration {
   sqlHash: string;
 }
 
-export interface PlannedPost {
+export type PlannedKind = "post" | "newsletter" | "project";
+
+/** One approved content item. A post, an issue and a project can share a slug, so `kind` is part of the identity. */
+export interface PlannedItem {
+  kind: PlannedKind;
   slug: string;
   sourceHash: string;
   status: string;
@@ -21,7 +25,7 @@ export interface ReleasePlan {
   migrations: PlannedMigration[];
   /** Pending seed versions, or null when they cannot be read until the migrations are applied. */
   seeds: string[] | null;
-  content: PlannedPost[];
+  content: PlannedItem[];
   blocked: boolean;
 }
 
@@ -33,14 +37,14 @@ export interface ImportOutcome {
   conflicts: readonly string[];
 }
 
-const PLAN_VERSION = 1;
+const PLAN_VERSION = 2;
 const short = (hash: string): string => hash.slice(0, 12);
 
 export function sha256(text: string): string {
   return createHash("sha256").update(text, "utf8").digest("hex");
 }
 
-/** What a post will do in this release, from the import's own dry-run result. */
+/** What an item will do in this release, from the import's own dry-run result. */
 export function contentStatus(slug: string, outcome: ImportOutcome): string {
   const tags = [
     outcome.created.includes(slug) && "create",
@@ -62,7 +66,8 @@ export function planFingerprint(plan: ReleasePlan): string {
     version: PLAN_VERSION,
     migrations: byKey(plan.migrations, (m) => m.name).map((m) => ({ name: m.name, sqlHash: m.sqlHash })),
     seeds: plan.seeds,
-    content: byKey(plan.content, (p) => p.slug).map((p) => ({
+    content: byKey(plan.content, (p) => `${p.kind}:${p.slug}`).map((p) => ({
+      kind: p.kind,
       slug: p.slug,
       sourceHash: p.sourceHash,
       status: p.status,
@@ -81,8 +86,8 @@ export function describePlan(plan: ReleasePlan): string[] {
       ? "Plan: seeds cannot be read until the migrations are applied"
       : `Plan: ${plan.seeds.length} pending seed version(s)${plan.seeds.length > 0 ? `: ${plan.seeds.join(", ")}` : ""}`,
   );
-  lines.push(`Plan: ${plan.content.length} approved post(s)`);
-  for (const p of plan.content) lines.push(`  post ${p.slug}: ${p.status} (hash ${short(p.sourceHash)})`);
+  lines.push(`Plan: ${plan.content.length} approved item(s)`);
+  for (const p of plan.content) lines.push(`  ${p.kind} ${p.slug}: ${p.status} (hash ${short(p.sourceHash)})`);
   if (plan.blocked) lines.push("Plan: BLOCKED by conflicts that need review");
   return lines;
 }

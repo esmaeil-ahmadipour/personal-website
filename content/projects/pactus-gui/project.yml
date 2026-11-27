@@ -1,0 +1,27 @@
+slug: pactus-gui
+name: "Pactus GUI"
+kind: tool
+stage: openSource
+year: 2024
+badges: [blockchain, desktop]
+stack: ["Flutter", "Dart", "gRPC"]
+isFeatured: true
+order: 1
+status: published
+publishedAt: "2026-11-01"
+coverImageUrl: /images/demo/cover-blocks.svg
+sourceUrl: "https://github.com/pactus-project/pactus-gui"
+posts: [flutter-clean-architecture-patterns, web3-development-best-practices]
+locales:
+  en:
+    description: "Cross-platform blockchain node management app"
+    overview: |-
+      [Sample] Project overview text.
+  fa:
+    description: "برنامه‌ی چندسکویی مدیریت نود بلاک‌چین"
+    overview: |-
+      [نمونه] متن معرفی پروژه.
+  ar:
+    description: "تطبيق متعدد المنصات لإدارة عقدة البلوك تشين"
+    overview: |-
+      [عينة] نص تعريف المشروع.
