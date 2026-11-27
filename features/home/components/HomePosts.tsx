@@ -2,6 +2,7 @@
 import { getTranslations } from "next-intl/server";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { SectionHead } from "@/components/ui/SectionHead";
+import { DragScroll } from "@/components/ui/DragScroll";
 import { SliderControls } from "@/components/ui/SliderControls";
 import { getHomePosts } from "../data/home-posts";
 import { PostSlideCard } from "./PostSlideCard";
@@ -33,13 +34,14 @@ export async function HomePosts({ locale }: { locale: Locale }) {
         <SliderControls targetId={TRACK_ID} prevLabel={t("slPrev")} nextLabel={t("slNext")} />
       </SectionHead>
 
-      <ul id={TRACK_ID} className="card-track">
+      <ul id={TRACK_ID} className="card-track card-track-bleed">
         {posts.map((post) => (
           <li key={post.id}>
             <PostSlideCard post={post} locale={locale} />
           </li>
         ))}
       </ul>
+      <DragScroll targetId={TRACK_ID} />
     </section>
   );
 }

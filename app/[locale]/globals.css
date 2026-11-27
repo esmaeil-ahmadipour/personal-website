@@ -652,6 +652,10 @@
 @keyframes hx-candle { 0% { opacity: 0; transform: scaleY(0.15); } 10% { opacity: 1; transform: scaleY(1); } 85% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(1); } }
 @keyframes hx-up { 0% { transform: translateY(10px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
 @keyframes hx-volume { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+.hx .mx { animation: hx-rain linear infinite; }
+.hx .bk { animation: hx-blink 1s steps(1, end) infinite; }
+@keyframes hx-rain { from { transform: translateY(-75px); } to { transform: translateY(70px); } }
+@keyframes hx-blink { 50% { opacity: 0; } }
 @keyframes hx-letter { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
 @keyframes hx-ring { 0% { stroke-dashoffset: 277; } 70%, 100% { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
@@ -668,10 +672,32 @@
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;
+  overscroll-behavior-x: contain;
   padding: 6px 0 10px;
 }
 .card-track::-webkit-scrollbar { display: none; }
-.card-track > * { flex: 0 0 176px; scroll-snap-align: start; }
+.card-track > * { flex: 0 0 clamp(140px, 42vw, 176px); scroll-snap-align: start; }
+/* Mouse drag (components/ui/DragScroll.tsx): snap is off only while dragging. */
+@media (hover: hover) and (pointer: fine) {
+  .card-track { cursor: grab; }
+}
+.card-track[data-dragging] {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  cursor: grabbing;
+  user-select: none;
+}
+/* Peek: the track runs into the section padding (the design's -40px), so the
+   next card shows cut off. Section padding is 1rem, 2rem from sm. */
+.card-track-bleed { margin-inline-end: -1rem; padding-inline-end: 1rem; }
+@media (min-width: 640px) {
+  .card-track-bleed { margin-inline-end: -2rem; padding-inline-end: 2rem; }
+}
+/* Newsletter band: end padding for the last card (pe-* utilities lose to .card-track). */
+.card-track-band { padding-inline-end: 1.5rem; }
+@media (min-width: 640px) {
+  .card-track-band { padding-inline-end: 2rem; }
+}
 .band-art .pl { transform-box: fill-box; transform-origin: center; animation: hx-pulse 2s ease-in-out infinite; }
 
 /* ============================================
