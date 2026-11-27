@@ -1,0 +1,27 @@
+slug: tarvix-market
+name: "Tarvix Market"
+kind: research
+stage: prototype
+year: 2024
+badges: [personal]
+stack: ["React", "Next.js", "TypeScript", "Tailwind", "Prisma", "PostgreSQL"]
+isFeatured: false
+order: 3
+status: published
+publishedAt: "2026-11-01"
+coverImageUrl: /images/demo/cover-diamond.svg
+url: "https://market.tarvix.org"
+posts: []
+locales:
+  en:
+    description: "Multi-branch grocery marketplace prototype"
+    overview: |-
+      [Sample] Project overview text.
+  fa:
+    description: "نمونه‌ی اولیه‌ی بازارچه‌ی چندشعبه‌ای خواروبار"
+    overview: |-
+      [نمونه] متن معرفی پروژه.
+  ar:
+    description: "نموذج أولي لسوق بقالة متعدد الفروع"
+    overview: |-
+      [عينة] نص تعريف المشروع.

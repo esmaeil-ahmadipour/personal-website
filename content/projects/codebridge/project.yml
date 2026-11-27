@@ -1,0 +1,24 @@
+slug: codebridge
+name: "CodeBridge"
+kind: tool
+stage: openSource
+badges: []
+stack: []
+isFeatured: false
+order: 4
+status: published
+publishedAt: "2026-11-01"
+sourceUrl: "https://github.com/esmaeil-ahmadipour/CodeBridge"
+locales:
+  en:
+    description: "[Sample] description to be added"
+    overview: |-
+      [Sample] Project overview text.
+  fa:
+    description: "[نمونه] توضیح اضافه می‌شود"
+    overview: |-
+      [نمونه] متن معرفی پروژه.
+  ar:
+    description: "[عينة] سيُضاف الوصف"
+    overview: |-
+      [عينة] نص تعريف المشروع.

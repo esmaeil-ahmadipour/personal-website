@@ -16,6 +16,20 @@ type HashedPost = Pick<ParsedPost, "slug" | "sourceHash">;
 
 const short = (hash: string): string => hash.slice(0, 12);
 
+/** What a manifest entry stands for. Only posts are approved by their bare slug. */
+export type PinKind = "post" | "newsletter" | "project";
+
+const KIND_TEXT: Record<PinKind, { noun: string; dir: string }> = {
+  post: { noun: "post", dir: "content/posts" },
+  newsletter: { noun: "newsletter issue", dir: "content/newsletter" },
+  project: { noun: "project", dir: "content/projects" },
+};
+
+/** The argument `pnpm content:approve` takes for an entry. */
+export const approveTarget = (kind: PinKind, slug: string): string => (kind === "post" ? slug : `${kind}:${slug}`);
+
+const label = (kind: PinKind, slug: string): string => (kind === "post" ? `"${slug}"` : `${kind} "${slug}"`);
+
 export function toEntries(posts: readonly RawEntry[]): ManifestEntry[] {
   return posts.map((post) =>
     typeof post === "string" ? { slug: post } : { slug: post.slug, sourceHash: post.sourceHash },
@@ -32,20 +46,25 @@ export function extraEntriesOf(manifest: Partial<Record<ExtraManifestKey, readon
 }
 
 /** Problems that make a release unsafe: unpinned entries and pins the files no longer match. */
-export function verifyPins(entries: readonly ManifestEntry[], posts: readonly HashedPost[]): string[] {
+export function verifyPins(
+  entries: readonly ManifestEntry[],
+  posts: readonly HashedPost[],
+  kind: PinKind = "post",
+): string[] {
   const current = new Map(posts.map((post) => [post.slug, post.sourceHash]));
   const problems: string[] = [];
   for (const entry of entries) {
     const now = current.get(entry.slug);
     if (entry.sourceHash === undefined) {
       problems.push(
-        `manifest.json: "${entry.slug}" is not approved; review it, then run: pnpm content:approve ${entry.slug}`,
+        `manifest.json: ${label(kind, entry.slug)} is not approved; ` +
+          `review it, then run: pnpm content:approve ${approveTarget(kind, entry.slug)}`,
       );
     } else if (now !== undefined && now !== entry.sourceHash) {
       problems.push(
-        `manifest.json: "${entry.slug}" changed since it was approved ` +
+        `manifest.json: ${label(kind, entry.slug)} changed since it was approved ` +
           `(approved ${short(entry.sourceHash)}, now ${short(now)}); ` +
-          `review it, then run: pnpm content:approve ${entry.slug}`,
+          `review it, then run: pnpm content:approve ${approveTarget(kind, entry.slug)}`,
       );
     }
   }
@@ -57,12 +76,14 @@ export function approveEntries(
   entries: readonly ManifestEntry[],
   posts: readonly HashedPost[],
   slugs: readonly string[],
+  kind: PinKind = "post",
 ): ManifestEntry[] {
   const current = new Map(posts.map((post) => [post.slug, post.sourceHash]));
   const next = new Map(entries.map((entry) => [entry.slug, entry] as const));
   const unknown = [...new Set(slugs)].filter((slug) => !current.has(slug));
   if (unknown.length > 0) {
-    throw new ContentError(unknown.map((slug) => `No post "${slug}" in content/posts.`));
+    const { noun, dir } = KIND_TEXT[kind];
+    throw new ContentError(unknown.map((slug) => `No ${noun} "${slug}" in ${dir}.`));
   }
   for (const slug of new Set(slugs)) {
     next.set(slug, { slug, sourceHash: current.get(slug) });

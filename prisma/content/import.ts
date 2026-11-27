@@ -49,6 +49,8 @@ export interface ImportOptions {
   force?: ForceRequest;
   /** What the items are. Defaults to "post"; a newsletter issue's slug is its number as text. */
   kind?: ImportKind;
+  /** Dry run only, projects only: slugs of posts the same release creates, so a link to one is not reported missing. */
+  plannedPosts?: ReadonlySet<string>;
 }
 
 export interface ImportSummary {
@@ -577,6 +579,11 @@ async function runImportWith<T extends PlanItem, D extends DbItemState>(
   const force =
     options.force !== undefined && forceKind(options.force) === ops.kind ? options.force : undefined;
   const state = await loadState(prisma, posts, ops);
+  if (dryRun && ops.kind === "project") {
+    for (const slug of options.plannedPosts ?? []) {
+      if (!state.refs.posts.has(slug)) state.refs.posts.set(slug, `planned:${slug}`);
+    }
+  }
   const plans = posts.map((post) =>
     planFor(ops, post, state.posts.get(post.slug) ?? null, state.syncs.get(post.slug) ?? null, force ?? null),
   );
@@ -621,16 +628,6 @@ async function runImportWith<T extends PlanItem, D extends DbItemState>(
   return summary;
 }
 
-export function runImport(
-  prisma: PrismaClient,
-  items: readonly ParsedPost[],
-  options: ImportOptions & { kind?: "post" | "newsletter" },
-): Promise<ImportSummary>;
-export function runImport(
-  prisma: PrismaClient,
-  items: readonly ParsedProject[],
-  options: ImportOptions & { kind: "project" },
-): Promise<ImportSummary>;
 export function runImport(
   prisma: PrismaClient,
   items: readonly ParsedPost[] | readonly ParsedProject[],

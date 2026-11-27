@@ -12,8 +12,8 @@ const base = (): ReleasePlan => ({
   ],
   seeds: ["1.1.0"],
   content: [
-    { slug: "alpha", sourceHash: H1, status: "create" },
-    { slug: "beta", sourceHash: H2, status: "unchanged" },
+    { kind: "post", slug: "alpha", sourceHash: H1, status: "create" },
+    { kind: "post", slug: "beta", sourceHash: H2, status: "unchanged" },
   ],
   blocked: false,
 });
@@ -55,6 +55,10 @@ describe("plan fingerprint", () => {
     hash.content[1].sourceHash = H1;
     variants.push(hash);
 
+    const kind = base();
+    kind.content[0].kind = "project";
+    variants.push(kind);
+
     variants.push({ ...base(), content: base().content.slice(0, 1) });
     variants.push({ ...base(), blocked: true });
 
@@ -67,6 +71,31 @@ describe("plan fingerprint", () => {
   });
 });
 
+describe("plan fingerprint with several kinds", () => {
+  it("tells a post, an issue and a project with the same slug apart", () => {
+    const item = (kind: "post" | "newsletter" | "project") => ({ kind, slug: "5", sourceHash: H1, status: "create" });
+    const withKinds = (...kinds: ("post" | "newsletter" | "project")[]): ReleasePlan => ({
+      ...base(),
+      content: kinds.map(item),
+    });
+    const fingerprints = new Set([
+      planFingerprint(withKinds("post")),
+      planFingerprint(withKinds("newsletter")),
+      planFingerprint(withKinds("project")),
+      planFingerprint(withKinds("post", "newsletter")),
+    ]);
+    assert.equal(fingerprints.size, 4);
+  });
+
+  it("ignores the order of items of different kinds", () => {
+    const plan = base();
+    plan.content.push({ kind: "newsletter", slug: "5", sourceHash: H2, status: "create" });
+    plan.content.push({ kind: "project", slug: "demo", sourceHash: H1, status: "update" });
+    const shuffled: ReleasePlan = { ...plan, content: [...plan.content].reverse() };
+    assert.equal(planFingerprint(plan), planFingerprint(shuffled));
+  });
+});
+
 describe("content status", () => {
   const outcome = {
     created: ["a"],
@@ -76,7 +105,7 @@ describe("content status", () => {
     conflicts: ["e"],
   };
 
-  it("names what the import dry run decided for a post", () => {
+  it("names what the import dry run decided for an item", () => {
     assert.equal(contentStatus("a", outcome), "create");
     assert.equal(contentStatus("b", outcome), "update");
     assert.equal(contentStatus("c", outcome), "unchanged");
@@ -87,17 +116,27 @@ describe("content status", () => {
 });
 
 describe("plan description", () => {
-  it("lists migrations, seeds and posts", () => {
+  it("lists migrations, seeds and content items", () => {
     const lines = describePlan(base());
     assert.deepEqual(lines, [
       "Plan: 2 pending migration(s)",
       `  migration 20260101_a (sql ${sha256("a").slice(0, 12)})`,
       `  migration 20260102_b (sql ${sha256("b").slice(0, 12)})`,
       "Plan: 1 pending seed version(s): 1.1.0",
-      "Plan: 2 approved post(s)",
+      "Plan: 2 approved item(s)",
       `  post alpha: create (hash ${"a".repeat(12)})`,
       `  post beta: unchanged (hash ${"b".repeat(12)})`,
     ]);
+  });
+
+  it("names the kind of every item", () => {
+    const plan = base();
+    plan.content.push({ kind: "newsletter", slug: "5", sourceHash: H2, status: "create" });
+    plan.content.push({ kind: "project", slug: "demo", sourceHash: H1, status: "after-migrations" });
+    const lines = describePlan(plan);
+    assert.ok(lines.includes("Plan: 4 approved item(s)"));
+    assert.ok(lines.includes(`  newsletter 5: create (hash ${"b".repeat(12)})`));
+    assert.ok(lines.includes(`  project demo: after-migrations (hash ${"a".repeat(12)})`));
   });
 
   it("explains unreadable seeds and blocked plans", () => {
