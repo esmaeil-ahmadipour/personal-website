@@ -2,6 +2,71 @@
 /* Decorative animated page-header illustrations, taken from the design.
    Colors follow the theme tokens; animations live in globals.css (.hx). */
 
+const BLUE = "hsl(var(--accent-blue))";
+const GREEN = "#34d399";
+const WHITE = "#ffffff";
+const TRAIL_OPACITY = [0.3, 0.45, 0.6, 0.8, 1, 1];
+
+/** Falling code columns. y = static start (also the look under reduced motion). */
+const MATRIX = [
+  { x: 27, y: 44, dur: 5.2, delay: -1.4, alt: false, g: ["<", "/", ">", "{", "}", ";"] },
+  { x: 43, y: 58, dur: 6.4, delay: -3.8, alt: true, g: ["1", "0", "=", "(", ")", "&"] },
+  { x: 59, y: 40, dur: 4.8, delay: -0.6, alt: false, g: ["{", ";", "0", "<", "/", ">"] },
+  { x: 75, y: 52, dur: 6, delay: -2.9, alt: true, g: ["}", "1", "#", "[", "]", "0"] },
+  { x: 91, y: 60, dur: 5.6, delay: -4.4, alt: false, g: ["/", "<", "1", "=", ">", "{"] },
+  { x: 107, y: 46, dur: 4.6, delay: -2.1, alt: true, g: ["0", "(", ";", ")", "}", "1"] },
+  { x: 123, y: 54, dur: 6.8, delay: -5.2, alt: false, g: ["<", "0", "{", "/", "1", ">"] },
+];
+
+/** 16:9 monitor (112x63 screen) running a code-rain screen. */
+function ProjectArt() {
+  return (
+    <>
+      <defs>
+        <clipPath id="hx-screen">
+          <rect x="19" y="37" width="112" height="63" rx="2" />
+        </clipPath>
+      </defs>
+      <rect x="15" y="33" width="120" height="71" rx="7" fill="hsl(var(--bg-elevated))" stroke="hsl(var(--border-strong))" />
+      <rect x="70" y="104" width="10" height="8" fill="hsl(var(--border-strong))" stroke="none" />
+      <rect x="56" y="112" width="38" height="4" rx="2" fill="hsl(var(--border-strong))" stroke="none" />
+      <rect x="19" y="37" width="112" height="63" rx="2" fill="hsl(var(--ink-dark))" stroke="none" />
+      <g clipPath="url(#hx-screen)">
+        {MATRIX.map((c) => {
+          const fills = c.alt
+            ? [GREEN, GREEN, BLUE, BLUE, BLUE, WHITE]
+            : [BLUE, BLUE, GREEN, GREEN, GREEN, WHITE];
+          return (
+            <g key={c.x} className="mx" style={{ animationDuration: `${c.dur}s`, animationDelay: `${c.delay}s` }}>
+              <text
+                x={c.x}
+                y={c.y}
+                textAnchor="middle"
+                fontFamily="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+                fontSize="6.5"
+                fontWeight="700"
+                stroke="none"
+              >
+                {c.g.map((ch, i) => (
+                  <tspan key={i} x={c.x} dy={i === 0 ? 0 : 7} fill={fills[i]} fillOpacity={TRAIL_OPACITY[i]}>
+                    {ch}
+                  </tspan>
+                ))}
+              </text>
+            </g>
+          );
+        })}
+        <rect x="19" y="89" width="112" height="11" fill="hsl(var(--ink-dark))" fillOpacity="0.92" stroke="none" />
+        <text x="23" y="97" fontFamily="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fontSize="6.5" fontWeight="700" fill={GREEN} stroke="none">
+          {">"}
+        </text>
+        <rect className="bk" x="30" y="92" width="4" height="6" fill={GREEN} stroke="none" />
+      </g>
+      <rect x="19" y="37" width="112" height="63" rx="2" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" strokeWidth="1" />
+    </>
+  );
+}
+
 const ART = {
   home: (
     <>
@@ -72,21 +137,7 @@ const ART = {
       </g>
     </>
   ),
-  project: (
-    <>
-      <circle className="n" cx="75" cy="75" r="18" />
-      <circle className="n" cx="75" cy="75" r="36" />
-      <circle className="n" cx="75" cy="75" r="54" />
-      <path className="n" d="M75 21V129M21 75H129" />
-      <g className="vc sw">
-        <path d="M75 75H129A54 54 0 0 0 75 21Z" fill="hsl(var(--accent-blue))" fillOpacity=".25" stroke="none" />
-        <path className="b" d="M75 75H129" />
-      </g>
-      <circle className="o g pu" cx="100" cy="50" r="5" fill="currentColor" />
-      <circle className="o g pu" cx="52" cy="96" r="5" fill="currentColor" style={{ animationDelay: ".7s" }} />
-      <circle className="o y pu" cx="104" cy="100" r="4" fill="currentColor" style={{ animationDelay: "1.4s" }} />
-    </>
-  ),
+  project: <ProjectArt />,
   blog: (
     <>
       <rect className="n" x="38" y="26" width="74" height="98" rx="10" />

@@ -1,6 +1,7 @@
 // features/newsletter/components/NewsletterSection.tsx
 import { getTranslations } from "next-intl/server";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { DragScroll } from "@/components/ui/DragScroll";
 import { SliderControls } from "@/components/ui/SliderControls";
 import { LINKEDIN_NEWSLETTER_URL } from "../config";
 import { getPublishedIssues, type IssueSummary } from "../services/newsletter.service";
@@ -40,8 +41,15 @@ export async function NewsletterSection({ locale }: { locale: string }) {
           </div>
         </div>
 
-        <div className="flex items-center">
-          <ul id={TRACK_ID} className="card-track min-w-0 flex-1 pe-6 sm:pe-8">
+        <div className="relative">
+          {/* Art sits behind the track at the end side; the last cards slide over it. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 end-0 hidden w-[190px] place-items-center md:grid"
+          >
+            <NewsletterBandArt />
+          </div>
+          <ul id={TRACK_ID} className="card-track card-track-band relative z-10">
             {issues.map((issue) => (
               <li key={issue.number}>
                 <IssueSlideCard issue={issue} locale={locale} />
@@ -51,9 +59,7 @@ export async function NewsletterSection({ locale }: { locale: string }) {
               <FollowSlideCard locale={locale} />
             </li>
           </ul>
-          <div className="hidden w-[190px] flex-none place-items-center md:grid">
-            <NewsletterBandArt />
-          </div>
+          <DragScroll targetId={TRACK_ID} />
         </div>
       </div>
     </section>
