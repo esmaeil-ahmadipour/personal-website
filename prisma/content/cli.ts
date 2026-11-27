@@ -4,6 +4,7 @@
 
 import { createLogger } from "../lib/log";
 import { verifyPins } from "./manifest";
+import { pinStatus, validateTaxonomy } from "./taxonomy";
 import { validateContent } from "./validate";
 
 const log = createLogger("content");
@@ -24,4 +25,14 @@ for (const error of result.errors) log.error(error);
 for (const problem of pinProblems) log.error(problem);
 log.info(`${result.posts.length} valid post(s), ${result.errors.length} error(s), ${listed.size} in manifest.`);
 
-process.exitCode = result.ok && pinProblems.length === 0 ? 0 : 1;
+const taxonomy = validateTaxonomy();
+for (const item of taxonomy.items) {
+  const release = pinStatus(taxonomy.entries[item.kind], item);
+  log.info(`${item.kind}:${item.slug}: ok (${release}, hash=${item.sourceHash.slice(0, 12)})`);
+}
+for (const error of taxonomy.errors) log.error(error);
+for (const problem of taxonomy.pinProblems) log.error(problem);
+log.info(`${taxonomy.items.length} taxonomy item(s), ${taxonomy.errors.length} error(s).`);
+
+process.exitCode =
+  result.ok && pinProblems.length === 0 && taxonomy.ok && taxonomy.pinProblems.length === 0 ? 0 : 1;

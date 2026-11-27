@@ -14,6 +14,9 @@ export type Locale = (typeof LOCALES)[number];
 export const POST_STATUSES = ["draft", "pending", "published"] as const;
 export type PostStatusValue = (typeof POST_STATUSES)[number];
 
+/** Kinds of content items the pipeline manages; posts are the default. */
+export type ContentKind = "post" | "category" | "tag" | "project" | "newsletter";
+
 /** The only files a post directory may contain (dotfiles are ignored). */
 export const POST_FILES: readonly string[] = [
   "post.yml",
