@@ -60,7 +60,11 @@ export function SliderControls({ targetId, prevLabel, nextLabel }: SliderControl
     const el = document.getElementById(targetId);
     if (!el) return;
     const rtl = getComputedStyle(el).direction === "rtl";
-    el.scrollBy({ left: step * (rtl ? -1 : 1) * el.clientWidth * 0.8 });
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollBy({
+      left: step * (rtl ? -1 : 1) * el.clientWidth * 0.8,
+      behavior: smooth ? "smooth" : "auto",
+    });
   }
 
   if (!state.scrollable) return null;

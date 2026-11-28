@@ -24,7 +24,7 @@ export async function IssueSlideCard({ issue, locale }: { issue: IssueSummary; l
 
   return (
     <Link href={`/${locale}/newsletter/${issue.number}`} className={CARD}>
-      <div className="cover-slot grid h-[224px] place-items-center rounded-xl border border-[hsl(var(--border-subtle))]">
+      <div className="cover-slot grid aspect-[176/224] w-full place-items-center rounded-xl border border-[hsl(var(--border-subtle))]">
         <span
           aria-hidden
           dir="ltr"
@@ -55,7 +55,7 @@ export async function FollowSlideCard({ locale }: { locale: string }) {
       rel="noopener noreferrer"
       className={CARD}
     >
-      <div className="grid h-[224px] place-items-center rounded-xl bg-[hsl(var(--accent-blue))] text-white">
+      <div className="grid aspect-[176/224] w-full place-items-center rounded-xl bg-[hsl(var(--accent-blue))] text-white">
         <span className="flex flex-col items-center gap-2.5">
           <span aria-hidden className="text-[56px] font-extrabold leading-none">in</span>
           <span className="px-3 text-center font-bold">{t("nlFollowShort")}</span>

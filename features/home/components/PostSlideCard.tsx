@@ -22,7 +22,7 @@ export async function PostSlideCard({ post, locale }: { post: Post; locale: stri
         <CoverMedia
           src={post.coverImageUrl}
           sizes="176px"
-          className="h-[236px] rounded-xl border border-[hsl(var(--border-subtle))]"
+          className="aspect-[176/236] w-full rounded-xl border border-[hsl(var(--border-subtle))]"
         />
         {post.readingTimeMin ? (
           <span className="absolute bottom-2 end-2 flex h-[34px] min-w-[34px] items-center justify-center rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--bg-surface))] px-2.5 text-xs font-bold text-[hsl(var(--text-primary))]">

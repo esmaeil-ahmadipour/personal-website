@@ -8,7 +8,7 @@ export function NewsletterBandArt() {
     <svg
       aria-hidden
       focusable="false"
-      className="band-art"
+      className="band-art opacity-60"
       viewBox="0 0 150 150"
       width="150"
       height="150"
